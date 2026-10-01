@@ -1,4 +1,6 @@
 (function () {
+  // уже разбудила терминал разработчика и обновила страницу -> сразу обратно в терминал
+  if (window.DevTerm && DevTerm.shouldResume()) { DevTerm.resume(); return; }
   var Q = window.QUEST || {};
   var WHO = Q.who || "?";
   var $ = function (id) { return document.getElementById(id); };
@@ -298,6 +300,30 @@
       else { o.classList.add("black"); setTimeout(function () { cv.remove(); cb(); }, 120); }
     })();
   }
+  // "?" в "/ конец...? /" становится кнопкой: по нажатию появляется строка для ключа из Морзе
+  function endQuestion() {
+    var et = $("endtext");
+    et.innerHTML = '/ конец...<button type="button" id="endq" class="endq">?</button> /';
+    $("endq").addEventListener("click", function () {
+      if ($("endinput")) { $("endinput").focus(); return; }
+      var wrap = document.createElement("div"); wrap.className = "endwrap";
+      wrap.innerHTML = '<input id="endinput" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="ключ">' +
+                       '<button type="button" id="endgo" class="endgo">ввод ⏎</button>';
+      et.parentNode.appendChild(wrap);
+      var inp = $("endinput"); inp.focus();
+      inp.addEventListener("keydown", function (e) { if (e.key === "Enter") submitKey(); });
+      $("endgo").addEventListener("click", submitKey);
+      function submitKey() {
+        if (inp.disabled || !inp.value.trim()) return;
+        var v = inp.value; inp.disabled = true; $("endgo").disabled = true;
+        (window.DevTerm ? DevTerm.wake(v) : Promise.resolve(false)).then(function (ok) {
+          if (ok) { wrap.remove(); return; }
+          inp.disabled = false; $("endgo").disabled = false; inp.value = ""; inp.placeholder = "не тот ключ";
+          wrap.classList.remove("deny"); void wrap.offsetWidth; wrap.classList.add("deny"); inp.focus();
+        });
+      }
+    });
+  }
   function theEnd() {
     dead = true;
     var o = document.createElement("div");
@@ -315,7 +341,7 @@
         }, 70);
         setTimeout(function () { clearInterval(shimmer); }, 3600);
         setTimeout(function () { o.classList.add("skullout"); }, 2500);
-        setTimeout(function () { typeLines($("endtext"), ["/ конец...? /"]); }, 3700);
+        setTimeout(function () { typeLines($("endtext"), ["/ конец...? /"], endQuestion); }, 3700);
       });
     });
   }
