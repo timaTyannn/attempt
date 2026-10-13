@@ -1,0 +1,41 @@
+{
+  "nodes": [
+    {"id":"g-vision","type":"group","label":"1. Видение","x":-1020,"y":-60,"width":380,"height":620},
+    {"id":"g-gameplay","type":"group","label":"2. Геймплей","x":-560,"y":-60,"width":380,"height":620},
+    {"id":"g-tech","type":"group","label":"4. Техника (Unreal)","x":-100,"y":-60,"width":380,"height":620},
+    {"id":"g-world","type":"group","label":"3. Мир","x":360,"y":-60,"width":380,"height":620},
+    {"id":"g-prod","type":"group","label":"6. Производство","x":820,"y":-60,"width":380,"height":620},
+    {"id":"home","type":"file","file":"00 Home.md","x":-160,"y":-420,"width":500,"height":260},
+    {"id":"how","type":"text","text":"## Как читать карту\nСлева направо: **идея → геймплей → техника → мир → производство**.\nСтрелка = «из этого следует». Перетаскивайте карточки, добавляйте свои (`двойной клик` по пустому месту).","x":420,"y":-420,"width":420,"height":200},
+    {"id":"concept","type":"file","file":"01 Vision/Концепция игры.md","x":-1000,"y":0,"width":340,"height":160},
+    {"id":"audience","type":"file","file":"01 Vision/Целевая аудитория.md","x":-1000,"y":190,"width":340,"height":160},
+    {"id":"refs","type":"file","file":"01 Vision/Референсы.md","x":-1000,"y":380,"width":340,"height":160},
+    {"id":"loop","type":"file","file":"02 Gameplay/Core Loop.md","x":-540,"y":0,"width":340,"height":160},
+    {"id":"mech","type":"file","file":"02 Gameplay/Механики.md","x":-540,"y":190,"width":340,"height":160},
+    {"id":"prog","type":"file","file":"02 Gameplay/Прогрессия.md","x":-540,"y":380,"width":340,"height":160},
+    {"id":"arch","type":"file","file":"04 Tech/Архитектура проекта.md","x":-80,"y":0,"width":340,"height":160},
+    {"id":"systems","type":"file","file":"04 Tech/Системы.md","x":-80,"y":190,"width":340,"height":160},
+    {"id":"cppbp","type":"file","file":"04 Tech/C++ или Blueprints.md","x":-80,"y":380,"width":340,"height":160},
+    {"id":"setting","type":"file","file":"03 World/Сеттинг.md","x":380,"y":0,"width":340,"height":160},
+    {"id":"chars","type":"file","file":"03 World/Персонажи.md","x":380,"y":190,"width":340,"height":160},
+    {"id":"levels","type":"file","file":"03 World/Уровни.md","x":380,"y":380,"width":340,"height":160},
+    {"id":"roadmap","type":"file","file":"06 Production/Roadmap.md","x":840,"y":0,"width":340,"height":160},
+    {"id":"backlog","type":"file","file":"06 Production/Backlog.md","x":840,"y":190,"width":340,"height":160},
+    {"id":"bugs","type":"file","file":"06 Production/Баги.md","x":840,"y":380,"width":340,"height":160}
+  ],
+  "edges": [
+    {"id":"e1","fromNode":"concept","fromSide":"right","toNode":"loop","toSide":"left"},
+    {"id":"e2","fromNode":"loop","fromSide":"bottom","toNode":"mech","toSide":"top"},
+    {"id":"e3","fromNode":"mech","fromSide":"bottom","toNode":"prog","toSide":"top"},
+    {"id":"e4","fromNode":"mech","fromSide":"right","toNode":"systems","toSide":"left","label":"реализуется через"},
+    {"id":"e5","fromNode":"arch","fromSide":"bottom","toNode":"systems","toSide":"top"},
+    {"id":"e6","fromNode":"concept","fromSide":"bottom","toNode":"audience","toSide":"top"},
+    {"id":"e7","fromNode":"audience","fromSide":"bottom","toNode":"refs","toSide":"top"},
+    {"id":"e8","fromNode":"setting","fromSide":"bottom","toNode":"chars","toSide":"top"},
+    {"id":"e9","fromNode":"chars","fromSide":"bottom","toNode":"levels","toSide":"top"},
+    {"id":"e10","fromNode":"levels","fromSide":"left","toNode":"mech","toSide":"right","label":"использует"},
+    {"id":"e11","fromNode":"roadmap","fromSide":"bottom","toNode":"backlog","toSide":"top"},
+    {"id":"e12","fromNode":"backlog","fromSide":"bottom","toNode":"bugs","toSide":"top"},
+    {"id":"e13","fromNode":"home","fromSide":"left","toNode":"concept","toSide":"top"}
+  ]
+}
