@@ -1,0 +1,190 @@
+<title>Хемоформ · Главный экран</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500&display=swap">
+<style>
+@font-face { font-family: "Disket Mono"; font-weight: 400; src: url(data:font/ttf;base64,__DISKET_REG__) format("truetype"); }
+@font-face { font-family: "Disket Mono"; font-weight: 700; src: url(data:font/ttf;base64,__DISKET_BOLD__) format("truetype"); }
+/* Layout: the ⌂ screen of the table terminal at 1920×1080. Header tabs, left: the sample, right: section cards in the team's own card style, footer: monitors 1–4 centred, Esc = back. Single dark look by design. */
+:root {
+  color-scheme: dark;
+  --page: #0a0a0a;
+  --bg: #121212;
+  --card: #383838;
+  --card-top: #2d2d2d;
+  --card-hi: #424242;
+  --text: #ececec;
+  --muted: #a7a7a7;
+  --dim: #5c5c5c;
+  --accent: #3dd4c4;
+  --ink: #0b201e;
+  --mono: "Disket Mono", ui-monospace, Menlo, monospace;
+  --body: "Jost", "Segoe UI", system-ui, sans-serif;
+}
+html, body { background: var(--page); color: var(--text); }
+body { font-family: var(--body); font-size: 15px; line-height: 1.45; }
+.wrap { max-width: 1440px; margin: 0 auto; padding-inline: 20px; padding-block: 18px 40px; display: grid; gap: 12px; }
+.top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px 20px; }
+.top p { margin: 0; color: var(--muted); max-width: 76ch; }
+.seg { display: flex; border: 1px solid #333; }
+.seg button { font-family: var(--mono); font-size: 12px; color: var(--muted); background: none; border: 0; padding: 7px 12px; cursor: pointer; }
+.seg button + button { border-left: 1px solid #333; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--ink); }
+button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.stage { position: relative; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; background: var(--bg); outline: none; }
+.stage:focus-visible { box-shadow: 0 0 0 2px var(--accent); }
+.screen { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; background: var(--bg); }
+
+.kc { display: inline-grid; place-items: center; min-width: 34px; height: 32px; padding: 0 7px; border-radius: 5px; background: #d8d8d8; color: #141414; font-family: var(--mono); font-weight: 700; font-size: 17px; box-shadow: 0 4px 0 #8a8a8a; }
+
+/* tabs */
+.tabs { position: absolute; left: 0; right: 0; top: 0; height: 64px; display: flex; justify-content: center; align-items: center; }
+.tabs .kc { margin: 0 30px; }
+.tab { position: relative; height: 64px; padding: 0 34px; display: grid; place-items: center; font-family: var(--mono); font-weight: 700; font-size: 22px; letter-spacing: .05em; color: var(--text); cursor: pointer; }
+.tab.home { font-size: 28px; padding: 0 28px; }
+.tab:hover:not(.on) { background: #1c1c1c; }
+.tab.on { background: var(--accent); color: var(--ink); }
+.tab.on::after { content: ""; position: absolute; bottom: -15px; left: 50%; width: 9px; height: 9px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: translateX(-50%) rotate(45deg); }
+.tab.nos { color: var(--dim); }
+.tab .bang { position: absolute; top: 8px; right: 10px; width: 18px; height: 18px; border-radius: 50%; background: var(--accent); color: var(--ink); font-size: 12px; display: grid; place-items: center; }
+.tab.on .bang { background: var(--ink); color: var(--accent); }
+
+/* left: sample */
+.sample { position: absolute; left: 110px; top: 200px; width: 600px; }
+.sample .lb { font-family: var(--body); font-size: 20px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.sample .id { font-family: var(--mono); font-weight: 700; font-size: 168px; line-height: .95; margin: 22px 0 28px; letter-spacing: .01em; }
+.sample .id.empty { font-size: 88px; line-height: 1.05; color: var(--dim); }
+.sample .where { font-size: 27px; line-height: 1.45; }
+.sample .where span { display: block; color: var(--muted); }
+.sample .task { margin-top: 64px; padding-top: 22px; border-top: 1px solid #2a2a2a; }
+.sample .task .lb { font-size: 17px; }
+.sample .task p { margin: 10px 0 0; font-size: 24px; line-height: 1.4; color: #d2d2d2; max-width: 28ch; }
+
+/* right: cards in the team's own style */
+.cards { position: absolute; left: 790px; right: 110px; top: 160px; height: 780px; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); gap: 16px; }
+.card { position: relative; background: var(--card); display: flex; flex-direction: column; cursor: pointer; transition: background .15s; }
+.card .ic { height: 170px; background: var(--card-top); display: grid; place-items: center; flex: none; transition: background .15s; }
+.card .ic svg { width: 110px; height: 110px; }
+.card .ic svg * { fill: none; stroke: #8f8f8f; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; transition: stroke .15s; }
+.card .nm { margin: 20px 18px 0; font-family: var(--mono); font-size: 27px; letter-spacing: .07em; line-height: 1.1; }
+.card .ds { margin: 12px 18px 0; font-size: 18px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); line-height: 1.35; }
+.card .st { margin: auto 18px 18px; font-size: 21px; color: #d0d0d0; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.card .st .kc { min-width: 30px; height: 28px; font-size: 15px; box-shadow: 0 3px 0 #8a8a8a; }
+.card .bang { position: absolute; top: 14px; right: 14px; width: 30px; height: 30px; border-radius: 50%; background: var(--accent); color: var(--ink); font-family: var(--mono); font-weight: 700; font-size: 17px; display: grid; place-items: center; }
+.card:hover { background: var(--card-hi); }
+.card.sel .ic { background: var(--accent); }
+.card.sel .ic svg * { stroke: var(--ink); }
+.card.sel .bang { background: var(--ink); color: var(--accent); }
+.card.nos { cursor: default; }
+.card.nos .ic svg *, .card.nos .nm { opacity: .35; }
+.card.nos .st { color: var(--dim); }
+.card.nos:hover { background: var(--card); }
+
+/* footer */
+.mons { position: absolute; left: 0; right: 0; top: 992px; display: flex; justify-content: center; gap: 46px; }
+.mon { display: flex; align-items: center; gap: 12px; font-family: var(--mono); font-size: 19px; letter-spacing: .06em; color: var(--muted); cursor: pointer; padding: 6px 4px; }
+.mon.on { color: var(--text); }
+.mon.on .kc { background: var(--accent); box-shadow: 0 4px 0 #1f7d73; }
+.back { position: absolute; left: 110px; top: 994px; display: flex; align-items: center; gap: 14px; font-family: var(--mono); font-size: 26px; letter-spacing: .06em; cursor: pointer; }
+
+.notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 16px 34px; padding-top: 6px; }
+.notes p { margin: 0; color: #c4c4c4; }
+.notes b { display: block; font-family: var(--mono); font-weight: 400; font-size: 12px; letter-spacing: .1em; color: var(--muted); margin-bottom: 2px; }
+</style>
+
+<div class="wrap">
+  <div class="top">
+    <p>Главный экран терминала стола. Стрелки или мышь — выбор карточки, Q / E — вкладки, 1–4 — мониторы, Esc — назад.</p>
+    <div class="seg" role="group" aria-label="Что на столе">
+      <button type="button" id="hasSample" aria-pressed="true">Образец на столе</button>
+      <button type="button" id="noSample" aria-pressed="false">Стол пуст</button>
+    </div>
+  </div>
+
+  <div class="stage" id="stage" tabindex="0" aria-label="Главный экран терминала">
+    <div class="screen" id="screen">
+      <div class="tabs" id="tabs"></div>
+      <div class="sample" id="sample"></div>
+      <div class="cards" id="cards"></div>
+      <div class="back"><span class="kc">ESC</span>НАЗАД</div>
+      <div class="mons" id="mons"></div>
+    </div>
+  </div>
+
+  <div class="notes">
+    <p><b>ПО КОММЕНТАРИЯМ</b>Карточки в вашем стиле: блок с иконкой сверху, название Disket, описание капсом Jost. Шкалы данных и подпись монитора убраны. Внизу по центру только 1–4, Esc — «Назад».</p>
+    <p><b>ВЫБРАННАЯ КАРТОЧКА</b>Блок иконки заливается бирюзовым, как активная вкладка. Это единственное крупное бирюзовое место на экране.</p>
+    <p><b>СЛЕВА</b>Образец крупно и одна строка задания из журнала. Больше ничего: подробности — во вкладках.</p>
+  </div>
+</div>
+
+<script>
+(() => {
+  const ICON = {
+    analysis: `<path d="M44 12h32M50 12v38l-28 50a8 8 0 0 0 7 12h62a8 8 0 0 0 7 -12l-28 -50v-38"/><path d="M32 82h56"/><circle cx="54" cy="96" r="4"/><circle cx="70" cy="90" r="3"/>`,
+    ir: `<path d="M8 28h22l8 56l8 -56h18l5 26l5 -26h38"/><path d="M8 104h104"/>`,
+    mass: `<path d="M10 102h100M22 102v-12M38 102v-18M54 102v-9M70 102v-22M96 102v-84"/>`,
+    base: `<ellipse cx="60" cy="26" rx="38" ry="12"/><path d="M22 26v66a38 12 0 0 0 76 0v-66M22 60a38 12 0 0 0 76 0"/>`,
+    journal: `<rect x="26" y="12" width="70" height="96" rx="3"/><path d="M38 12v96M52 38h32M52 56h32M52 74h20"/>`,
+    mol: `<circle cx="26" cy="60" r="14"/><circle cx="60" cy="60" r="14"/><circle cx="94" cy="60" r="14"/><path d="M40 55h6M40 65h6M74 55h6M74 65h6"/>`
+  };
+  const TABS = [["home", "⌂"], ["analysis", "АНАЛИЗ"], ["ir", "ИК-СПЕКТР"], ["mass", "МАСС-СПЕКТР"], ["base", "БАЗА ДАННЫХ"], ["journal", "ЖУРНАЛ"]];
+  const CARDS = s => [
+    { id: "analysis", nm: "АНАЛИЗ", ds: "приём и первичный скан образца", st: s ? "скан готов" : "вставить образец" },
+    { id: "ir", nm: "ИК-СПЕКТР", ds: "какие связи есть в молекуле", st: s ? "зоны не отмечены" : "нет образца", nos: !s },
+    { id: "mass", nm: "МАСС-СПЕКТР", ds: "масса молекулы и осколки", st: s ? "масса 44" : "нет образца", nos: !s },
+    { id: "base", nm: "БАЗА ДАННЫХ", ds: "атомы, связи, приборы, образцы", st: "4 раздела" },
+    { id: "journal", nm: "ЖУРНАЛ", ds: "задание и записи исследований", st: s ? "новая запись" : "новое задание", bang: true },
+    { id: "mol", nm: "МОЛЕКУЛА", ds: "голограмма над столом", st: s ? "C · O · O" : "нужна формула", key: "4", nos: !s }
+  ];
+  let sample = true, sel = 1, mon = 1;
+  const $ = id => document.getElementById(id);
+
+  function render() {
+    $("tabs").innerHTML = `<span class="kc">Q</span>` + TABS.map(([id, t]) =>
+      `<div class="tab ${id === "home" ? "home on" : ""} ${!sample && (id === "ir" || id === "mass") ? "nos" : ""}">${t}${id === "journal" ? '<span class="bang">!</span>' : ""}</div>`).join("") + `<span class="kc">E</span>`;
+    $("sample").innerHTML = sample
+      ? `<div class="lb">на столе</div><div class="id">КР-01</div>
+         <div class="where">ледник «Северный»<span>проба льда, глубина 2 м · Kepler-442b</span></div>
+         <div class="task"><div class="lb">задание</div><p>Определить вещество в пробе. Колонисты жалуются на вкус талой воды.</p></div>`
+      : `<div class="lb">на столе</div><div class="id empty">ПРИЁМНИК<br>ПУСТ</div>
+         <div class="where">Вставьте пробирку<span>и откройте «Анализ»</span></div>
+         <div class="task"><div class="lb">задание</div><p>Новое задание в журнале.</p></div>`;
+    const cs = CARDS(sample);
+    if (cs[sel].nos) sel = 0;
+    $("cards").innerHTML = cs.map((c, i) => `<div class="card ${i === sel ? "sel" : ""} ${c.nos ? "nos" : ""}" data-i="${i}">
+      ${c.bang ? '<span class="bang">!</span>' : ""}
+      <div class="ic"><svg viewBox="0 0 120 120" aria-hidden="true">${ICON[c.id]}</svg></div>
+      <div class="nm">${c.nm}</div><div class="ds">${c.ds}</div>
+      <div class="st"><span>${c.st}</span>${c.key ? `<span class="kc">${c.key}</span>` : ""}</div></div>`).join("");
+    $("mons").innerHTML = ["ЛЕВЫЙ", "ЦЕНТР", "ПРАВЫЙ", "МОЛЕКУЛА"].map((n, i) =>
+      `<div class="mon ${i === mon ? "on" : ""}" data-m="${i}"><span class="kc">${i + 1}</span>${n}</div>`).join("");
+    $("hasSample").setAttribute("aria-pressed", String(sample));
+    $("noSample").setAttribute("aria-pressed", String(!sample));
+  }
+
+  const screen = $("screen"), stage = $("stage");
+  screen.addEventListener("mouseover", e => { const c = e.target.closest(".card:not(.nos)"); if (c && +c.dataset.i !== sel) { sel = +c.dataset.i; render(); } });
+  screen.addEventListener("click", e => {
+    stage.focus({ preventScroll: true });
+    const m = e.target.closest(".mon"); if (m) { mon = +m.dataset.m; render(); }
+  });
+  document.addEventListener("keydown", e => {
+    if (e.target.closest && e.target.closest(".top")) return;
+    const cs = CARDS(sample), step = d => { let i = sel; do { i = Math.max(0, Math.min(5, i + d)); } while (cs[i].nos && i > 0 && i < 5); if (!cs[i].nos) sel = i; render(); };
+    if (e.key === "ArrowRight") { e.preventDefault(); step(1); }
+    else if (e.key === "ArrowLeft") { e.preventDefault(); step(-1); }
+    else if (e.key === "ArrowDown") { e.preventDefault(); step(3); }
+    else if (e.key === "ArrowUp") { e.preventDefault(); step(-3); }
+    else if (["1", "2", "3", "4"].includes(e.key)) { mon = +e.key - 1; render(); }
+  });
+  $("hasSample").addEventListener("click", () => { sample = true; render(); });
+  $("noSample").addEventListener("click", () => { sample = false; render(); });
+
+  const fit = () => { screen.style.transform = `scale(${stage.clientWidth / 1920})`; };
+  new ResizeObserver(fit).observe(stage);
+  fit();
+  render();
+})();
+</script>

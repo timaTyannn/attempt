@@ -1,0 +1,6 @@
+build/
+fonts/*.ttf
+fonts/*.TTF
+figma/batch-*.js
+figma/spec.json
+figma/screens.html

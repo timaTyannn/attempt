@@ -1,0 +1,378 @@
+<title>Хемоформ · Направления меню</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&display=swap">
+<style>
+@font-face { font-family: "Disket Mono"; font-weight: 400; src: url(data:font/ttf;base64,__DISKET_REG__) format("truetype"); }
+@font-face { font-family: "Disket Mono"; font-weight: 700; src: url(data:font/ttf;base64,__DISKET_BOLD__) format("truetype"); }
+/* Layout: a working document — contract on top, three 16:9 screens (same content, three directions), then the choice table. Single dark look: it sits next to game screens. */
+:root {
+  color-scheme: dark;
+  --page: #0c0e0e;
+  --ink: #e4eae8;
+  --muted: #8d9896;
+  --rule: #263030;
+  --accent: #3dd4c4;
+  --mono: "Disket Mono", ui-monospace, Menlo, monospace;
+  --body: "Jost", "Segoe UI", system-ui, sans-serif;
+}
+html, body { background: var(--page); color: var(--ink); }
+body { font-family: var(--body); font-size: 17px; line-height: 1.55; }
+.doc { max-width: 1240px; margin: 0 auto; padding-inline: 20px; padding-block: 36px 80px; }
+h1 { font-family: var(--mono); font-weight: 700; font-size: clamp(28px, 4vw, 44px); letter-spacing: .02em; margin: 0 0 8px; text-wrap: balance; }
+.lead { color: var(--muted); max-width: 66ch; margin: 0 0 40px; }
+h2 { font-family: var(--mono); font-weight: 700; font-size: 22px; letter-spacing: .04em; margin: 56px 0 18px; padding-top: 14px; border-top: 1px solid var(--rule); }
+h2 small { font-family: var(--body); font-weight: 400; font-size: 16px; color: var(--muted); letter-spacing: 0; margin-left: 10px; }
+.contract { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 26px 40px; }
+.contract section { min-width: 0; }
+.contract h3 { font-family: var(--mono); font-size: 15px; letter-spacing: .1em; color: var(--accent); margin: 0 0 6px; font-weight: 400; }
+.contract ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
+.contract p { margin: 0; }
+.tok { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.tok span { display: inline-flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.tok i { width: 18px; height: 18px; border: 1px solid #3a4444; display: inline-block; }
+.frame { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 16px 40px; }
+.frame div { border-left: 2px solid var(--rule); padding-left: 16px; }
+.frame b { display: block; font-family: var(--mono); font-weight: 400; font-size: 13px; letter-spacing: .1em; color: var(--muted); margin-bottom: 4px; }
+
+.dir { margin-top: 44px; }
+.dir header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 18px; margin-bottom: 12px; }
+.dir header h3 { font-family: var(--mono); font-size: 26px; margin: 0; }
+.dir header span { color: var(--muted); }
+.notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 10px 36px; margin-top: 14px; }
+.notes p { margin: 0; color: #c2cbc9; }
+.notes b { font-family: var(--mono); font-weight: 400; font-size: 13px; letter-spacing: .1em; color: var(--muted); display: block; }
+
+.comp { position: relative; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; }
+.scr { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; overflow: hidden; }
+.scr * { box-sizing: border-box; }
+
+.tblwrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; min-width: 720px; font-variant-numeric: tabular-nums; }
+th, td { padding: 10px 12px; border-bottom: 1px solid var(--rule); text-align: left; }
+th { font-family: var(--mono); font-weight: 400; font-size: 13px; letter-spacing: .08em; color: var(--muted); }
+td.n { font-family: var(--mono); text-align: center; }
+tr.sum td { font-family: var(--mono); color: var(--accent); border-bottom: 0; }
+.rec { margin-top: 22px; max-width: 70ch; }
+.rec b { color: var(--accent); font-weight: 500; }
+
+/* ============ D · СИНТЕЗ ============ */
+.D { background: radial-gradient(ellipse 1400px 900px at 1100px 520px, #222525, #161818 80%); font-family: var(--mono); color: #eceeee; }
+.D .tabs { position: absolute; left: 0; right: 0; top: 0; height: 76px; display: flex; justify-content: center; align-items: center; }
+.D .kc { width: 34px; height: 34px; border-radius: 3px; background: #eceeee; color: #151616; font-weight: 700; font-size: 18px; display: grid; place-items: center; margin: 0 22px; }
+.D .tab { height: 76px; padding: 0 30px; display: grid; place-items: center; font-weight: 700; font-size: 23px; color: #9ea4a4; position: relative; }
+.D .tab.on { background: #0c0d0d; color: #fff; }
+.D .tab.on::after { content: ""; position: absolute; bottom: -16px; left: 50%; width: 10px; height: 10px; border-right: 2.5px solid #9ea4a4; border-bottom: 2.5px solid #9ea4a4; transform: translateX(-50%) rotate(45deg); }
+.D .tab.nos { color: #4d5353; }
+.D .tab .b { position: absolute; top: 14px; right: 8px; width: 20px; height: 20px; border-radius: 50%; background: #3dd4c4; color: #062420; font-size: 13px; display: grid; place-items: center; }
+.D .mon { position: absolute; right: 100px; top: 112px; font-size: 20px; color: #7d8484; }
+.D .mon b { color: #3dd4c4; font-weight: 400; }
+.D .left { position: absolute; left: 100px; top: 150px; width: 640px; }
+.D .left .l { font-size: 20px; color: #7d8484; letter-spacing: .1em; }
+.D .left .id { font-weight: 700; font-size: 176px; line-height: .95; margin: 16px 0 14px; }
+.D .left .id.empty { font-size: 96px; color: #4d5353; line-height: 1.05; }
+.D .left .src { font-family: var(--body); font-size: 25px; color: #a3a9a9; margin-bottom: 70px; max-width: 26ch; }
+.D .meter { display: grid; grid-template-columns: 1fr auto; gap: 10px 20px; padding: 16px 0 18px; border-top: 1px solid #2e3232; }
+.D .meter span { font-size: 20px; color: #9ea4a4; letter-spacing: .04em; }
+.D .meter b { font-size: 28px; font-weight: 400; }
+.D .meter b.q { color: #4d5353; }
+.D .meter .bar { grid-column: 1 / -1; height: 8px; display: flex; gap: 5px; }
+.D .meter .bar i { flex: 1; background: #2a2e2e; }
+.D .meter .bar i.on { background: #eceeee; }
+.D .grid { position: absolute; left: 820px; right: 100px; top: 150px; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 380px); gap: 12px; }
+.D .card { background: #252828; padding: 24px; display: flex; flex-direction: column; position: relative; }
+.D .card .n { font-weight: 700; font-size: 26px; line-height: 1.05; color: #c6cbcb; min-height: 56px; }
+.D .card .art { flex: 1; display: grid; place-items: center; }
+.D .card svg { width: 116px; height: 116px; } .D .card svg * { fill: none; stroke: #aab0b0; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.D .card .s { font-family: var(--body); font-size: 22px; color: #9ea4a4; }
+.D .card .k { position: absolute; right: 20px; bottom: 20px; width: 30px; height: 30px; border: 1.5px solid #5b6161; font-size: 16px; color: #9ea4a4; display: grid; place-items: center; }
+.D .card.sel { background: #0c0d0d; } .D .card.sel .n { color: #fff; } .D .card.sel svg * { stroke: #fff; } .D .card.sel .s { color: #3dd4c4; }
+.D .card.nos .n, .D .card.nos .art { opacity: .3; }
+.D .card .b { position: absolute; top: 20px; right: 20px; width: 30px; height: 30px; border-radius: 50%; background: #3dd4c4; color: #062420; font-size: 18px; font-weight: 700; display: grid; place-items: center; }
+.D .foot { position: absolute; left: 100px; right: 100px; top: 1000px; display: flex; align-items: center; gap: 12px; font-size: 19px; color: #9ea4a4; }
+.D .foot .m { border: 2px solid #3f4444; padding: 7px 14px; display: flex; gap: 10px; align-items: center; }
+.D .foot .m i { font-style: normal; color: #eceeee; }
+.D .foot .m.on { border-color: #eceeee; color: #fff; }
+.D .foot .m.off { color: #4d5353; }
+.D .foot .sp { flex: 1; }
+.D .foot .esc { display: flex; gap: 10px; align-items: center; }
+.D .foot .esc i { font-style: normal; background: #eceeee; color: #151616; padding: 2px 7px; font-weight: 700; font-size: 16px; border-radius: 3px; }
+.D .bootmsg { position: absolute; inset: 76px 0 100px; display: grid; place-items: center; text-align: center; }
+.D .bootmsg b { display: block; font-size: 64px; color: #4d5353; }
+.D .bootmsg span { font-family: var(--body); font-size: 26px; color: #7d8484; }
+.states { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 18px; margin-top: 18px; }
+.states figure { margin: 0; }
+.states figcaption { color: var(--muted); font-size: 15px; margin-top: 6px; }
+.src-table td:first-child { font-family: var(--mono); font-size: 14px; color: var(--accent); white-space: nowrap; }
+
+/* ============ A · ГОЛОГРАММА ============ */
+.A { background: #040706; font-family: var(--mono); color: #3dd4c4; }
+.A .strip { position: absolute; left: 80px; right: 80px; top: 70px; height: 66px; display: flex; border: 2px solid rgba(61,212,196,.55); }
+.A .strip .k { width: 66px; display: grid; place-items: center; font-size: 20px; color: rgba(61,212,196,.7); border-right: 2px solid rgba(61,212,196,.35); }
+.A .strip .k:last-child { border-right: 0; border-left: 2px solid rgba(61,212,196,.35); }
+.A .strip .t { flex: 1; display: grid; place-items: center; font-size: 23px; letter-spacing: .04em; color: rgba(61,212,196,.85); border-right: 1px solid rgba(61,212,196,.22); position: relative; }
+.A .strip .t.home { flex: 0 0 90px; font-size: 28px; }
+.A .strip .t.on { background: #3dd4c4; color: #041513; }
+.A .strip .t .b { position: absolute; top: 6px; right: 8px; width: 20px; height: 20px; border: 2px solid #3dd4c4; font-size: 13px; display: grid; place-items: center; }
+.A .mon { position: absolute; right: 80px; top: 30px; font-size: 20px; color: rgba(61,212,196,.6); }
+.A .left { position: absolute; left: 80px; top: 176px; width: 700px; height: 760px; border: 2px solid rgba(61,212,196,.35); padding: 30px 34px; }
+.A .left .l { font-size: 20px; color: rgba(61,212,196,.6); letter-spacing: .1em; }
+.A .left .id { font-weight: 700; font-size: 120px; line-height: 1; margin: 12px 0 10px; color: #3dd4c4; }
+.A .left .src { font-family: var(--body); font-size: 25px; color: rgba(61,212,196,.75); margin-bottom: 40px; }
+.A .meter { display: grid; grid-template-columns: 1fr auto; gap: 10px 20px; padding: 16px 0; border-top: 1px solid rgba(61,212,196,.25); }
+.A .meter span { font-size: 21px; color: rgba(61,212,196,.75); }
+.A .meter b { font-size: 26px; font-weight: 400; }
+.A .meter .bar { grid-column: 1 / -1; height: 10px; display: flex; gap: 4px; }
+.A .meter .bar i { flex: 1; background: rgba(61,212,196,.14); }
+.A .meter .bar i.on { background: #3dd4c4; }
+.A .tiles { position: absolute; left: 810px; right: 80px; top: 176px; height: 760px; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: repeat(3, 1fr); gap: 0; border: 2px solid rgba(61,212,196,.35); }
+.A .tile { border-right: 1px solid rgba(61,212,196,.22); border-bottom: 1px solid rgba(61,212,196,.22); display: grid; grid-template-columns: 110px 1fr; align-items: center; padding: 0 30px; gap: 10px; position: relative; }
+.A .tile:nth-child(2n) { border-right: 0; } .A .tile:nth-last-child(-n+2) { border-bottom: 0; }
+.A .tile svg { width: 84px; height: 84px; } .A .tile svg * { fill: none; stroke: #3dd4c4; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.A .tile .n { font-size: 27px; letter-spacing: .03em; }
+.A .tile .s { font-family: var(--body); font-size: 21px; color: rgba(61,212,196,.65); margin-top: 6px; }
+.A .tile.sel { background: rgba(61,212,196,.1); box-shadow: inset 0 0 0 2px #3dd4c4; }
+.A .tile.dim { opacity: .4; }
+.A .tile .b { position: absolute; top: 18px; right: 18px; width: 28px; height: 28px; background: #3dd4c4; color: #041513; font-size: 17px; display: grid; place-items: center; }
+.A .foot { position: absolute; left: 80px; right: 80px; top: 972px; height: 62px; display: flex; gap: 14px; align-items: center; border-top: 2px solid rgba(61,212,196,.35); font-size: 20px; color: rgba(61,212,196,.7); padding-top: 12px; }
+.A .foot .m { border: 1.5px solid rgba(61,212,196,.35); padding: 6px 14px; }
+.A .foot .m.on { border-color: #3dd4c4; color: #3dd4c4; }
+.A .foot .sp { flex: 1; }
+
+/* ============ B · ЧИСТЫЙ ALTERS ============ */
+.B { background: radial-gradient(ellipse 1300px 900px at 900px 500px, #2b2e2e, #1b1d1d 80%); font-family: var(--mono); color: #eceeee; }
+.B .tabs { position: absolute; left: 0; right: 0; top: 0; height: 74px; display: flex; justify-content: center; align-items: center; gap: 4px; }
+.B .kc { width: 34px; height: 34px; border-radius: 4px; background: #eceeee; color: #151616; font-weight: 700; font-size: 18px; display: grid; place-items: center; margin: 0 22px; }
+.B .tab { height: 74px; padding: 0 30px; display: grid; place-items: center; font-weight: 700; font-size: 23px; color: #a8adad; position: relative; }
+.B .tab.on { background: #101111; color: #fff; }
+.B .tab.on::after { content: ""; position: absolute; bottom: -16px; left: 50%; width: 10px; height: 10px; border-right: 2.5px solid #a8adad; border-bottom: 2.5px solid #a8adad; transform: translateX(-50%) rotate(45deg); }
+.B .tab .b { position: absolute; top: 14px; right: 8px; width: 20px; height: 20px; border-radius: 50%; background: #3dd4c4; color: #062420; font-size: 13px; display: grid; place-items: center; }
+.B .ttl { position: absolute; top: 150px; font-weight: 700; font-size: 46px; padding-bottom: 10px; background: repeating-linear-gradient(90deg, #eceeee 0 16px, transparent 16px 24px) left bottom / 100% 4px no-repeat; }
+.B .grid { position: absolute; left: 140px; top: 240px; width: 1040px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.B .card { height: 330px; background: #2f3232; padding: 22px; display: flex; flex-direction: column; position: relative; }
+.B .card .n { font-weight: 700; font-size: 26px; line-height: 1.05; color: #c9cdcd; min-height: 56px; }
+.B .card .art { flex: 1; display: grid; place-items: center; }
+.B .card svg { width: 120px; height: 120px; } .B .card svg * { fill: none; stroke: #b9bebe; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.B .card .s { font-family: var(--body); font-size: 21px; color: #a8adad; }
+.B .card.sel { background: #0f1010; } .B .card.sel .n { color: #fff; } .B .card.sel svg * { stroke: #fff; }
+.B .card.dim .n, .B .card.dim svg { opacity: .35; }
+.B .card .b { position: absolute; top: 18px; right: 18px; width: 30px; height: 30px; border-radius: 50%; background: #3dd4c4; color: #062420; font-size: 18px; font-weight: 700; display: grid; place-items: center; }
+.B .side { position: absolute; left: 1230px; right: 140px; top: 240px; display: grid; gap: 10px; }
+.B .side .row { height: 80px; background: #262828; display: flex; justify-content: space-between; align-items: center; padding: 0 24px; font-family: var(--body); font-size: 24px; color: #c9cdcd; }
+.B .side .row b { font-family: var(--mono); font-weight: 400; font-size: 26px; color: #fff; }
+.B .side .row.ok b { color: #3dd4c4; }
+.B .side .big { background: #101111; height: 180px; flex-direction: column; justify-content: center; align-items: flex-start; gap: 4px; }
+.B .side .big b { font-weight: 700; font-size: 72px; line-height: 1; }
+.B .bar { position: absolute; left: 520px; width: 880px; top: 990px; height: 76px; background: #151616; display: flex; justify-content: space-around; align-items: center; }
+.B .bar div { text-align: center; } .B .bar b { display: block; font-weight: 400; font-size: 24px; } .B .bar span { font-family: var(--body); font-size: 18px; color: #a8adad; }
+.B .esc { position: absolute; right: 70px; top: 1000px; border: 2px solid #777c7c; padding: 8px 14px; display: flex; gap: 12px; align-items: center; font-size: 21px; }
+.B .esc i { font-style: normal; background: #eceeee; color: #151616; padding: 1px 6px; font-weight: 700; font-size: 17px; }
+.B .mons { position: absolute; left: 70px; top: 1004px; display: flex; gap: 10px; font-size: 19px; color: #a8adad; }
+.B .mons span { border: 2px solid #555a5a; padding: 6px 12px; } .B .mons span.on { border-color: #eceeee; color: #fff; }
+
+/* ============ C · AD ASTRA ============ */
+.C { background: #000; font-family: var(--mono); color: #e8eceb; }
+.C .nav { position: absolute; left: 90px; right: 90px; top: 50px; display: flex; gap: 48px; align-items: baseline; font-size: 21px; color: #7c8483; }
+.C .nav .on { color: #fff; border-bottom: 3px solid #3dd4c4; padding-bottom: 8px; }
+.C .nav .b { color: #3dd4c4; }
+.C .nav .r { margin-left: auto; font-size: 20px; }
+.C .hair { position: absolute; left: 90px; right: 90px; height: 1px; background: #262b2a; }
+.C .id { position: absolute; left: 90px; top: 190px; }
+.C .id .l { font-size: 20px; color: #7c8483; letter-spacing: .1em; }
+.C .id .big { font-weight: 700; font-size: 190px; line-height: .95; margin-top: 10px; }
+.C .id .src { font-family: var(--body); font-size: 26px; color: #a3abaa; margin-top: 16px; }
+.C .idx { position: absolute; right: 90px; top: 190px; width: 640px; }
+.C .idx .r { display: grid; grid-template-columns: 60px 1fr auto; align-items: baseline; padding: 20px 0; border-bottom: 1px solid #262b2a; font-size: 26px; }
+.C .idx .r .i { font-size: 20px; color: #59615f; }
+.C .idx .r .s { font-family: var(--body); font-size: 21px; color: #7c8483; }
+.C .idx .r.sel { color: #3dd4c4; } .C .idx .r.sel .i { color: #3dd4c4; }
+.C .idx .r.dim { color: #59615f; }
+.C .idx .r .s.b { color: #3dd4c4; }
+.C .tl { position: absolute; left: 90px; right: 90px; top: 760px; height: 120px; }
+.C .tl .line { position: absolute; left: 0; right: 0; top: 40px; height: 2px; background: #262b2a; }
+.C .tl .line i { position: absolute; left: 0; top: 0; height: 2px; width: 30%; background: #e8eceb; }
+.C .tl .p { position: absolute; top: 0; transform: translateX(-50%); text-align: center; font-size: 20px; color: #59615f; }
+.C .tl .p .d { width: 16px; height: 16px; margin: 32px auto 14px; background: #000; border: 2px solid #59615f; }
+.C .tl .p.done { color: #e8eceb; } .C .tl .p.done .d { background: #e8eceb; border-color: #e8eceb; }
+.C .tl .p.cur { color: #3dd4c4; } .C .tl .p.cur .d { border-color: #3dd4c4; }
+.C .tl .p b { display: block; font-weight: 400; font-size: 26px; color: #e8eceb; margin-top: 4px; }
+.C .foot { position: absolute; left: 90px; right: 90px; top: 1000px; display: flex; gap: 40px; font-size: 20px; color: #7c8483; }
+.C .foot .on { color: #fff; } .C .foot .sp { flex: 1; }
+</style>
+
+<main class="doc">
+  <h1>Меню терминала · контракт и три направления</h1>
+  <p class="lead">Сначала правила, которые не меняются ни в одном варианте. Потом одно и то же меню с одинаковым текстом в трёх визуальных направлениях. В конце — оценка по общим критериям. Выбор за вами.</p>
+
+  <h2>01 Задача экрана</h2>
+  <div class="frame">
+    <div><b>ЧТО ЭТО</b>Главный экран терминала на столе лаборатории. Висит на меше, игрок смотрит на него сидя, немного сверху.</div>
+    <div><b>ГЛАВНАЯ ЗАДАЧА</b>За две секунды понять, что лежит на столе, где я сейчас и куда можно пойти.</div>
+    <div><b>САМАЯ ДОРОГАЯ ОШИБКА</b>Игрок не видит, что нажимается, и не понимает, на какой вкладке и каком мониторе он находится.</div>
+  </div>
+
+  <h2>02 Дизайн-контракт <small>общий для всех направлений</small></h2>
+  <div class="contract">
+    <section><h3>ГОЛОС</h3><ul><li>Названия — реальные предметы и действия: «Масс-спектр», «Вставьте образец».</li><li>Статусы — факты: «масса 44», «3 записи», а не «всё готово!».</li><li>Без восклицаний и маркетинга.</li></ul></section>
+    <section><h3>ВИЗУАЛ</h3><ul><li>Плоско. Иерархия — размером, контрастом и отступами.</li><li>Запрещено: градиенты на элементах, свечение, стекло, тени у карточек, скругления больше 4 px.</li><li>Референсы дают принципы, картинки не копируем.</li></ul></section>
+    <section><h3>ЦВЕТ</h3><p>Один акцент — бирюзовый, и он значит «активно или можно нажать». Оранжевый — только модель на графиках, красный — только ошибки.</p>
+      <div class="tok"><span><i style="background:#3dd4c4"></i>акцент</span><span><i style="background:#e07439"></i>модель</span><span><i style="background:#e0563f"></i>ошибка</span><span><i style="background:#e4eae8"></i>текст</span><span><i style="background:#111313"></i>фон</span></div></section>
+    <section><h3>ШРИФТЫ</h3><ul><li><span style="font-family:var(--mono)">Disket Mono</span> — вкладки, заголовки, числа, клавиши.</li><li>Jost — пояснения и описания.</li><li>Не мельче 20 px при 1920×1080: экран на меше под углом.</li></ul></section>
+    <section><h3>КОМПОНЕНТЫ</h3><ul><li>Вкладка, подвкладка, плитка раздела, строка статуса, клавиша, «!».</li><li>Состояния каждого: обычное, наведено, активно, нет образца, новое.</li><li>Ничего «мёртвого»: всё, что похоже на кнопку, нажимается.</li></ul></section>
+    <section><h3>ОБЯЗАТЕЛЬНЫЕ СОСТОЯНИЯ</h3><ul><li>Стол пуст.</li><li>Образец есть, анализ идёт.</li><li>Новое в журнале или базе («!»).</li><li>Боковой монитор ещё выключен.</li><li>Игрок встаёт — подтверждение.</li></ul></section>
+    <section><h3>ФИНАЛЬНАЯ ПРОВЕРКА</h3><ul><li>Читается под углом 30° с расстояния стола.</li><li>За 2 секунды ясно: где я, какой монитор, что на столе.</li><li>На экране одно главное акцентное место.</li><li>Нет ни одного запрещённого приёма.</li><li>Всё доступно с Q/E и геймпада.</li></ul></section>
+  </div>
+
+  <h2>03 Три направления <small>содержимое одинаковое: образец КР-01, масса уже найдена, в журнале новая запись, монитор 2</small></h2>
+
+  <article class="dir">
+    <header><h3>A · Голограмма</h3><span>принцип из Elite Dangerous: монохром одного цвета, рамки линиями, вкладки — светящаяся полоса</span></header>
+    <div class="comp"><div class="scr A">
+      <div class="mon">МОНИТОР 2 · ЦЕНТР</div>
+      <div class="strip"><span class="k">Q</span><span class="t home on">⌂</span><span class="t">АНАЛИЗ</span><span class="t">ИК-СПЕКТР</span><span class="t">МАСС-СПЕКТР</span><span class="t">БАЗА ДАННЫХ</span><span class="t">ЖУРНАЛ<span class="b">!</span></span><span class="k">E</span></div>
+      <div class="left"><div class="l">НА СТОЛЕ</div><div class="id">КР-01</div><div class="src">ледник «Северный» · лёд, 2 м</div>
+        <div class="meter"><span>МАССА МОЛЕКУЛЫ</span><b>44</b><div class="bar"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div></div>
+        <div class="meter"><span>ЗОНЫ ИК</span><b>—</b><div class="bar"><i></i><i></i><i></i><i></i><i></i></div></div>
+        <div class="meter"><span>СТРУКТУРА</span><b>—</b><div class="bar"><i></i><i></i><i></i><i></i><i></i></div></div>
+        <div class="meter"><span>ВЕЩЕСТВО</span><b>?</b><div class="bar"><i></i><i></i><i></i><i></i><i></i></div></div></div>
+      <div class="tiles">
+        <div class="tile"><svg viewBox="0 0 96 96"><path d="M36 10h24M40 10v30l-22 40a6 6 0 0 0 5 9h50a6 6 0 0 0 5 -9l-22 -40v-30M26 66h44"/></svg><div><div class="n">АНАЛИЗ</div><div class="s">скан готов</div></div></div>
+        <div class="tile sel"><svg viewBox="0 0 96 96"><path d="M6 22h18l6 46l6 -46h14l4 22l4 -22h32M6 86h84"/></svg><div><div class="n">ИК-СПЕКТР</div><div class="s">зоны не отмечены</div></div></div>
+        <div class="tile"><svg viewBox="0 0 96 96"><path d="M8 84h80M18 84v-10M32 84v-14M46 84v-8M60 84v-16M80 84v-70"/></svg><div><div class="n">МАСС-СПЕКТР</div><div class="s">масса 44 · CO₂</div></div></div>
+        <div class="tile"><svg viewBox="0 0 96 96"><ellipse cx="48" cy="22" rx="30" ry="9"/><path d="M18 22v52a30 9 0 0 0 60 0v-52M18 48a30 9 0 0 0 60 0"/></svg><div><div class="n">БАЗА ДАННЫХ</div><div class="s">атомы · связи · приборы</div></div></div>
+        <div class="tile"><span class="b">!</span><svg viewBox="0 0 96 96"><rect x="22" y="10" width="54" height="76" rx="3"/><path d="M32 10v76M42 30h26M42 44h26M42 58h16"/></svg><div><div class="n">ЖУРНАЛ</div><div class="s">новая запись</div></div></div>
+        <div class="tile"><svg viewBox="0 0 96 96"><circle cx="22" cy="48" r="11"/><circle cx="48" cy="48" r="11"/><circle cx="74" cy="48" r="11"/><path d="M33 44h4M33 52h4M59 44h4M59 52h4"/></svg><div><div class="n">МОЛЕКУЛА · 4</div><div class="s">C · O · O</div></div></div>
+      </div>
+      <div class="foot"><span class="m">1 ЛЕВЫЙ · ВЫКЛ</span><span class="m on">2 ЦЕНТР</span><span class="m">3 ПРАВЫЙ · ВЫКЛ</span><span class="m">4 МОЛЕКУЛА</span><span class="sp"></span><span>BKSP НАЗАД</span><span class="m">ESC ВСТАТЬ</span></div>
+    </div></div>
+    <div class="notes"><p><b>СИЛЬНО</b>Цельно и «приборно». Сразу понятно, что это экран машины, а не сайт. Одним цветом легко держать правило акцента.</p><p><b>СЛАБО</b>Всё одного цвета, поэтому активное отличается только заливкой. Рамки везде утяжеляют экран и спорят с контрактом («без лишнего»).</p><p><b>В RIVE / UE</b>Дёшево: линии и заливки. Хорошо смотрится на меше с эмиссией.</p></div>
+  </article>
+
+  <article class="dir">
+    <header><h3>B · Чистый Alters</h3><span>принцип из The Alters: серые плоскости, жирный крупный шрифт, выбранное — чёрная плашка, акцент только у «!»</span></header>
+    <div class="comp"><div class="scr B">
+      <div class="tabs"><span class="kc">Q</span><span class="tab on">⌂</span><span class="tab">АНАЛИЗ</span><span class="tab">ИК-СПЕКТР</span><span class="tab">МАСС-СПЕКТР</span><span class="tab">БАЗА ДАННЫХ</span><span class="tab">ЖУРНАЛ<span class="b">!</span></span><span class="kc">E</span></div>
+      <div class="ttl" style="left:140px">РАЗДЕЛЫ</div><div class="ttl" style="left:1230px">НА СТОЛЕ</div>
+      <div class="grid">
+        <div class="card"><div class="n">АНАЛИЗ</div><div class="art"><svg viewBox="0 0 96 96"><path d="M36 10h24M40 10v30l-22 40a6 6 0 0 0 5 9h50a6 6 0 0 0 5 -9l-22 -40v-30M26 66h44"/></svg></div><div class="s">скан готов</div></div>
+        <div class="card sel"><div class="n">ИК-<br>СПЕКТР</div><div class="art"><svg viewBox="0 0 96 96"><path d="M6 22h18l6 46l6 -46h14l4 22l4 -22h32M6 86h84"/></svg></div><div class="s">зоны не отмечены</div></div>
+        <div class="card"><div class="n">МАСС-<br>СПЕКТР</div><div class="art"><svg viewBox="0 0 96 96"><path d="M8 84h80M18 84v-10M32 84v-14M46 84v-8M60 84v-16M80 84v-70"/></svg></div><div class="s">масса 44</div></div>
+        <div class="card"><div class="n">БАЗА<br>ДАННЫХ</div><div class="art"><svg viewBox="0 0 96 96"><ellipse cx="48" cy="22" rx="30" ry="9"/><path d="M18 22v52a30 9 0 0 0 60 0v-52M18 48a30 9 0 0 0 60 0"/></svg></div><div class="s">4 раздела</div></div>
+        <div class="card"><span class="b">!</span><div class="n">ЖУРНАЛ</div><div class="art"><svg viewBox="0 0 96 96"><rect x="22" y="10" width="54" height="76" rx="3"/><path d="M32 10v76M42 30h26M42 44h26M42 58h16"/></svg></div><div class="s">новая запись</div></div>
+        <div class="card"><div class="n">МОЛЕКУЛА</div><div class="art"><svg viewBox="0 0 96 96"><circle cx="22" cy="48" r="11"/><circle cx="48" cy="48" r="11"/><circle cx="74" cy="48" r="11"/><path d="M33 44h4M33 52h4M59 44h4M59 52h4"/></svg></div><div class="s">клавиша 4</div></div>
+      </div>
+      <div class="side">
+        <div class="row big"><span>образец</span><b>КР-01</b></div>
+        <div class="row"><span>источник</span><b style="font-size:22px">лёд · 2 м</b></div>
+        <div class="row ok"><span>масса молекулы</span><b>44</b></div>
+        <div class="row"><span>зоны ИК</span><b>—</b></div>
+        <div class="row"><span>структура</span><b>—</b></div>
+        <div class="row"><span>вещество</span><b>?</b></div>
+      </div>
+      <div class="mons"><span>1</span><span class="on">2 ЦЕНТР</span><span>3</span><span>4 МОЛЕКУЛА</span></div>
+      <div class="bar"><div><b>КР-01</b><span>образец</span></div><div><b>044</b><span>масса</span></div><div><b>—</b><span>связи</span></div><div><b>—</b><span>структура</span></div><div><b>3</b><span>записи</span></div></div>
+      <div class="esc"><i>ESC</i>ВСТАТЬ</div>
+    </div></div>
+    <div class="notes"><p><b>СИЛЬНО</b>Самое понятное: крупно, спокойно, выбранное видно с любого угла. Тот же язык, что во внутриигровом интерфейсе Нексуса (вкладки Q/E).</p><p><b>СЛАБО</b>Похоже на меню базы, а не на прибор: меньше «научного» характера. Данные образца дублируются справа и внизу, одно надо убрать.</p><p><b>В RIVE / UE</b>Средне: нужны рисунки предметов для карточек, но сами компоненты простые.</p></div>
+  </article>
+
+  <article class="dir">
+    <header><h3>C · Ad Astra</h3><span>принцип из интерфейсов Ad Astra: почти пустой экран, огромный идентификатор, тонкая линия хода исследования, список разделов вместо плиток</span></header>
+    <div class="comp"><div class="scr C">
+      <div class="nav"><span class="on">⌂ ОБЗОР</span><span>АНАЛИЗ</span><span>ИК-СПЕКТР</span><span>МАСС-СПЕКТР</span><span>БАЗА ДАННЫХ</span><span>ЖУРНАЛ <span class="b">!</span></span><span class="r">Q / E</span></div>
+      <div class="hair" style="top:120px"></div>
+      <div class="id"><div class="l">ОБРАЗЕЦ НА СТОЛЕ</div><div class="big">КР-01</div><div class="src">Kepler-442b · ледник «Северный» · проба льда, глубина 2 м</div></div>
+      <div class="idx">
+        <div class="r"><span class="i">01</span><span>АНАЛИЗ</span><span class="s">скан готов</span></div>
+        <div class="r sel"><span class="i">02</span><span>ИК-СПЕКТР</span><span class="s">открыть →</span></div>
+        <div class="r"><span class="i">03</span><span>МАСС-СПЕКТР</span><span class="s">44</span></div>
+        <div class="r"><span class="i">04</span><span>БАЗА ДАННЫХ</span><span class="s">4 раздела</span></div>
+        <div class="r"><span class="i">05</span><span>ЖУРНАЛ</span><span class="s b">новая запись</span></div>
+      </div>
+      <div class="tl"><div class="line"><i></i></div>
+        <div class="p done" style="left:6%"><div class="d"></div>ОБРАЗЕЦ<b>КР-01</b></div>
+        <div class="p done" style="left:30%"><div class="d"></div>МАССА<b>44</b></div>
+        <div class="p cur" style="left:54%"><div class="d"></div>СВЯЗИ<b>—</b></div>
+        <div class="p" style="left:76%"><div class="d"></div>СТРУКТУРА<b>—</b></div>
+        <div class="p" style="left:94%"><div class="d"></div>ВЕЩЕСТВО<b>?</b></div>
+      </div>
+      <div class="hair" style="top:970px"></div>
+      <div class="foot"><span>МОНИТОР</span><span>1</span><span class="on">2 ЦЕНТР</span><span>3</span><span>4 МОЛЕКУЛА</span><span class="sp"></span><span>BKSP НАЗАД</span><span>ESC ВСТАТЬ</span></div>
+    </div></div>
+    <div class="notes"><p><b>СИЛЬНО</b>Больше всего характера и «научности». Линия хода сама объясняет логику: образец → масса → связи → структура.</p><p><b>СЛАБО</b>Самый рискованный на меше: много мелкого серого текста, нажимаемое выглядит как текст. Линия хода подсказывает порядок, а вы решили не вести игрока.</p><p><b>В RIVE / UE</b>Дёшево по графике, но всё держится на типографике и точных отступах.</p></div>
+  </article>
+
+  <h2>04 Оценка <small>0–4 по каждому пункту, моя оценка, не решение</small></h2>
+  <div class="tblwrap"><table>
+    <tr><th>КРИТЕРИЙ</th><th>A · ГОЛОГРАММА</th><th>B · ALTERS</th><th>C · AD ASTRA</th></tr>
+    <tr><td>Читается на меше под углом</td><td class="n">3</td><td class="n">4</td><td class="n">2</td></tr>
+    <tr><td>Видно, где я и какой монитор</td><td class="n">3</td><td class="n">4</td><td class="n">3</td></tr>
+    <tr><td>Видно, что нажимается</td><td class="n">2</td><td class="n">4</td><td class="n">2</td></tr>
+    <tr><td>Растёт без перерисовки</td><td class="n">3</td><td class="n">3</td><td class="n">4</td></tr>
+    <tr><td>Совпадает с решением «не вести игрока»</td><td class="n">4</td><td class="n">4</td><td class="n">2</td></tr>
+    <tr><td>Свой характер, не шаблон</td><td class="n">3</td><td class="n">2</td><td class="n">4</td></tr>
+    <tr><td>Связь с остальным UI Нексуса</td><td class="n">2</td><td class="n">4</td><td class="n">2</td></tr>
+    <tr><td>Стоимость в Rive / UE (4 — дёшево)</td><td class="n">4</td><td class="n">3</td><td class="n">4</td></tr>
+    <tr class="sum"><td>ИТОГО</td><td class="n">24</td><td class="n">28</td><td class="n">23</td></tr>
+  </table></div>
+  <p class="rec">По правилу Oh My Design направление с оценкой ниже 2 хотя бы по одному пункту отсеивается. Здесь ниже 2 нет ни у кого, все три проходят. У A и C по несколько двоек, и как раз по читаемости и «что нажимается», поэтому моя рекомендация — <b>B · Alters как основа</b>. Из C стоит взять огромный идентификатор образца и пустое пространство, из A — шкалы-сегменты для данных. Выбирать вам: можно взять одно направление как есть или назвать, что смешать.</p>
+
+  <h2>05 Синтез <small>лучшее из трёх: основа B, левая половина из C, шкалы из A</small></h2>
+  <div class="comp"><div class="scr D">
+    <div class="tabs"><span class="kc">Q</span><span class="tab on">⌂</span><span class="tab">АНАЛИЗ</span><span class="tab">ИК-СПЕКТР</span><span class="tab">МАСС-СПЕКТР</span><span class="tab">БАЗА ДАННЫХ</span><span class="tab">ЖУРНАЛ<span class="b">!</span></span><span class="kc">E</span></div>
+    <div class="mon">МОНИТОР <b>2</b> · ЦЕНТР</div>
+    <div class="left"><div class="l">НА СТОЛЕ</div><div class="id">КР-01</div><div class="src">Kepler-442b · ледник «Северный» · проба льда, глубина 2 м</div>
+      <div class="meter"><span>МАССА МОЛЕКУЛЫ</span><b>44</b><div class="bar"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div></div>
+      <div class="meter"><span>ЗОНЫ ИК</span><b class="q">—</b><div class="bar"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+      <div class="meter"><span>СТРУКТУРА</span><b class="q">—</b><div class="bar"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+      <div class="meter"><span>ВЕЩЕСТВО</span><b class="q">?</b><div class="bar"><i></i><i></i><i></i><i></i><i></i><i></i></div></div></div>
+    <div class="grid">
+      <div class="card"><div class="n">АНАЛИЗ</div><div class="art"><svg viewBox="0 0 96 96"><path d="M36 10h24M40 10v30l-22 40a6 6 0 0 0 5 9h50a6 6 0 0 0 5 -9l-22 -40v-30M26 66h44"/></svg></div><div class="s">скан готов</div></div>
+      <div class="card sel"><div class="n">ИК-<br>СПЕКТР</div><div class="art"><svg viewBox="0 0 96 96"><path d="M6 22h18l6 46l6 -46h14l4 22l4 -22h32M6 86h84"/></svg></div><div class="s">открыть · Enter</div></div>
+      <div class="card"><div class="n">МАСС-<br>СПЕКТР</div><div class="art"><svg viewBox="0 0 96 96"><path d="M8 84h80M18 84v-10M32 84v-14M46 84v-8M60 84v-16M80 84v-70"/></svg></div><div class="s">масса 44</div></div>
+      <div class="card"><div class="n">БАЗА<br>ДАННЫХ</div><div class="art"><svg viewBox="0 0 96 96"><ellipse cx="48" cy="22" rx="30" ry="9"/><path d="M18 22v52a30 9 0 0 0 60 0v-52M18 48a30 9 0 0 0 60 0"/></svg></div><div class="s">атомы, связи, приборы</div></div>
+      <div class="card"><span class="b">!</span><div class="n">ЖУРНАЛ</div><div class="art"><svg viewBox="0 0 96 96"><rect x="22" y="10" width="54" height="76" rx="3"/><path d="M32 10v76M42 30h26M42 44h26M42 58h16"/></svg></div><div class="s">новая запись</div></div>
+      <div class="card"><div class="n">МОЛЕКУЛА</div><div class="art"><svg viewBox="0 0 96 96"><circle cx="22" cy="48" r="11"/><circle cx="48" cy="48" r="11"/><circle cx="74" cy="48" r="11"/><path d="M33 44h4M33 52h4M59 44h4M59 52h4"/></svg></div><div class="s">C · O · O</div><span class="k">4</span></div>
+    </div>
+    <div class="foot"><span class="m off"><i>1</i>ЛЕВЫЙ · ВЫКЛ</span><span class="m on"><i>2</i>ЦЕНТР</span><span class="m off"><i>3</i>ПРАВЫЙ · ВЫКЛ</span><span class="m"><i>4</i>МОЛЕКУЛА</span><span class="sp"></span><span>BKSP НАЗАД</span><span class="esc"><i>ESC</i>ВСТАТЬ</span></div>
+  </div></div>
+
+  <div class="states">
+    <figure><div class="comp"><div class="scr D">
+      <div class="tabs"><span class="kc">Q</span><span class="tab on">⌂</span><span class="tab">АНАЛИЗ</span><span class="tab nos">ИК-СПЕКТР</span><span class="tab nos">МАСС-СПЕКТР</span><span class="tab">БАЗА ДАННЫХ</span><span class="tab">ЖУРНАЛ<span class="b">!</span></span><span class="kc">E</span></div>
+      <div class="mon">МОНИТОР <b>2</b> · ЦЕНТР</div>
+      <div class="left"><div class="l">НА СТОЛЕ</div><div class="id empty">ПРИЁМНИК<br>ПУСТ</div><div class="src">Вставьте пробирку. Задание — в журнале.</div></div>
+      <div class="grid">
+        <div class="card sel"><div class="n">АНАЛИЗ</div><div class="art"><svg viewBox="0 0 96 96"><path d="M36 10h24M40 10v30l-22 40a6 6 0 0 0 5 9h50a6 6 0 0 0 5 -9l-22 -40v-30M26 66h44"/></svg></div><div class="s">вставить образец</div></div>
+        <div class="card nos"><div class="n">ИК-<br>СПЕКТР</div><div class="art"><svg viewBox="0 0 96 96"><path d="M6 22h18l6 46l6 -46h14l4 22l4 -22h32M6 86h84"/></svg></div><div class="s">нет образца</div></div>
+        <div class="card nos"><div class="n">МАСС-<br>СПЕКТР</div><div class="art"><svg viewBox="0 0 96 96"><path d="M8 84h80M18 84v-10M32 84v-14M46 84v-8M60 84v-16M80 84v-70"/></svg></div><div class="s">нет образца</div></div>
+        <div class="card"><div class="n">БАЗА<br>ДАННЫХ</div><div class="art"><svg viewBox="0 0 96 96"><ellipse cx="48" cy="22" rx="30" ry="9"/><path d="M18 22v52a30 9 0 0 0 60 0v-52M18 48a30 9 0 0 0 60 0"/></svg></div><div class="s">атомы, связи, приборы</div></div>
+        <div class="card"><span class="b">!</span><div class="n">ЖУРНАЛ</div><div class="art"><svg viewBox="0 0 96 96"><rect x="22" y="10" width="54" height="76" rx="3"/><path d="M32 10v76M42 30h26M42 44h26M42 58h16"/></svg></div><div class="s">новое задание</div></div>
+        <div class="card nos"><div class="n">МОЛЕКУЛА</div><div class="art"><svg viewBox="0 0 96 96"><circle cx="22" cy="48" r="11"/><circle cx="48" cy="48" r="11"/><circle cx="74" cy="48" r="11"/><path d="M33 44h4M33 52h4M59 44h4M59 52h4"/></svg></div><div class="s">нужна формула</div><span class="k">4</span></div>
+      </div>
+      <div class="foot"><span class="m off"><i>1</i>ЛЕВЫЙ · ВЫКЛ</span><span class="m on"><i>2</i>ЦЕНТР</span><span class="m off"><i>3</i>ПРАВЫЙ · ВЫКЛ</span><span class="m"><i>4</i>МОЛЕКУЛА</span><span class="sp"></span><span>BKSP НАЗАД</span><span class="esc"><i>ESC</i>ВСТАТЬ</span></div>
+    </div></div><figcaption>Стол пуст: приборы серые с подписью «нет образца», выбран «Анализ», «!» у журнала — новое задание.</figcaption></figure>
+    <figure><div class="comp"><div class="scr D">
+      <div class="tabs"><span class="kc">Q</span><span class="tab on">⌂</span><span class="tab">АНАЛИЗ</span><span class="tab">ИК-СПЕКТР</span><span class="tab">МАСС-СПЕКТР</span><span class="tab">БАЗА ДАННЫХ</span><span class="tab">ЖУРНАЛ</span><span class="kc">E</span></div>
+      <div class="mon">МОНИТОР <b>3</b> · ПРАВЫЙ</div>
+      <div class="bootmsg"><div><b>ВКЛЮЧЕНИЕ…</b><span>Монитор откроется на обзоре и запомнит раздел.</span></div></div>
+      <div class="foot"><span class="m off"><i>1</i>ЛЕВЫЙ · ВЫКЛ</span><span class="m"><i>2</i>ЦЕНТР · ИК</span><span class="m on"><i>3</i>ПРАВЫЙ</span><span class="m"><i>4</i>МОЛЕКУЛА</span><span class="sp"></span><span>BKSP НАЗАД</span><span class="esc"><i>ESC</i>ВСТАТЬ</span></div>
+    </div></div><figcaption>Боковой монитор включается при первом переходе. В футере видно, что центр остался на ИК.</figcaption></figure>
+  </div>
+
+  <div class="tblwrap" style="margin-top:28px"><table class="src-table">
+    <tr><th>ОТКУДА</th><th>ЧТО ВЗЯТО</th><th>ЗАЧЕМ</th></tr>
+    <tr><td>B · ALTERS</td><td>вкладки с клавишами Q/E, чёрная плашка выбранного, крупный жирный шрифт, карточки разделов с рисунком</td><td>лучше всего читается на меше и сразу видно, что нажимается</td></tr>
+    <tr><td>C · AD ASTRA</td><td>огромный «КР-01», пустое пространство слева, без рамок</td><td>характер «научного прибора», образец — главное на экране</td></tr>
+    <tr><td>A · ELITE</td><td>сегментные шкалы, индикатор монитора, бирюзовый только как сигнал</td><td>данные читаются как приборные показания, а не как текст</td></tr>
+    <tr><td>УБРАНО</td><td>нижняя панель ресурсов из B, линия хода из C, рамки везде из A</td><td>дублировала данные слева; подсказывала порядок, который вы решили не навязывать; утяжеляли экран</td></tr>
+  </table></div>
+</main>
+
+<script>
+(() => {
+  const fit = () => document.querySelectorAll(".comp").forEach(c => { c.firstElementChild.style.transform = `scale(${c.clientWidth / 1920})`; });
+  new ResizeObserver(fit).observe(document.body);
+  fit();
+})();
+</script>

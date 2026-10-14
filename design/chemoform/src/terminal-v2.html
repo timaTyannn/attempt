@@ -1,0 +1,643 @@
+<title>Хемоформ · Терминал стола</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&display=swap">
+<style>
+@font-face { font-family: "Disket Mono"; font-weight: 400; src: url(data:font/ttf;base64,__DISKET_REG__) format("truetype"); }
+@font-face { font-family: "Disket Mono"; font-weight: 700; src: url(data:font/ttf;base64,__DISKET_BOLD__) format("truetype"); }
+/* Layout: one 1920×1080 table monitor scaled to the page. Header tabs (Q/E) + sub-tabs (A/D), content, footer with monitors 1–3 and molecule 4.
+   Elite Dangerous-style: monochrome, one accent = "можно нажать". Single dark look by design. */
+:root {
+  color-scheme: dark;
+  --page: #090a0a;
+  --bg: #111313;
+  --panel: #171a1a;
+  --panel-2: #1d2121;
+  --line: #2a3030;
+  --line-2: #3a4242;
+  --text: #e6ecea;
+  --muted: #8a9694;
+  --dim: #545e5c;
+  --accent: #3dd4c4;
+  --accent-ink: #062420;
+  --model: #e07439;
+  --bad: #e0563f;
+  --mono: "Disket Mono", ui-monospace, Menlo, monospace;
+  --body: "Jost", "Segoe UI", system-ui, sans-serif;
+}
+html, body { background: var(--page); color: var(--text); }
+body { font-family: var(--body); font-size: 15px; line-height: 1.45; }
+.wrap { max-width: 1440px; margin: 0 auto; padding-inline: 20px; padding-block: 18px 40px; display: grid; gap: 12px; }
+.top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px 20px; }
+.top p { margin: 0; color: var(--muted); max-width: 80ch; }
+.top .ctl { display: flex; gap: 8px; flex-wrap: wrap; }
+.top button { font-family: var(--mono); font-size: 12px; letter-spacing: .06em; color: var(--muted); background: none; border: 1px solid var(--line-2); padding: 7px 12px; cursor: pointer; }
+.top button[aria-pressed="true"] { color: var(--accent-ink); background: var(--accent); border-color: var(--accent); }
+.top button:hover { color: var(--text); }
+button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.stage { position: relative; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; background: var(--bg); outline: none; }
+.stage:focus-visible { box-shadow: 0 0 0 2px var(--accent); }
+.screen { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; background: var(--bg); font-family: var(--body); overflow: hidden; }
+.screen::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(0deg, rgba(255,255,255,.018) 0 1px, transparent 1px 4px); }
+
+.key { display: inline-grid; place-items: center; min-width: 30px; height: 30px; padding: 0 6px; border: 1.5px solid var(--line-2); font-family: var(--mono); font-size: 16px; color: var(--muted); }
+.mono { font-family: var(--mono); }
+
+/* header */
+.hdr { position: absolute; left: 60px; right: 60px; top: 24px; height: 60px; display: flex; align-items: stretch; border-bottom: 2px solid var(--line-2); }
+.hdr .key { align-self: center; }
+.tabs { flex: 1; display: flex; margin: 0 14px; }
+.tab { position: relative; flex: 1 1 auto; display: grid; place-items: center; padding: 0 18px; font-family: var(--mono); font-size: 21px; letter-spacing: .04em; color: var(--text); cursor: pointer; border-right: 1px solid var(--line); }
+.tab:last-child { border-right: 0; }
+.tab.home { flex: 0 0 76px; font-size: 26px; }
+.tab:hover { background: var(--panel-2); }
+.tab.on { background: var(--accent); color: var(--accent-ink); font-weight: 700; }
+.tab.nos { color: var(--dim); }
+.tab.need { box-shadow: inset 0 0 0 2px var(--accent); }
+.tab .bang { position: absolute; top: 8px; right: 8px; width: 20px; height: 20px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); font-family: var(--mono); font-weight: 700; font-size: 14px; display: grid; place-items: center; }
+.tab.on .bang { background: var(--accent-ink); color: var(--accent); }
+.mon { align-self: center; margin-left: 18px; font-family: var(--mono); font-size: 16px; color: var(--muted); white-space: nowrap; }
+.mon b { color: var(--text); font-weight: 400; }
+
+.subs { position: absolute; left: 0; right: 0; top: 96px; display: flex; justify-content: center; gap: 14px; align-items: center; }
+.subtab { padding: 6px 18px; font-family: var(--mono); font-size: 17px; letter-spacing: .08em; color: var(--muted); cursor: pointer; border: 1.5px solid var(--line); }
+.subtab.on { color: var(--accent-ink); background: var(--accent); border-color: var(--accent); }
+.subtab:hover:not(.on) { color: var(--text); }
+
+.tut { position: absolute; left: 60px; right: 60px; top: 96px; height: 40px; display: flex; align-items: center; justify-content: center; gap: 12px; font-family: var(--mono); font-size: 16px; color: var(--dim); }
+.tut .s { display: flex; gap: 8px; align-items: center; }
+.tut .s b { width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid currentColor; display: grid; place-items: center; font-weight: 400; font-size: 14px; }
+.tut .s.done { color: var(--muted); }
+.tut .s.cur { color: var(--accent); }
+.tut .s.cur b { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.tut .ln { width: 40px; height: 1px; background: var(--line-2); }
+.tut .tag { margin-right: 18px; color: var(--accent); letter-spacing: .14em; }
+
+/* content */
+.content { position: absolute; left: 60px; right: 60px; top: 156px; height: 806px; }
+.panel { background: var(--panel); border-top: 2px solid var(--line-2); }
+.ptitle { font-family: var(--mono); font-size: 22px; letter-spacing: .06em; padding: 16px 22px 12px; display: flex; justify-content: space-between; align-items: baseline; }
+.ptitle small { font-family: var(--body); font-size: 18px; color: var(--muted); letter-spacing: 0; }
+.lbl { font-family: var(--mono); font-size: 16px; letter-spacing: .1em; color: var(--muted); }
+.btn { display: inline-flex; align-items: center; gap: 12px; font-family: var(--mono); font-weight: 700; font-size: 22px; letter-spacing: .06em; color: var(--accent-ink); background: var(--accent); padding: 14px 24px; cursor: pointer; border: 0; }
+.btn.ghost { background: none; color: var(--accent); box-shadow: inset 0 0 0 2px var(--accent); }
+.btn.off { background: var(--panel-2); color: var(--dim); cursor: default; box-shadow: none; }
+.btn .key { border-color: currentColor; color: inherit; height: 26px; min-width: 26px; font-size: 14px; }
+.rows { display: grid; }
+.r { display: flex; justify-content: space-between; align-items: baseline; gap: 20px; padding: 13px 22px; border-bottom: 1px solid var(--line); font-size: 23px; }
+.r span:first-child { font-family: var(--mono); font-size: 18px; letter-spacing: .06em; color: var(--muted); }
+.r b { font-weight: 500; }
+.r b.q { color: var(--dim); }
+.r b.ok { color: var(--accent); }
+
+/* home */
+.home-l { position: absolute; left: 0; top: 0; width: 640px; height: 806px; }
+.home-l .id { font-family: var(--mono); font-weight: 700; font-size: 104px; line-height: 1; padding: 6px 22px 0; }
+.home-l .id.empty { color: var(--dim); font-size: 64px; padding-top: 20px; }
+.home-l .src { padding: 14px 22px 24px; font-size: 22px; color: var(--muted); }
+.prog { padding: 14px 22px; border-bottom: 1px solid var(--line); display: grid; grid-template-columns: 1fr auto; gap: 8px 20px; align-items: baseline; }
+.prog .bar { grid-column: 1 / -1; height: 4px; background: var(--line); }
+.prog .bar i { display: block; height: 100%; background: var(--text); }
+.prog.ok .bar i { background: var(--accent); }
+.prog span { font-family: var(--mono); font-size: 18px; color: var(--muted); }
+.prog b { font-family: var(--mono); font-size: 24px; font-weight: 400; }
+.tiles { position: absolute; left: 680px; top: 0; right: 0; height: 806px; display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 1fr; gap: 10px; }
+.tile { position: relative; background: var(--panel); border-top: 2px solid var(--line-2); display: grid; place-items: center; align-content: center; gap: 18px; cursor: pointer; padding: 20px; text-align: center; }
+.tile:hover { background: var(--panel-2); border-top-color: var(--accent); }
+.tile svg { width: 96px; height: 96px; }
+.tile svg * { fill: none; stroke: var(--text); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.tile .nm { font-family: var(--mono); font-size: 24px; letter-spacing: .05em; }
+.tile .st { font-size: 19px; color: var(--muted); min-height: 1.4em; }
+.tile.nos svg *, .tile.nos .nm { stroke: var(--dim); color: var(--dim); }
+.tile .bang { position: absolute; top: 14px; right: 14px; width: 26px; height: 26px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); font-family: var(--mono); font-weight: 700; display: grid; place-items: center; }
+.tile.need { box-shadow: inset 0 0 0 2px var(--accent); }
+
+/* analysis */
+.an-frame { position: absolute; left: 0; top: 0; width: 640px; height: 640px; display: grid; place-items: center; }
+.an-frame .c { position: absolute; width: 60px; height: 60px; border: 3px solid var(--line-2); }
+.an-frame .c1 { left: 0; top: 0; border-right: 0; border-bottom: 0; } .an-frame .c2 { right: 0; top: 0; border-left: 0; border-bottom: 0; }
+.an-frame .c3 { left: 0; bottom: 0; border-right: 0; border-top: 0; } .an-frame .c4 { right: 0; bottom: 0; border-left: 0; border-top: 0; }
+.an-frame svg { width: 300px; height: 300px; }
+.an-frame svg * { fill: none; stroke: var(--text); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.an-frame.empty svg * { stroke: var(--dim); stroke-dasharray: 8 10; }
+.an-r { position: absolute; left: 700px; right: 0; top: 0; height: 806px; display: flex; flex-direction: column; }
+.an-r h2 { margin: 0 0 6px; font-family: var(--mono); font-weight: 700; font-size: 56px; }
+.an-r .sub { font-size: 24px; color: var(--muted); margin-bottom: 26px; }
+.log { font-family: var(--mono); font-size: 18px; line-height: 1.8; color: var(--muted); min-height: 230px; padding: 10px 0; }
+.log .g { color: var(--accent); }
+.an-r .act { margin-top: auto; display: flex; gap: 14px; }
+
+/* charts */
+.chart { position: relative; }
+.chart svg { display: block; }
+.axis text { font-family: var(--mono); font-size: 15px; fill: var(--muted); }
+.axis line, .axis path { stroke: var(--line-2); }
+.peak { cursor: pointer; }
+.peak rect.b { fill: var(--text); }
+.peak.sel rect.b { fill: var(--accent); }
+.peak rect.hit { fill: transparent; }
+.peak text { font-family: var(--mono); font-size: 16px; fill: var(--muted); }
+.peak.sel text { fill: var(--accent); }
+.zone { cursor: pointer; }
+.zone rect { fill: rgba(255,255,255,.035); }
+.zone:hover rect { fill: rgba(61,212,196,.07); }
+.zone.mk rect { fill: rgba(61,212,196,.12); stroke: var(--accent); stroke-width: 2; }
+.zone text { font-family: var(--mono); font-size: 14px; fill: var(--muted); }
+.zone.mk text { fill: var(--accent); }
+
+.mass-b { position: absolute; left: 0; top: 446px; width: 1160px; height: 360px; }
+.el { display: grid; grid-template-columns: 70px 1fr 54px 80px 54px 110px; align-items: center; gap: 14px; padding: 9px 22px; border-bottom: 1px solid var(--line); }
+.el .sym { font-family: var(--mono); font-weight: 700; font-size: 34px; text-align: center; border: 1.5px solid var(--line-2); height: 56px; display: grid; place-items: center; }
+.el .nm { font-size: 22px; } .el .nm small { display: block; font-size: 16px; color: var(--muted); }
+.el .pm { height: 46px; border: 1.5px solid var(--line-2); display: grid; place-items: center; font-family: var(--mono); font-size: 26px; color: var(--accent); cursor: pointer; }
+.el .pm:hover { border-color: var(--accent); }
+.el .n { font-family: var(--mono); font-size: 34px; text-align: center; }
+.el .sum { font-family: var(--mono); font-size: 28px; text-align: right; color: var(--muted); }
+.el .sum.on { color: var(--text); }
+.mass-r { position: absolute; left: 1190px; right: 0; top: 446px; height: 360px; display: flex; flex-direction: column; padding: 18px 26px; }
+.mass-r .big { font-family: var(--mono); font-weight: 700; font-size: 110px; line-height: 1; }
+.mass-r .vs { font-size: 22px; color: var(--muted); margin: 8px 0 14px; }
+.mass-r .vs b { color: var(--text); font-weight: 500; }
+.mass-r .msg { font-size: 22px; min-height: 2.6em; }
+.mass-r .msg.ok { color: var(--accent); } .mass-r .msg.bad { color: var(--bad); }
+.mass-r .btn { margin-top: auto; align-self: flex-start; }
+.formula { font-family: var(--body); font-weight: 600; }
+
+.ir-b { position: absolute; left: 0; top: 520px; right: 0; height: 286px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.ir-b { overflow: hidden; }
+.ir-b .r { padding: 7px 22px; font-size: 20px; }
+.ir-b .ptitle { padding: 10px 22px 6px; }
+.legend { display: flex; gap: 24px; font-family: var(--mono); font-size: 15px; color: var(--muted); }
+.legend i { display: inline-block; width: 30px; height: 3px; margin-right: 8px; vertical-align: middle; background: var(--text); }
+.legend i.m { background: repeating-linear-gradient(90deg, var(--model) 0 8px, transparent 8px 13px); }
+
+/* base / journal */
+.two { position: absolute; inset: 0; display: grid; grid-template-columns: 560px 1fr; gap: 10px; }
+.list .li { padding: 16px 22px; border-bottom: 1px solid var(--line); cursor: pointer; display: flex; justify-content: space-between; align-items: baseline; gap: 14px; font-size: 22px; }
+.list .li:hover { background: var(--panel-2); }
+.list .li.on { background: var(--panel-2); box-shadow: inset 4px 0 0 var(--accent); }
+.list .li small { font-family: var(--mono); font-size: 15px; color: var(--muted); }
+.list .li .bang { width: 20px; height: 20px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); font-family: var(--mono); font-size: 13px; display: grid; place-items: center; flex: none; }
+.article { padding: 6px 30px 30px; overflow: hidden; }
+.article h3 { margin: 6px 0 14px; font-family: var(--mono); font-size: 38px; font-weight: 700; }
+.article p { margin: 0 0 14px; font-size: 23px; line-height: 1.5; color: #cfd6d4; max-width: 56ch; }
+.article table { border-collapse: collapse; width: 100%; max-width: 980px; font-size: 22px; margin-top: 6px; }
+.article th { text-align: left; font-family: var(--mono); font-weight: 400; font-size: 16px; letter-spacing: .08em; color: var(--muted); padding: 10px 14px; border-bottom: 2px solid var(--line-2); }
+.article td { padding: 12px 14px; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+.article td.k { font-family: var(--mono); font-weight: 700; font-size: 26px; }
+.entry { padding: 16px 22px; border-bottom: 1px solid var(--line); }
+.entry .t { font-family: var(--mono); font-size: 15px; color: var(--muted); }
+.entry .h { font-size: 23px; margin-top: 4px; }
+.entry .h.ok { color: var(--accent); } .entry .h.bad { color: var(--bad); }
+.entry p { margin: 6px 0 0; font-size: 19px; color: #c3cbc9; }
+
+/* footer */
+.ftr { position: absolute; left: 60px; right: 60px; top: 990px; height: 66px; border-top: 2px solid var(--line-2); display: flex; align-items: center; gap: 12px; font-family: var(--mono); font-size: 17px; color: var(--muted); }
+.ftr .m { display: flex; align-items: center; gap: 10px; padding: 8px 14px; cursor: pointer; border: 1.5px solid transparent; }
+.ftr .m.on { border-color: var(--accent); color: var(--text); }
+.ftr .m.on .key { border-color: var(--accent); color: var(--accent); }
+.ftr .sp { flex: 1; }
+.ftr .note { color: var(--dim); font-size: 15px; }
+
+/* overlays */
+.ov { position: absolute; inset: 0; background: rgba(8,10,10,.86); display: grid; place-items: center; z-index: 5; }
+.ov[hidden] { display: none !important; }
+.ovbox { background: var(--panel); border-top: 2px solid var(--accent); padding: 34px 40px; min-width: 760px; max-width: 1500px; }
+.ovbox h3 { margin: 0 0 6px; font-family: var(--mono); font-weight: 700; font-size: 40px; }
+.ovbox .lbl { margin-bottom: 18px; display: block; }
+.ovbox .act { display: flex; gap: 14px; margin-top: 26px; }
+.molsvg text { font-family: var(--mono); font-weight: 700; font-size: 44px; text-anchor: middle; dominant-baseline: central; }
+.atom circle { fill: var(--panel-2); stroke: var(--line-2); stroke-width: 3; }
+.atom.ok circle { stroke: var(--accent); }
+.atom.bad circle { stroke: var(--bad); }
+.atom text { fill: var(--text); }
+.atom .h { font-family: var(--body); font-weight: 500; font-size: 22px; fill: var(--muted); }
+.bond { cursor: pointer; }
+.bond line { stroke: var(--text); stroke-width: 5; stroke-linecap: round; }
+.bond rect { fill: transparent; }
+.bond:hover line { stroke: var(--accent); }
+.chk { display: grid; gap: 0; margin-top: 8px; }
+.chk div { display: flex; justify-content: space-between; gap: 30px; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 23px; }
+.chk b { font-family: var(--mono); font-weight: 400; }
+.chk b.ok { color: var(--accent); } .chk b.bad { color: var(--bad); }
+.boot { font-family: var(--mono); font-size: 26px; color: var(--muted); letter-spacing: .1em; }
+</style>
+
+<div class="wrap">
+  <div class="top">
+    <p>Терминал стола «Хемоформ». Q / E — разделы, A / D — подразделы, Backspace — назад, 1–3 — мониторы, 4 — молекула, Esc — встать. Можно мышью.</p>
+    <div class="ctl">
+      <button type="button" id="tutBtn" aria-pressed="false">Обучение</button>
+      <button type="button" id="resetBtn">Сначала</button>
+    </div>
+  </div>
+  <div class="stage" id="stage" tabindex="0" aria-label="Монитор стола Хемоформ">
+    <div class="screen" id="screen">
+      <div class="hdr"><span class="key">Q</span><div class="tabs" id="tabs"></div><span class="key">E</span><span class="mon" id="mon"></span></div>
+      <div class="subs" id="subs"></div>
+      <div class="tut" id="tut" hidden></div>
+      <div class="content" id="content"></div>
+      <div class="ftr" id="ftr"></div>
+      <div class="ov" id="ov" hidden><div class="ovbox" id="ovbox"></div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const AT = { C: { m: 12, v: 4, n: "углерод" }, H: { m: 1, v: 1, n: "водород" }, N: { m: 14, v: 3, n: "азот" }, O: { m: 16, v: 2, n: "кислород" } };
+  const TABS = [
+    { id: "home", label: "⌂" },
+    { id: "analysis", label: "АНАЛИЗ" },
+    { id: "ir", label: "ИК-СПЕКТР", needsSample: true },
+    { id: "mass", label: "МАСС-СПЕКТР", needsSample: true },
+    { id: "base", label: "БАЗА ДАННЫХ", subs: ["АТОМЫ", "СВЯЗИ", "ПРИБОРЫ", "ОБРАЗЦЫ"] },
+    { id: "journal", label: "ЖУРНАЛ", subs: ["БРИФИНГ", "ЗАПИСИ"] }
+  ];
+  const PEAKS = [{ m: 12, i: 9 }, { m: 16, i: 10 }, { m: 22, i: 2 }, { m: 28, i: 11 }, { m: 44, i: 100 }];
+  const SAMPLE_IR = [{ x: 2349, d: .86, w: 38 }, { x: 667, d: .55, w: 16 }];
+  const ZONES = [
+    { id: "oh", a: 3600, b: 3200, t: "O–H / N–H" },
+    { id: "ch", a: 3000, b: 2850, t: "C–H" },
+    { id: "cum", a: 2400, b: 2000, t: "≡ и =C=" },
+    { id: "dbl", a: 1800, b: 1600, t: "C=O, C=C" },
+    { id: "fp", a: 1500, b: 500, t: "отпечаток" }
+  ];
+  const SAMPLE_ZONES = ["cum", "fp"];
+  const ICON = {
+    analysis: `<path d="M36 10h24M40 10v30l-22 40a6 6 0 0 0 5 9h50a6 6 0 0 0 5 -9l-22 -40v-30"/><path d="M26 66h44"/>`,
+    ir: `<path d="M6 22h18l6 46l6 -46h14l4 22l4 -22h32"/><path d="M6 86h84"/>`,
+    mass: `<path d="M8 84h80M18 84v-10M32 84v-14M46 84v-8M60 84v-16M80 84v-70"/>`,
+    base: `<ellipse cx="48" cy="22" rx="30" ry="9"/><path d="M18 22v52a30 9 0 0 0 60 0v-52M18 48a30 9 0 0 0 60 0"/>`,
+    journal: `<rect x="22" y="10" width="54" height="76" rx="3"/><path d="M32 10v76M42 30h26M42 44h26M42 58h16"/>`,
+    mol: `<circle cx="22" cy="48" r="11"/><circle cx="48" cy="48" r="11"/><circle cx="74" cy="48" r="11"/><path d="M33 44h4M33 52h4M59 44h4M59 52h4"/>`,
+    tube: `<path d="M120 30h60M128 30v190a22 22 0 0 0 44 0v-190"/><path d="M128 150h44"/><circle cx="146" cy="190" r="5"/><circle cx="156" cy="172" r="4"/>`
+  };
+
+  let S;
+  function fresh() {
+    return {
+      monitors: [{ tab: "home", sub: 0, on: false }, { tab: "home", sub: 0, on: true }, { tab: "home", sub: 0, on: false }],
+      mon: 1, sample: false, scanned: false, scanning: false,
+      peak: null, cnt: { C: 0, H: 0, N: 0, O: 0 }, formula: null,
+      marks: [], bonds: [], report: null, tut: S ? S.tut : false,
+      alerts: { journal: true, base: false }, seen: {},
+      journal: [{ t: "09:40", h: "Новый образец с Kepler-442b", p: "Брифинг: определить, что за вещество во льду с ледника «Северный»." }],
+      baseSel: { 0: 0, 1: 0, 2: 0, 3: 0 }, newArticle: false, overlay: null, booting: false, stood: false
+    };
+  }
+  S = fresh();
+
+  const $ = id => document.getElementById(id);
+  const M = () => S.monitors[S.mon];
+  const tabDef = id => TABS.find(t => t.id === id);
+  const fsub = f => f.replace(/(\d+)/g, "<sub>$1</sub>");
+  const now = () => { const d = new Date(); return String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0"); };
+  const formulaOf = c => ["C", "H", "N", "O"].filter(k => c[k]).map(k => k + (c[k] > 1 ? c[k] : "")).join("");
+  const massOf = c => Object.keys(c).reduce((s, k) => s + c[k] * AT[k].m, 0);
+
+  // ---- molecule model ----
+  function heavyChain(f) {
+    if (!f) return [];
+    const list = [];
+    ["C", "N", "O"].forEach(k => { for (let i = 0; i < f.cnt[k]; i++) list.push(k); });
+    list.sort((a, b) => AT[b].v - AT[a].v);
+    const out = [];
+    list.forEach((a, i) => { if (i === 0) out.push(a); else if (i % 2) out.unshift(a); else out.push(a); });
+    return out.slice(0, 6);
+  }
+  function molState() {
+    const chain = heavyChain(S.formula);
+    const bonds = S.bonds.length === Math.max(0, chain.length - 1) ? S.bonds : Array(Math.max(0, chain.length - 1)).fill(1);
+    S.bonds = bonds;
+    const free = chain.map((a, i) => AT[a].v - (bonds[i - 1] || 0) - (bonds[i] || 0));
+    const H = S.formula ? S.formula.cnt.H : 0;
+    let left = H; const hs = free.map(f => { const k = Math.max(0, Math.min(f, left)); left -= k; return k; });
+    const atomOk = free.map((f, i) => f >= 0 && f - hs[i] === 0);
+    const valOk = chain.length > 0 && atomOk.every(Boolean) && left === 0;
+    return { chain, bonds, free, hs, atomOk, valOk };
+  }
+  function modelZones(ms) {
+    const z = new Set(); const peaks = [];
+    const { chain, bonds, hs } = ms;
+    chain.forEach((a, i) => {
+      const l = bonds[i - 1] || 0, r = bonds[i] || 0;
+      if (hs[i]) { if (a === "C") { z.add("ch"); peaks.push(2920); } else { z.add("oh"); peaks.push(a === "O" ? 3400 : 3350); } }
+      if (l === 2 && r === 2) { z.add("cum"); z.add("fp"); peaks.push(2349, 667); }
+    });
+    bonds.forEach((b, i) => {
+      const a = chain[i], c = chain[i + 1];
+      const cum = (bonds[i - 1] === 2 && b === 2) || (bonds[i + 1] === 2 && b === 2);
+      if (b === 1) { z.add("fp"); peaks.push(a === "C" && c === "C" ? 1000 : 1100); }
+      if (b === 2 && !cum) { z.add("dbl"); peaks.push(a === "O" || c === "O" ? 1715 : 1650); }
+      if (b === 3) { z.add("cum"); peaks.push(2200); }
+    });
+    return { zones: z, peaks: [...new Set(peaks)] };
+  }
+  const builtModel = () => S.formula && S.bonds.length ? modelZones(molState()) : null;
+
+  // ---- progress / tutorial ----
+  const massDone = () => !!S.formula;
+  const irDone = () => S.marks.length > 0;
+  const tutStep = () => !S.scanned ? 0 : !massDone() ? 1 : !irDone() ? 2 : S.report !== "ok" ? (S.overlay === "report" ? 4 : 3) : 5;
+  const TUT = [["ОБРАЗЕЦ", "analysis"], ["МАССА", "mass"], ["ИК", "ir"], ["СТРУКТУРА", "mol"], ["ОТЧЁТ", "mol"]];
+  const needTab = () => S.tut && tutStep() < 5 ? TUT[tutStep()][1] : null;
+
+  // ---- render ----
+  function render() {
+    const m = M(), need = needTab();
+    const body = (!m.on || S.booting) ? `<div style="display:grid;place-items:center;height:100%"><span class="boot">ВКЛЮЧЕНИЕ МОНИТОРА…</span></div>`
+      : ({ home: vHome, analysis: vAnalysis, mass: vMass, ir: vIR, base: vBase, journal: vJournal })[m.tab]();
+    $("tabs").innerHTML = TABS.map(t => {
+      const nos = t.needsSample && !S.sample;
+      const bang = S.alerts[t.id] ? '<span class="bang">!</span>' : "";
+      return `<div class="tab ${t.id === "home" ? "home" : ""} ${m.tab === t.id ? "on" : ""} ${nos ? "nos" : ""} ${need === t.id && m.tab !== t.id ? "need" : ""}" data-tab="${t.id}">${t.label}${bang}</div>`;
+    }).join("");
+    $("mon").innerHTML = `МОНИТОР <b>${S.mon + 1}</b> · ${["ЛЕВЫЙ", "ЦЕНТР", "ПРАВЫЙ"][S.mon]}`;
+
+    const td = tabDef(m.tab);
+    $("tut").hidden = !S.tut;
+    if (S.tut) {
+      const st = tutStep();
+      $("tut").innerHTML = `<span class="tag">ОБУЧЕНИЕ</span>` + TUT.map(([n], i) =>
+        (i ? '<span class="ln"></span>' : "") + `<span class="s ${i < st ? "done" : i === st ? "cur" : ""}"><b>${i < st ? "✓" : i + 1}</b>${n}</span>`).join("");
+    }
+    $("subs").style.display = td.subs && !S.tut ? "flex" : "none";
+    if (td.subs) {
+      $("subs").innerHTML = `<span class="key">A</span>` + td.subs.map((s, i) => `<div class="subtab ${m.sub === i ? "on" : ""}" data-sub="${i}">${s}</div>`).join("") + `<span class="key">D</span>`;
+      if (S.tut) { $("subs").style.display = "flex"; $("subs").style.top = "136px"; } else $("subs").style.top = "96px";
+    }
+    const c = $("content");
+    c.style.top = S.tut ? (td.subs ? "190px" : "156px") : (td.subs ? "150px" : "120px");
+    c.style.height = (990 - 28 - parseInt(c.style.top)) + "px";
+
+    c.innerHTML = body;
+
+    $("ftr").innerHTML = [0, 1, 2].map(i => `<div class="m ${S.mon === i ? "on" : ""}" data-mon="${i}"><span class="key">${i + 1}</span>${["ЛЕВЫЙ", "ЦЕНТР", "ПРАВЫЙ"][i]}${S.monitors[i].on ? " · " + tabDef(S.monitors[i].tab).label : ""}</div>`).join("") +
+      `<div class="m ${need === "mol" ? "on" : ""}" data-mol="1"><span class="key">4</span>МОЛЕКУЛА</div><span class="sp"></span><span class="note">BKSP назад</span><div class="m" data-stand="1"><span class="key">ESC</span>ВСТАТЬ</div>`;
+    renderOverlay();
+  }
+
+  function vHome() {
+    const ms = S.formula ? molState() : null;
+    const row = (n, v, p, ok) => `<div class="prog ${ok ? "ok" : ""}"><span>${n}</span><b>${v}</b><div class="bar"><i style="width:${p}%"></i></div></div>`;
+    const left = S.sample
+      ? `<div class="lbl" style="padding:18px 22px 0">ОБРАЗЕЦ НА СТОЛЕ</div><div class="id">КР-01</div><div class="src">ледник «Северный» · проба льда, глубина 2 м</div>` +
+        row("ПЕРВИЧНЫЙ СКАН", S.scanned ? "ГОТОВ" : "—", S.scanned ? 100 : 0, S.scanned) +
+        row("МАССА МОЛЕКУЛЫ", S.formula ? massOf(S.formula.cnt) : "—", S.formula ? 100 : 0, !!S.formula) +
+        row("ЗОНЫ ИК", S.marks.length ? S.marks.length + " отмеч." : "—", S.marks.length ? 100 : 0, S.marks.length > 0) +
+        row("ВЕЩЕСТВО", S.report === "ok" ? "CO₂" : "?", S.report === "ok" ? 100 : 0, S.report === "ok")
+      : `<div class="lbl" style="padding:18px 22px 0">ОБРАЗЕЦ НА СТОЛЕ</div><div class="id empty">ПРИЁМНИК ПУСТ</div><div class="src">Вставьте образец во вкладке «Анализ».</div>`;
+    const tile = (id, label, st, opts = {}) => `<div class="tile ${opts.nos ? "nos" : ""} ${opts.need ? "need" : ""}" data-go="${id}">${opts.bang ? '<span class="bang">!</span>' : ""}<svg viewBox="0 0 96 96">${ICON[opts.icon || id]}</svg><div class="nm">${label}</div><div class="st">${st}</div></div>`;
+    const need = needTab();
+    return `<div class="home-l panel">${left}</div><div class="tiles">
+      ${tile("analysis", "АНАЛИЗ", S.sample ? (S.scanned ? "скан готов" : "нужен первичный скан") : "вставьте образец", { need: need === "analysis" })}
+      ${tile("mass", "МАСС-СПЕКТР", !S.sample ? "вставьте образец" : S.formula ? "масса " + massOf(S.formula.cnt) : "формула не собрана", { nos: !S.sample, need: need === "mass" })}
+      ${tile("ir", "ИК-СПЕКТР", !S.sample ? "вставьте образец" : S.marks.length ? "зон: " + S.marks.length : "зоны не отмечены", { nos: !S.sample, need: need === "ir" })}
+      ${tile("base", "БАЗА ДАННЫХ", "атомы · связи · приборы · образцы", { bang: S.alerts.base })}
+      ${tile("journal", "ЖУРНАЛ", "записей: " + S.journal.length, { bang: S.alerts.journal })}
+      ${tile("mol", "МОЛЕКУЛА", S.formula ? fsub(S.formula.f) + (ms && ms.valOk ? " · собрана" : "") : "нужна формула", { need: need === "mol" })}
+    </div>`;
+  }
+
+  function vAnalysis() {
+    const frame = `<div class="an-frame ${S.sample ? "" : "empty"} panel"><i class="c c1"></i><i class="c c2"></i><i class="c c3"></i><i class="c c4"></i><svg viewBox="0 0 300 300">${ICON.tube}</svg></div>`;
+    if (!S.sample) return frame + `<div class="an-r"><div class="lbl">ПРИЁМНИК</div><h2>ПУСТ</h2><div class="sub">Поместите пробирку с образцом в приёмник стола.</div>
+      <div class="act"><button class="btn" data-act="insert">ВСТАВИТЬ ОБРАЗЕЦ <span class="key">↵</span></button></div></div>`;
+    const lines = ["начало сканирования", "образец в приёмнике", "масса пробы: 14.2 г", "тип: лёд", "источник: ледник «Северный»", "сканирование завершено"];
+    const shown = S.scanned ? lines.length : S.scanning ? S.scanLine : 0;
+    const log = lines.slice(0, shown).map((l, i) => `<div class="${i === lines.length - 1 ? "g" : ""}">[09:4${i}] ${l}</div>`).join("");
+    return frame + `<div class="an-r"><div class="lbl">ОБРАЗЕЦ</div><h2>КР-01</h2><div class="sub">Kepler-442b · ледник «Северный»</div>
+      <div class="panel rows">
+        <div class="r"><span>МАССА ПРОБЫ</span><b class="${S.scanned ? "" : "q"}">${S.scanned ? "14.2 г" : "?"}</b></div>
+        <div class="r"><span>ТИП</span><b class="${S.scanned ? "" : "q"}">${S.scanned ? "лёд" : "?"}</b></div>
+        <div class="r"><span>КООРДИНАТЫ</span><b class="${S.scanned ? "" : "q"}">${S.scanned ? "−42.18 / +73.04" : "?"}</b></div>
+      </div>
+      <div class="log">${log || '<span style="color:var(--dim)">первичный скан не выполнен</span>'}</div>
+      <div class="act">${S.scanned ? `<button class="btn ghost" data-go="mass">К МАСС-СПЕКТРУ</button><button class="btn ghost" data-go="ir">К ИК-СПЕКТРУ</button>` : `<button class="btn ${S.scanning ? "off" : ""}" data-act="scan">ПЕРВИЧНЫЙ СКАН <span class="key">↵</span></button>`}</div></div>`;
+  }
+
+  function vMass() {
+    if (!S.sample) return noSample();
+    const W = 1800, H = 420, x0 = 70, x1 = W - 40, y0 = 360, y1 = 40;
+    const X = m => x0 + (m / 60) * (x1 - x0), Y = i => y0 - (i / 100) * (y0 - y1);
+    let ticks = ""; for (let m = 0; m <= 60; m += 10) ticks += `<line x1="${X(m)}" y1="${y0}" x2="${X(m)}" y2="${y0 + 8}"/><text x="${X(m)}" y="${y0 + 30}" text-anchor="middle">${m}</text>`;
+    const bars = PEAKS.map(p => `<g class="peak ${S.peak === p.m ? "sel" : ""}" data-peak="${p.m}"><rect class="hit" x="${X(p.m) - 22}" y="${y1 - 10}" width="44" height="${y0 - y1 + 10}"/>
+      <rect class="b" x="${X(p.m) - 5}" y="${Y(Math.max(p.i, 1.5))}" width="10" height="${y0 - Y(Math.max(p.i, 1.5))}"/><text x="${X(p.m)}" y="${Y(p.i) - 12}" text-anchor="middle">${p.m}</text></g>`).join("");
+    const chart = `<div class="panel chart"><div class="ptitle">МАСС-СПЕКТР · КР-01<small>Клик по пику — выбрать. Целая молекула — крайний правый крупный пик.</small></div>
+      <svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><g class="axis"><path d="M${x0} ${y0}H${x1}"/>${ticks}<text x="${x1}" y="${y0 + 30}" text-anchor="end" dx="40">m/z</text></g>${bars}</svg></div>`;
+    const sum = massOf(S.cnt), f = formulaOf(S.cnt);
+    const rows = ["C", "H", "N", "O"].map(k => `<div class="el"><div class="sym">${k}</div><div class="nm">${AT[k].n}<small>масса атома ${AT[k].m}</small></div>
+      <div class="pm" data-dec="${k}">−</div><div class="n">${S.cnt[k]}</div><div class="pm" data-inc="${k}">+</div><div class="sum ${S.cnt[k] ? "on" : ""}">${S.cnt[k] * AT[k].m}</div></div>`).join("");
+    let msg = "", cls = "", can = false;
+    if (S.peak == null) msg = "Выберите пик на спектре.";
+    else if (!sum) msg = "Соберите атомы, сумма масс которых равна пику.";
+    else if (sum !== S.peak) { msg = `Сумма ${sum} не равна пику ${S.peak}.`; cls = "bad"; }
+    else if (S.peak !== 44) { msg = "Сумма совпала, но это осколок молекулы, а не она целиком."; cls = "bad"; }
+    else { msg = `Совпало: <span class="formula">${fsub(f)}</span>. Есть и другие формулы с массой 44.`; cls = "ok"; can = true; }
+    const rec = S.formula ? `<div class="vs">Записано: <b class="formula">${fsub(S.formula.f)}</b></div>` : "";
+    return chart + `<div class="mass-b panel">${rows}</div>
+      <div class="mass-r panel"><span class="lbl">СОБРАНО</span><div class="big">${sum}</div><div class="vs">пик: <b>${S.peak ?? "—"}</b> · формула: <b class="formula">${f ? fsub(f) : "—"}</b></div>${rec}
+      <div class="msg ${cls}">${msg}</div><button class="btn ${can ? "" : "off"}" data-act="recmass">ЗАПИСАТЬ ФОРМУЛУ <span class="key">↵</span></button></div>`;
+  }
+
+  function vIR() {
+    if (!S.sample) return noSample();
+    const W = 1800, H = 380, x0 = 70, x1 = W - 40, y0 = 320, y1 = 30;
+    const X = w => x0 + ((4000 - w) / 3600) * (x1 - x0);
+    const T = (w, peaks) => { let t = .92; peaks.forEach(p => t -= p.d * Math.exp(-((w - p.x) ** 2) / (2 * p.w * p.w))); return t; };
+    const Y = t => y0 - t * (y0 - y1);
+    const path = peaks => { let d = ""; for (let w = 4000; w >= 400; w -= 6) d += (d ? "L" : "M") + X(w).toFixed(1) + " " + Y(T(w, peaks)).toFixed(1); return d; };
+    const model = builtModel();
+    const zones = ZONES.map(z => `<g class="zone ${S.marks.includes(z.id) ? "mk" : ""}" data-zone="${z.id}"><rect x="${X(z.a)}" y="${y1}" width="${X(z.b) - X(z.a)}" height="${y0 - y1}"/><text x="${(X(z.a) + X(z.b)) / 2}" y="${y1 + 22}" text-anchor="middle">${z.t}</text></g>`).join("");
+    let ticks = ""; for (let w = 4000; w >= 500; w -= 500) ticks += `<line x1="${X(w)}" y1="${y0}" x2="${X(w)}" y2="${y0 + 8}"/><text x="${X(w)}" y="${y0 + 30}" text-anchor="middle">${w}</text>`;
+    const mpath = model ? `<path d="${path(model.peaks.map(x => ({ x, d: .55, w: x < 1000 ? 16 : 34 })))}" fill="none" stroke="var(--model)" stroke-width="3" stroke-dasharray="10 8"/>` : "";
+    const chart = `<div class="panel chart"><div class="ptitle">ИК-СПЕКТР · КР-01<small>Клик по зоне — отметить, что в ней есть поглощение.</small></div>
+      <svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${zones}<g class="axis"><path d="M${x0} ${y0}H${x1}"/>${ticks}<text x="${x1}" y="${y0 + 30}" text-anchor="end" dx="40">см⁻¹</text></g>
+      <path d="${path(SAMPLE_IR)}" fill="none" stroke="var(--text)" stroke-width="3"/>${mpath}</svg>
+      <div class="legend" style="padding:0 22px 16px"><span><i></i>образец</span><span><i class="m"></i>модель с голограммы${model ? "" : " — соберите молекулу [4]"}</span></div></div>`;
+    const marked = ZONES.map(z => `<div class="r"><span>${z.t}</span><b class="${S.marks.includes(z.id) ? "ok" : "q"}">${S.marks.includes(z.id) ? "поглощение" : "—"}</b></div>`).join("");
+    const mz = model ? ZONES.map(z => `<div class="r"><span>${z.t}</span><b class="${model.zones.has(z.id) ? "" : "q"}">${model.zones.has(z.id) ? "поглощает" : "—"}</b></div>`).join("") : `<div class="r"><span>модель</span><b class="q">не собрана</b></div>`;
+    return chart + `<div class="ir-b"><div class="panel"><div class="ptitle">ОТМЕЧЕНО В ОБРАЗЦЕ</div><div class="rows">${marked}</div></div>
+      <div class="panel"><div class="ptitle">МОДЕЛЬ${S.formula ? ' · <span class="formula">' + fsub(S.formula.f) + "</span>" : ""}</div><div class="rows">${mz}</div></div></div>`;
+  }
+
+  const noSample = () => `<div style="display:grid;place-items:center;height:100%;text-align:center"><div><div class="lbl">ПРИБОР НЕДОСТУПЕН</div><h2 style="font-family:var(--mono);font-size:56px;margin:12px 0 24px">ВСТАВЬТЕ ОБРАЗЕЦ</h2><button class="btn ghost" data-go="analysis">К АНАЛИЗУ</button></div></div>`;
+
+  const BASE = [
+    [{ n: "Водород · H", h: "Водород", body: `<p>Самый лёгкий атом. Образует одну связь.</p>` },
+     { n: "Углерод · C", h: "Углерод", body: `<p>Образует четыре связи. Основа органических молекул.</p>` },
+     { n: "Азот · N", h: "Азот", body: `<p>Образует три связи.</p>` },
+     { n: "Кислород · O", h: "Кислород", body: `<p>Образует две связи: две одинарные или одну двойную.</p>` },
+     { n: "Таблица масс", h: "Массы и валентность", body: `<table><tr><th>АТОМ</th><th>МАССА</th><th>СВЯЗЕЙ</th></tr>${["H", "C", "N", "O"].map(k => `<tr><td class="k">${k}</td><td>${AT[k].m}</td><td>${AT[k].v}</td></tr>`).join("")}</table>` }],
+    [{ n: "Типы связей", h: "Одинарная, двойная, тройная", body: `<p>Атомы делят пары электронов. Сумма связей атома равна его валентности: у углерода 4, у кислорода 2.</p><p>Двойная связь считается за две, тройная — за три.</p>` },
+     { n: "Зоны ИК", h: "Где поглощают связи", body: `<table><tr><th>ЗОНА, СМ⁻¹</th><th>СВЯЗЬ</th></tr><tr><td>3600–3200</td><td>O–H, N–H</td></tr><tr><td>3000–2850</td><td>C–H</td></tr><tr><td>2400–2000</td><td>тройные (C≡N, C≡C) и две двойные подряд у одного атома (X=C=Y)</td></tr><tr><td>1800–1600</td><td>одиночная двойная: C=O, C=C</td></tr><tr><td>1500–500</td><td>«отпечаток»: одинарные связи, изгибы</td></tr></table>` }],
+    [{ n: "Масс-спектрометр", h: "Как читать масс-спектр", body: `<p>Молекулы разбиваются на осколки, прибор сортирует их по массе (m/z).</p><p>Крайний правый крупный пик — масса целой молекулы. Пики левее — её осколки.</p><p>Одна масса подходит разным формулам. Чтобы выбрать, нужен второй прибор.</p>` },
+     { n: "ИК-спектрометр", h: "Как читать ИК-спектр", body: `<p>Через образец светят инфракрасным светом. Провал на графике — свет поглотился.</p><p>Каждая связь поглощает в своей зоне. Отметьте зоны с провалами и сравните с моделью.</p>` }],
+    []
+  ];
+  function vBase() {
+    const m = M();
+    let items = BASE[m.sub];
+    if (m.sub === 3) {
+      items = [{ n: "Вода · H₂O", h: "Вода", body: `<p>Масса 18. Связи O–H: широкий провал в ИК около 3400 см⁻¹.</p><p>Тренировочный образец.</p>` }];
+      if (S.report === "ok") items.push({ n: "Углекислый газ · CO₂", h: "Углекислый газ", isNew: S.newArticle, body: `<p>Масса 44. Строение O=C=O: две двойные связи у одного атома углерода.</p><p>ИК: сильный провал около 2349 см⁻¹ и слабее около 667 см⁻¹. Отдельной полосы C=O около 1715 нет.</p>` });
+    }
+    const i = Math.min(S.baseSel[m.sub] || 0, items.length - 1);
+    const it = items[i];
+    if (it && it.isNew) { S.newArticle = false; S.alerts.base = false; }
+    return `<div class="two"><div class="panel list"><div class="ptitle">${tabDef("base").subs[m.sub]}</div>${items.map((x, k) =>
+      `<div class="li ${k === i ? "on" : ""}" data-art="${k}"><span>${x.n}</span>${x.isNew ? '<span class="bang">!</span>' : ""}</div>`).join("")}</div>
+      <div class="panel article"><span class="lbl">БАЗА ДАННЫХ</span><h3>${it ? it.h : ""}</h3>${it ? it.body : ""}</div></div>`;
+  }
+
+  function vJournal() {
+    const m = M();
+    S.alerts.journal = false;
+    if (m.sub === 0) return `<div class="panel article" style="position:absolute;inset:0"><span class="lbl">БРИФИНГ · ${now()}</span><h3>Образец КР-01</h3>
+      <p>Дрон доставил пробу льда с ледника «Северный», глубина 2 метра. Колонисты сообщают о странном вкусе талой воды.</p>
+      <p><b>Задача:</b> определить вещество в пробе. Порядок работы выбираете сами.</p>
+      <p>Как читать приборы — в «Базе данных», раздел «Приборы». Массы атомов и валентность — раздел «Атомы».</p>
+      <p>Когда соберёте молекулу [4], нажмите Enter: станция проверит её по обоим спектрам.</p></div>`;
+    return `<div class="panel" style="position:absolute;inset:0;overflow:hidden"><div class="ptitle">ЗАПИСИ<small>${S.journal.length}</small></div>${S.journal.slice().reverse().map(e =>
+      `<div class="entry"><div class="t">${e.t}</div><div class="h ${e.c || ""}">${e.h}</div>${e.p ? `<p>${e.p}</p>` : ""}</div>`).join("")}</div>`;
+  }
+
+  // ---- overlays ----
+  function renderOverlay() {
+    const ov = $("ov"), box = $("ovbox");
+    if (!S.overlay) { ov.hidden = true; return; }
+    ov.hidden = false;
+    if (S.overlay === "stand") {
+      box.innerHTML = `<h3>ВСТАТЬ ИЗ-ЗА СТОЛА?</h3><span class="lbl">Мониторы запомнят открытые разделы.</span><div class="act"><button class="btn" data-act="standyes">ВСТАТЬ <span class="key">ESC</span></button><button class="btn ghost" data-act="close">ОСТАТЬСЯ <span class="key">BKSP</span></button></div>`;
+    } else if (S.overlay === "stood") {
+      box.innerHTML = `<h3>ВЫ ВСТАЛИ ИЗ-ЗА СТОЛА</h3><span class="lbl">Подойдите к столу и нажмите E, чтобы сесть.</span><div class="act"><button class="btn" data-act="sit">СЕСТЬ <span class="key">E</span></button></div>`;
+    } else if (S.overlay === "mol") {
+      if (!S.formula) { box.innerHTML = `<h3>ГОЛОГРАММА</h3><span class="lbl">Сначала соберите и запишите формулу на масс-спектре.</span><div class="act"><button class="btn ghost" data-act="close">НАЗАД <span class="key">BKSP</span></button></div>`; return; }
+      const ms = molState(), n = ms.chain.length, gap = 230, W = Math.max(760, n * gap + 120), cx = i => W / 2 + (i - (n - 1) / 2) * gap, cy = 170;
+      const bonds = ms.bonds.map((b, i) => {
+        const x1 = cx(i) + 50, x2 = cx(i + 1) - 50, offs = b === 1 ? [0] : b === 2 ? [-9, 9] : [-14, 0, 14];
+        return `<g class="bond" data-bond="${i}"><rect x="${x1}" y="${cy - 34}" width="${x2 - x1}" height="68"/>${offs.map(o => `<line x1="${x1}" y1="${cy + o}" x2="${x2}" y2="${cy + o}"/>`).join("")}</g>`;
+      }).join("");
+      const atoms = ms.chain.map((a, i) => `<g class="atom ${ms.atomOk[i] ? "ok" : "bad"}"><circle cx="${cx(i)}" cy="${cy}" r="48"/><text x="${cx(i)}" y="${cy}">${a}</text>${ms.hs[i] ? `<text class="h" x="${cx(i)}" y="${cy + 80}">+H×${ms.hs[i]}</text>` : ""}</g>`).join("");
+      box.innerHTML = `<span class="lbl">ГОЛОГРАММА · [4]</span><h3>СБОРКА <span class="formula">${fsub(S.formula.f)}</span></h3>
+        <span class="lbl" style="margin-top:6px">Клик по связи меняет её: одинарная → двойная → тройная. Зелёный атом — связей хватает.</span>
+        <svg class="molsvg" width="${W}" height="300" viewBox="0 0 ${W} 300">${bonds}${atoms}</svg>
+        <div class="act"><button class="btn" data-act="check">ПРОВЕРИТЬ <span class="key">↵</span></button><button class="btn ghost" data-act="close">НАЗАД <span class="key">BKSP</span></button></div>`;
+    } else if (S.overlay === "report") {
+      const r = S.lastReport;
+      box.innerHTML = `<span class="lbl">ОТЧЁТ СТАНЦИИ</span><h3>${r.ok ? "ВЕЩЕСТВО ОПРЕДЕЛЕНО" : "НЕ СОШЛОСЬ"}</h3>
+        <div class="chk">${r.lines.map(([n, ok, t]) => `<div><span>${n}</span><b class="${ok ? "ok" : "bad"}">${t}</b></div>`).join("")}</div>
+        ${r.ok ? `<p style="font-size:22px;color:#cfd6d4;max-width:60ch">Это <b>углекислый газ, CO₂</b>. Статья добавлена в базу данных.</p>` : `<p style="font-size:22px;color:#cfd6d4;max-width:60ch">Запись сохранена в журнал. Проверьте приборы ещё раз.</p>`}
+        <div class="act"><button class="btn" data-act="close">ПОНЯТНО <span class="key">↵</span></button></div>`;
+    }
+  }
+
+  function check() {
+    const ms = molState(), model = modelZones(ms);
+    const massOk = massOf(S.formula.cnt) === 44;
+    const irOk = SAMPLE_ZONES.every(z => model.zones.has(z)) && [...model.zones].every(z => SAMPLE_ZONES.includes(z));
+    const ok = massOk && ms.valOk && irOk;
+    const lines = [["Масса", massOk, massOk ? "совпадает" : "не совпадает"], ["Валентность", ms.valOk, ms.valOk ? "в порядке" : "не у всех атомов"], ["ИК модели и образца", irOk, irOk ? "совпадает" : "не совпадает"]];
+    S.lastReport = { ok, lines };
+    S.report = ok ? "ok" : "fail";
+    const miss = lines.filter(l => !l[1]).map(l => l[0].toLowerCase()).join(", ");
+    S.journal.push(ok ? { t: now(), h: "КР-01 определён: CO₂", c: "ok", p: "Модель O=C=O совпала с масс- и ИК-спектром." } : { t: now(), h: "Проверка КР-01: не сошлось", c: "bad", p: "Не совпало: " + miss + ". Модель " + S.formula.f + "." });
+    S.alerts.journal = true;
+    if (ok) { S.alerts.base = true; S.newArticle = true; }
+    S.overlay = "report";
+  }
+
+  // ---- actions ----
+  function go(tab, sub = 0) {
+    if (tab === "mol") { S.overlay = "mol"; render(); return; }
+    const m = M(); m.tab = tab; m.sub = sub; render();
+  }
+  function act(a) {
+    if (a === "insert") { S.sample = true; S.journal.push({ t: now(), h: "Образец КР-01 в приёмнике" }); render(); }
+    else if (a === "scan" && !S.scanning) {
+      S.scanning = true; S.scanLine = 0; render();
+      const tick = () => { S.scanLine++; if (S.scanLine >= 6) { S.scanning = false; S.scanned = true; S.journal.push({ t: now(), h: "Первичный скан КР-01", p: "Лёд, 14.2 г, ледник «Северный»." }); } render(); if (S.scanning) setTimeout(tick, 260); };
+      setTimeout(tick, 260);
+    }
+    else if (a === "recmass") {
+      if (massOf(S.cnt) === 44 && S.peak === 44) {
+        S.formula = { f: formulaOf(S.cnt), cnt: { ...S.cnt } }; S.bonds = []; S.report = null;
+        S.journal.push({ t: now(), h: "Масса молекулы 44, формула " + S.formula.f, p: "Записано с масс-спектра." }); render();
+      }
+    }
+    else if (a === "check") check(), render();
+    else if (a === "close") { S.overlay = null; render(); }
+    else if (a === "standyes") { S.overlay = "stood"; render(); }
+    else if (a === "sit") { S.overlay = null; S.booting = true; render(); setTimeout(() => { S.booting = false; render(); }, 700); }
+  }
+  function back() {
+    if (S.overlay === "stood") return;
+    if (S.overlay) { S.overlay = null; return render(); }
+    const m = M();
+    if (m.sub > 0) { m.sub = 0; return render(); }
+    if (m.tab !== "home") { m.tab = "home"; return render(); }
+  }
+  function setMon(i) {
+    S.mon = i;
+    if (!M().on) { S.booting = true; M().on = true; render(); setTimeout(() => { S.booting = false; render(); }, 650); }
+    else render();
+  }
+  function cycleTab(d) { const i = TABS.findIndex(t => t.id === M().tab); go(TABS[(i + d + TABS.length) % TABS.length].id); }
+  function cycleSub(d) { const td = tabDef(M().tab); if (!td.subs) return; const m = M(); m.sub = (m.sub + d + td.subs.length) % td.subs.length; render(); }
+
+  const screen = $("screen"), stage = $("stage");
+  screen.addEventListener("click", e => {
+    stage.focus({ preventScroll: true });
+    const q = s => e.target.closest(s);
+    let el;
+    if (S.overlay === "stood" && !q("[data-act]")) return;
+    if ((el = q("[data-tab]"))) return go(el.dataset.tab);
+    if ((el = q("[data-sub]"))) { M().sub = +el.dataset.sub; return render(); }
+    if ((el = q("[data-go]"))) return go(el.dataset.go);
+    if ((el = q("[data-act]"))) return act(el.dataset.act);
+    if ((el = q("[data-mon]"))) return setMon(+el.dataset.mon);
+    if (q("[data-mol]")) return go("mol");
+    if (q("[data-stand]")) { S.overlay = "stand"; return render(); }
+    if ((el = q("[data-peak]"))) { S.peak = +el.dataset.peak; return render(); }
+    if ((el = q("[data-inc]"))) { const k = el.dataset.inc; S.cnt[k] = Math.min(8, S.cnt[k] + 1); return render(); }
+    if ((el = q("[data-dec]"))) { const k = el.dataset.dec; S.cnt[k] = Math.max(0, S.cnt[k] - 1); return render(); }
+    if ((el = q("[data-zone]"))) { const z = el.dataset.zone; S.marks = S.marks.includes(z) ? S.marks.filter(x => x !== z) : [...S.marks, z]; return render(); }
+    if ((el = q("[data-art]"))) { S.baseSel[M().sub] = +el.dataset.art; return render(); }
+    if ((el = q("[data-bond]"))) { const i = +el.dataset.bond; S.bonds[i] = S.bonds[i] % 3 + 1; S.report = null; return render(); }
+    if (e.target === $("ov") && S.overlay !== "stood") { S.overlay = null; render(); }
+  });
+  document.addEventListener("keydown", e => {
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if (e.target.closest && e.target.closest(".top")) return;
+    const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+    const handled = () => e.preventDefault();
+    if (S.overlay === "stood") { if (k === "e" || k === "у" || k === "Enter") { handled(); act("sit"); } return; }
+    if (S.overlay === "stand") { if (k === "Escape") { handled(); act("standyes"); } else if (k === "Backspace") { handled(); back(); } return; }
+    if (k === "Escape") { handled(); S.overlay = "stand"; return render(); }
+    if (k === "Backspace") { handled(); return back(); }
+    if (S.overlay === "mol") { if (k === "Enter") { handled(); if (S.formula) act("check"); } else if (k === "4") { handled(); act("close"); } return; }
+    if (S.overlay === "report") { if (k === "Enter") { handled(); act("close"); } return; }
+    if (k === "q" || k === "й") { handled(); return cycleTab(-1); }
+    if (k === "e" || k === "у") { handled(); return cycleTab(1); }
+    if (k === "a" || k === "ф") { handled(); return cycleSub(-1); }
+    if (k === "d" || k === "в") { handled(); return cycleSub(1); }
+    if (k === "1" || k === "2" || k === "3") { handled(); return setMon(+k - 1); }
+    if (k === "4") { handled(); return go("mol"); }
+    if (k === "Enter") {
+      handled(); const t = M().tab;
+      if (t === "analysis") act(S.sample ? "scan" : "insert");
+      else if (t === "mass") act("recmass");
+    }
+  });
+
+  $("tutBtn").addEventListener("click", () => { S.tut = !S.tut; $("tutBtn").setAttribute("aria-pressed", String(S.tut)); render(); });
+  $("resetBtn").addEventListener("click", () => { S = fresh(); render(); });
+
+  const fit = () => { screen.style.transform = `scale(${stage.clientWidth / 1920})`; };
+  new ResizeObserver(fit).observe(stage);
+  fit();
+  render();
+})();
+</script>

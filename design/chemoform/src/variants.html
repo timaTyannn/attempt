@@ -1,0 +1,282 @@
+<title>Хемоформ · Приборы и улучшения</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500&display=swap">
+<style>
+@font-face { font-family: "Disket Mono"; font-weight: 400; src: url(data:font/ttf;base64,__DISKET_REG__) format("truetype"); }
+@font-face { font-family: "Disket Mono"; font-weight: 700; src: url(data:font/ttf;base64,__DISKET_BOLD__) format("truetype"); }
+/* Layout: working document. Scaling rule, then four 16:9 variants of the same "Приборы" screen (9 instruments), then the "Улучшения" screen. Single dark look by design. */
+:root {
+  color-scheme: dark;
+  --page: #0b0b0b; --ink: #e8e8e8; --muted: #9a9a9a; --rule: #2a2a2a;
+  --bg: #121212; --card: #383838; --card-top: #2d2d2d; --text: #ececec; --dim: #5c5c5c;
+  --accent: #3dd4c4; --dark: #0b201e;
+  --mono: "Disket Mono", ui-monospace, Menlo, monospace;
+  --body: "Jost", "Segoe UI", system-ui, sans-serif;
+}
+html, body { background: var(--page); color: var(--ink); }
+body { font-family: var(--body); font-size: 17px; line-height: 1.55; }
+.doc { max-width: 1240px; margin: 0 auto; padding-inline: 20px; padding-block: 34px 80px; }
+h1 { font-family: var(--mono); font-weight: 700; font-size: clamp(26px, 4vw, 40px); margin: 0 0 8px; text-wrap: balance; }
+.lead { color: var(--muted); max-width: 66ch; margin: 0 0 30px; }
+h2 { font-family: var(--mono); font-weight: 700; font-size: 21px; letter-spacing: .03em; margin: 54px 0 16px; padding-top: 14px; border-top: 1px solid var(--rule); }
+h2 small { font-family: var(--body); font-weight: 400; font-size: 16px; color: var(--muted); margin-left: 8px; letter-spacing: 0; }
+.rules { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 330px), 1fr)); gap: 18px 38px; }
+.rules div { border-left: 2px solid var(--rule); padding-left: 16px; min-width: 0; }
+.rules b { display: block; font-family: var(--mono); font-weight: 400; font-size: 13px; letter-spacing: .1em; color: var(--accent); margin-bottom: 4px; }
+.v { margin-top: 40px; }
+.v header { display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: baseline; margin-bottom: 10px; }
+.v header h3 { font-family: var(--mono); font-size: 24px; margin: 0; }
+.v header span { color: var(--muted); }
+.notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 10px 32px; margin-top: 12px; }
+.notes p { margin: 0; color: #c6c6c6; }
+.notes b { display: block; font-family: var(--mono); font-weight: 400; font-size: 12px; letter-spacing: .1em; color: var(--muted); }
+.comp { position: relative; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; }
+.scr { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; overflow: hidden; background: var(--bg); color: var(--text); font-family: var(--body); }
+.scr * { box-sizing: border-box; }
+.kc { display: inline-grid; place-items: center; min-width: 32px; height: 30px; padding: 0 7px; border-radius: 5px; background: #d8d8d8; color: #141414; font-family: var(--mono); font-weight: 700; font-size: 16px; box-shadow: 0 4px 0 #8a8a8a; }
+.ico * { fill: none; stroke: #8f8f8f; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.foot { position: absolute; left: 0; right: 0; top: 994px; display: flex; justify-content: center; gap: 44px; font-family: var(--mono); font-size: 19px; color: var(--muted); }
+.foot span { display: flex; gap: 12px; align-items: center; }
+.foot .on { color: var(--text); } .foot .on .kc { background: var(--accent); box-shadow: 0 4px 0 #1f7d73; }
+.back { position: absolute; left: 100px; top: 996px; display: flex; gap: 14px; align-items: center; font-family: var(--mono); font-size: 24px; }
+.pts { display: inline-grid; place-items: center; min-width: 26px; height: 26px; padding: 0 6px; border-radius: 13px; background: var(--accent); color: var(--dark); font-family: var(--mono); font-weight: 700; font-size: 15px; }
+.bang { display: inline-grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; background: var(--accent); color: var(--dark); font-family: var(--mono); font-size: 12px; }
+
+/* ---- header 1: filled tabs (current) ---- */
+.h1 { position: absolute; left: 0; right: 0; top: 0; height: 64px; display: flex; justify-content: center; align-items: center; }
+.h1 .kc { margin: 0 28px; }
+.h1 .t { position: relative; height: 64px; padding: 0 30px; display: flex; gap: 10px; align-items: center; font-family: var(--mono); font-weight: 700; font-size: 21px; letter-spacing: .05em; }
+.h1 .t.on { background: var(--accent); color: var(--dark); }
+.h1 .t.on::after { content: ""; position: absolute; bottom: -15px; left: 50%; width: 9px; height: 9px; border-right: 2px solid #999; border-bottom: 2px solid #999; transform: translateX(-50%) rotate(45deg); }
+/* ---- header 2: text tabs with underline, points on the right ---- */
+.h2 { position: absolute; left: 100px; right: 100px; top: 34px; height: 60px; display: flex; align-items: flex-end; gap: 46px; border-bottom: 1px solid #2c2c2c; font-family: var(--mono); font-size: 21px; letter-spacing: .05em; color: var(--muted); }
+.h2 .t { padding-bottom: 16px; display: flex; gap: 10px; align-items: center; border-bottom: 4px solid transparent; margin-bottom: -1px; }
+.h2 .t.on { color: var(--text); border-bottom-color: var(--accent); }
+.h2 .kc { margin-bottom: 14px; }
+.h2 .sp { flex: 1; }
+.h2 .up { padding-bottom: 14px; display: flex; gap: 12px; align-items: center; color: var(--text); }
+/* ---- header 3: segmented bar with icons ---- */
+.h3 { position: absolute; left: 100px; right: 100px; top: 28px; height: 92px; display: flex; background: #1a1a1a; }
+.h3 .kc { align-self: center; margin: 0 22px; }
+.h3 .t { flex: 1; display: grid; justify-items: center; align-content: center; gap: 8px; font-family: var(--mono); font-size: 17px; letter-spacing: .06em; color: var(--muted); border-left: 1px solid #262626; position: relative; }
+.h3 .t svg { width: 34px; height: 34px; } .h3 .t svg * { stroke: #8f8f8f; }
+.h3 .t.on { background: #2a2a2a; color: var(--text); box-shadow: inset 0 -4px 0 var(--accent); }
+.h3 .t.on svg * { stroke: var(--accent); }
+.h3 .t .pts, .h3 .t .bang { position: absolute; top: 10px; right: 18px; }
+/* ---- header 4: big section title + small tabs, left aligned ---- */
+.h4 { position: absolute; left: 100px; right: 100px; top: 34px; display: flex; align-items: baseline; gap: 38px; font-family: var(--mono); font-size: 19px; letter-spacing: .06em; color: var(--muted); }
+.h4 .big { font-weight: 700; font-size: 54px; color: var(--text); letter-spacing: .02em; margin-right: 18px; }
+.h4 .t { display: flex; gap: 8px; align-items: center; }
+.h4 .t.on { color: var(--accent); }
+.h4 .sp { flex: 1; }
+
+/* ---- V1: carousel of the team's cards ---- */
+.v1row { position: absolute; left: 100px; right: 100px; top: 150px; height: 600px; display: grid; grid-template-columns: 40px repeat(5, 1fr) 40px; gap: 16px; align-items: stretch; }
+.v1row .arr { display: grid; place-items: center; font-family: var(--mono); font-size: 34px; color: var(--muted); }
+.card { position: relative; background: var(--card); display: flex; flex-direction: column; }
+.card .ic { height: 200px; background: var(--card-top); display: grid; place-items: center; }
+.card .ic svg { width: 120px; height: 120px; }
+.card .gr { margin: 18px 18px 0; font-family: var(--mono); font-size: 15px; letter-spacing: .12em; color: var(--muted); }
+.card .nm { margin: 8px 18px 0; font-family: var(--mono); font-size: 25px; letter-spacing: .05em; line-height: 1.1; }
+.card .st { margin: auto 18px 18px; font-size: 20px; color: #cfcfcf; display: flex; justify-content: space-between; align-items: center; }
+.card.sel .ic { background: var(--accent); } .card.sel .ic svg * { stroke: var(--dark); }
+.card.lock .ic svg, .card.lock .nm { opacity: .35; } .card.lock .st { color: var(--accent); }
+.v1pager { position: absolute; left: 0; right: 0; top: 780px; display: flex; justify-content: center; gap: 18px; align-items: center; font-family: var(--mono); font-size: 18px; color: var(--muted); }
+.v1pager i { width: 46px; height: 5px; background: #333; display: inline-block; } .v1pager i.on { background: var(--text); }
+.v1desc { position: absolute; left: 160px; right: 160px; top: 840px; display: flex; justify-content: space-between; align-items: baseline; font-size: 24px; color: #cfcfcf; border-top: 1px solid #2a2a2a; padding-top: 22px; }
+.v1desc b { font-family: var(--mono); font-weight: 400; color: var(--text); margin-right: 16px; }
+
+/* ---- V2: grouped rows of compact horizontal cards ---- */
+.v2 { position: absolute; left: 100px; right: 100px; top: 140px; display: grid; gap: 22px; }
+.v2 .grp { display: grid; grid-template-columns: 200px repeat(3, 1fr); gap: 14px; align-items: start; }
+.v2 .gl { font-family: var(--mono); font-size: 17px; letter-spacing: .12em; color: var(--muted); padding-top: 34px; }
+.hc { height: 108px; background: var(--card); display: grid; grid-template-columns: 108px 1fr auto; align-items: center; position: relative; }
+.hc .ic { height: 108px; background: var(--card-top); display: grid; place-items: center; }
+.hc .ic svg { width: 66px; height: 66px; }
+.hc .tx { padding: 0 18px; min-width: 0; }
+.hc .nm { font-family: var(--mono); font-size: 21px; letter-spacing: .04em; white-space: nowrap; }
+.hc .st { font-size: 19px; color: #c8c8c8; margin-top: 4px; }
+.hc .k { padding-right: 18px; }
+.hc.sel .ic { background: var(--accent); } .hc.sel .ic svg * { stroke: var(--dark); }
+.hc.lock { background: transparent; outline: 2px dashed #3a3a3a; outline-offset: -2px; } .hc.lock .ic { background: transparent; } .hc.lock .nm, .hc.lock svg { opacity: .4; } .hc.lock .st { color: var(--accent); }
+.hc.empty { background: transparent; outline: 1px solid #222; outline-offset: -1px; }
+
+/* ---- V3: icon rail + big card + details ---- */
+.rail { position: absolute; left: 100px; top: 150px; width: 104px; display: grid; gap: 8px; }
+.rail .gl { font-family: var(--mono); font-size: 13px; letter-spacing: .1em; color: var(--dim); padding: 2px 0 0; text-align: center; line-height: 1.2; }
+.rail .r { height: 62px; background: #1d1d1d; display: grid; place-items: center; position: relative; }
+.rail .r svg { width: 38px; height: 38px; }
+.rail .r.sel { background: var(--accent); } .rail .r.sel svg * { stroke: var(--dark); }
+.rail .r.lock svg { opacity: .3; } .rail .r.lock::after { content: "+"; position: absolute; right: 8px; top: 2px; font-family: var(--mono); color: var(--accent); font-size: 20px; }
+.big3 { position: absolute; left: 250px; top: 140px; width: 640px; height: 800px; }
+.big3 .ic { height: 420px; } .big3 .ic svg { width: 240px; height: 240px; }
+.big3 .nm { font-size: 40px; margin-top: 14px; } .big3 .gr { font-size: 17px; }
+.det3 { position: absolute; left: 940px; right: 100px; top: 150px; }
+.det3 .lb { font-family: var(--mono); font-size: 16px; letter-spacing: .12em; color: var(--accent); }
+.det3 h4 { margin: 10px 0 18px; font-family: var(--mono); font-size: 36px; font-weight: 400; }
+.det3 p { margin: 0 0 16px; font-size: 24px; line-height: 1.45; color: #cfcfcf; max-width: 36ch; }
+.det3 .row { display: flex; justify-content: space-between; padding: 14px 0; border-top: 1px solid #2a2a2a; font-size: 22px; }
+.det3 .row span { color: var(--muted); font-family: var(--mono); font-size: 17px; letter-spacing: .08em; }
+.det3 .go { margin-top: 36px; display: inline-flex; gap: 14px; align-items: center; font-family: var(--mono); font-weight: 700; font-size: 26px; color: var(--accent); }
+
+/* ---- V4: table schematic ---- */
+.tbl { position: absolute; left: 100px; top: 150px; width: 1080px; height: 800px; }
+.tbl .outline { position: absolute; left: 60px; top: 60px; right: 60px; bottom: 60px; border: 2px solid #333; border-radius: 22px; }
+.tbl .recv { position: absolute; left: 50%; top: 50%; width: 220px; height: 220px; transform: translate(-50%, -50%); border-radius: 50%; border: 2px solid #4a4a4a; display: grid; place-items: center; text-align: center; }
+.tbl .recv b { display: block; font-family: var(--mono); font-size: 46px; } .tbl .recv span { font-size: 18px; color: var(--muted); }
+.slot { position: absolute; width: 190px; height: 170px; background: var(--card); display: grid; justify-items: center; align-content: center; gap: 10px; font-family: var(--mono); font-size: 16px; letter-spacing: .04em; text-align: center; }
+.slot svg { width: 64px; height: 64px; }
+.slot.sel { background: var(--accent); color: var(--dark); } .slot.sel svg * { stroke: var(--dark); }
+.slot.lock { background: transparent; border: 2px dashed #3d3d3d; color: var(--dim); } .slot.lock svg { opacity: .35; } .slot.lock em { font-style: normal; color: var(--accent); font-size: 15px; }
+.det4 { position: absolute; left: 1230px; right: 100px; top: 170px; }
+.det4 .lb { font-family: var(--mono); font-size: 16px; letter-spacing: .12em; color: var(--muted); }
+.det4 h4 { margin: 10px 0 16px; font-family: var(--mono); font-size: 34px; font-weight: 400; }
+.det4 p { margin: 0 0 14px; font-size: 23px; color: #cfcfcf; }
+
+/* ---- upgrades ---- */
+.upl { position: absolute; left: 100px; top: 150px; width: 520px; }
+.upl .lb { font-family: var(--mono); font-size: 17px; letter-spacing: .12em; color: var(--muted); }
+.upl .n { font-family: var(--mono); font-weight: 700; font-size: 170px; line-height: 1; margin: 14px 0 6px; color: var(--accent); }
+.upl .u { font-family: var(--mono); font-size: 24px; letter-spacing: .06em; margin-bottom: 40px; }
+.upl p { margin: 0 0 14px; font-size: 22px; color: #c8c8c8; max-width: 30ch; }
+.upg { position: absolute; left: 680px; right: 100px; top: 150px; display: grid; gap: 22px; }
+.upg .grp { display: grid; grid-template-columns: 170px repeat(3, 1fr); gap: 14px; }
+.upg .gl { font-family: var(--mono); font-size: 16px; letter-spacing: .12em; color: var(--muted); padding-top: 18px; }
+.uc { height: 228px; background: var(--card); display: flex; flex-direction: column; position: relative; }
+.uc .ic { height: 100px; background: var(--card-top); display: grid; place-items: center; } .uc .ic svg { width: 60px; height: 60px; }
+.uc .nm { margin: 12px 16px 0; font-family: var(--mono); font-size: 19px; letter-spacing: .04em; line-height: 1.15; }
+.uc .ft { margin: auto 16px 14px; display: flex; justify-content: space-between; align-items: center; font-size: 18px; color: #c8c8c8; }
+.uc .cost { font-family: var(--mono); color: var(--accent); }
+.uc.done { background: #262626; } .uc.done .ic { background: #222; } .uc.done .cost { color: var(--muted); }
+.uc.sel .ic { background: var(--accent); } .uc.sel .ic svg * { stroke: var(--dark); }
+.uc.far { background: transparent; outline: 2px dashed #333; outline-offset: -2px; } .uc.far .ic { background: transparent; } .uc.far .nm, .uc.far svg { opacity: .35; } .uc.far .cost { color: var(--dim); }
+</style>
+
+<main class="doc">
+  <h1>Приборы, масштаб и улучшения</h1>
+  <p class="lead">Ответы на три вопроса. Сначала правило, по которому меню растёт. Потом четыре варианта верхнего меню и карточек на одном экране «Приборы» с девятью приборами. В конце — экран «Улучшения».</p>
+
+  <h2>01 Как масштабироваться</h2>
+  <div class="rules">
+    <div><b>ПРИБОРЫ УХОДЯТ ИЗ ВЕРХНЕГО МЕНЮ</b>Пока приборов два, ИК и Масс можно держать отдельными вкладками. При пяти и больше верхний ряд ломается. Поэтому все приборы живут в одной вкладке «Приборы», а наверху остаются разделы: ⌂ · Анализ · Приборы · База · Журнал · Улучшения.</div>
+    <div><b>ВНУТРИ — ГРУППЫ ПО ЗАДАЧЕ</b>Приборы делятся по тому, что они дают: состав (масс, хроматограф), связи (ИК, УФ), структура (ЯМР, голограмма), подготовка (pH, центрифуга, реактор). Новый прибор встаёт в свою группу.</div>
+    <div><b>БЫСТРЫЙ ДОСТУП НЕ ТЕРЯЕТСЯ</b>Клавиши 1–3 по-прежнему переключают мониторы, и каждый монитор помнит свой прибор. Можно держать масс на левом, ИК на правом и не заходить в меню вовсе.</div>
+    <div><b>ЗАКРЫТОЕ ВИДНО ЗАРАНЕЕ</b>Приборы, которые ещё не открыты, стоят на своих местах пунктиром с ценой в очках. Клик ведёт в «Улучшения».</div>
+  </div>
+
+  <h2>02 Четыре варианта <small>один экран «Приборы»: 9 приборов, 3 закрыты, выбран ИК</small></h2>
+  <div id="variants"></div>
+
+  <h2>03 Улучшения <small>новая вкладка: очки исследований за определённые образцы</small></h2>
+  <div class="comp"><div class="scr" id="upgrades"></div></div>
+  <div class="notes">
+    <p><b>ОТКУДА ОЧКИ</b>За каждый определённый образец. Ошибка при проверке очков не отнимает, но и не даёт.</p>
+    <p><b>ЧТО ОТКРЫВАЕТСЯ</b>Новые приборы, точность существующих и удобства стола. Подсказок с ответами в улучшениях нет: учебная часть не покупается.</p>
+    <p><b>«!» НА ВКЛАДКЕ</b>Появляется, когда хватает очков хотя бы на одно улучшение. Число на вкладке — сколько очков есть.</p>
+  </div>
+</main>
+
+<script>
+(() => {
+  const IC = {
+    mass: `<path d="M10 102h100M22 102v-12M38 102v-18M54 102v-9M70 102v-22M96 102v-84"/>`,
+    gc: `<rect x="14" y="30" width="72" height="76" rx="3"/><circle cx="50" cy="68" r="22"/><circle cx="50" cy="68" r="12"/><path d="M50 30v-16M44 14h12M86 60h18v34"/>`,
+    ir: `<path d="M8 28h22l8 56l8 -56h18l5 26l5 -26h38"/><path d="M8 104h104"/>`,
+    uv: `<circle cx="34" cy="60" r="16"/><path d="M34 32v-10M34 98v-10M10 60h-6M62 60h8M76 40l26 -14M76 60h30M76 80l26 14"/>`,
+    nmr: `<circle cx="60" cy="60" r="44"/><circle cx="60" cy="60" r="24"/><path d="M60 4v20M60 96v20M4 60h20M96 60h20"/>`,
+    holo: `<ellipse cx="60" cy="98" rx="38" ry="9"/><path d="M28 92l-6 -50M92 92l6 -50" stroke-dasharray="4 6"/><circle cx="40" cy="50" r="10"/><circle cx="60" cy="50" r="12"/><circle cx="80" cy="50" r="10"/>`,
+    ph: `<path d="M38 40v58a6 6 0 0 0 6 6h32a6 6 0 0 0 6 -6v-58M32 40h56M38 74h44M60 8v22M54 8h12"/>`,
+    cent: `<circle cx="60" cy="60" r="44"/><circle cx="60" cy="60" r="8"/><path d="M60 16v26M60 78v26M16 60h26M78 60h26"/>`,
+    reactor: `<path d="M34 40a26 14 0 0 1 52 0v56a6 6 0 0 1 -6 6h-40a6 6 0 0 1 -6 -6z"/><path d="M34 64h52M60 26v-16M20 72h14M86 72h14"/>`,
+    home: `<path d="M14 58l46 -40l46 40M26 48v56h68v-56"/>`,
+    analysis: `<path d="M44 12h32M50 12v38l-28 50a8 8 0 0 0 7 12h62a8 8 0 0 0 7 -12l-28 -50v-38M32 82h56"/>`,
+    base: `<ellipse cx="60" cy="26" rx="38" ry="12"/><path d="M22 26v66a38 12 0 0 0 76 0v-66M22 60a38 12 0 0 0 76 0"/>`,
+    journal: `<rect x="26" y="12" width="70" height="96" rx="3"/><path d="M38 12v96M52 38h32M52 56h32M52 74h20"/>`,
+    up: `<path d="M60 104v-80M28 54l32 -32l32 32M30 104h60"/>`,
+    tools: `<path d="M20 100l44 -44M78 22a20 20 0 0 0 -16 30l-8 8l12 12l8 -8a20 20 0 0 0 30 -16l-12 12l-14 -2l-2 -14z"/>`,
+    plus: `<path d="M60 20v80M20 60h80"/>`,
+    acc: `<circle cx="60" cy="60" r="42"/><circle cx="60" cy="60" r="22"/><circle cx="60" cy="60" r="4"/>`,
+    tray: `<path d="M12 70h96l-10 30h-76zM30 70v-40h60v40"/>`
+  };
+  const svg = (k, cls = "ico") => `<svg class="${cls}" viewBox="0 0 120 120" aria-hidden="true">${IC[k]}</svg>`;
+  const INST = [
+    { id: "mass", n: "МАСС-СПЕКТРОМЕТР", s: "МАСС-СПЕКТР", g: "СОСТАВ", st: "масса 44", key: 2 },
+    { id: "gc", n: "ХРОМАТОГРАФ", s: "ХРОМАТОГРАФ", g: "СОСТАВ", st: "готов" },
+    { id: "ir", n: "ИК-СПЕКТРОМЕТР", s: "ИК-СПЕКТР", g: "СВЯЗИ", st: "зоны не отмечены", key: 3, sel: true },
+    { id: "uv", n: "УФ-СПЕКТРОМЕТР", s: "УФ-СПЕКТР", g: "СВЯЗИ", st: "готов" },
+    { id: "nmr", n: "ЯМР-СПЕКТРОМЕТР", s: "ЯМР", g: "СТРУКТУРА", lock: "2 очка" },
+    { id: "holo", n: "ГОЛОГРАММА", s: "ГОЛОГРАММА", g: "СТРУКТУРА", st: "C · O · O", key: 4 },
+    { id: "ph", n: "pH-МЕТР", s: "pH-МЕТР", g: "ПОДГОТОВКА", st: "готов" },
+    { id: "cent", n: "ЦЕНТРИФУГА", s: "ЦЕНТРИФУГА", g: "ПОДГОТОВКА", lock: "1 очко" },
+    { id: "reactor", n: "РЕАКТОР", s: "РЕАКТОР", g: "ПОДГОТОВКА", lock: "1 очко" }
+  ];
+  const GROUPS = ["СОСТАВ", "СВЯЗИ", "СТРУКТУРА", "ПОДГОТОВКА"];
+  const TABS = [["home", "⌂"], ["analysis", "АНАЛИЗ"], ["tools", "ПРИБОРЫ"], ["base", "БАЗА ДАННЫХ"], ["journal", "ЖУРНАЛ"], ["up", "УЛУЧШЕНИЯ"]];
+  const extra = (id, on) => id === "journal" ? ' <span class="bang">!</span>' : id === "up" ? ' <span class="pts">3</span>' : "";
+  const foot = () => `<div class="back"><span class="kc">ESC</span>НАЗАД</div><div class="foot">${["ЛЕВЫЙ", "ЦЕНТР", "ПРАВЫЙ", "МОЛЕКУЛА"].map((n, i) => `<span class="${i === 1 ? "on" : ""}"><span class="kc">${i + 1}</span>${n}</span>`).join("")}</div>`;
+  const status = i => i.lock ? `закрыто · ${i.lock}` : i.st;
+
+  const H1 = on => `<div class="h1"><span class="kc">Q</span>${TABS.map(([id, t]) => `<div class="t ${id === on ? "on" : ""}">${t}${extra(id)}</div>`).join("")}<span class="kc">E</span></div>`;
+  const H2 = on => `<div class="h2"><span class="kc">Q</span>${TABS.filter(t => t[0] !== "up").map(([id, t]) => `<div class="t ${id === on ? "on" : ""}">${t}${extra(id)}</div>`).join("")}<span class="kc">E</span><span class="sp"></span><div class="up ${on === "up" ? "on" : ""}">УЛУЧШЕНИЯ <span class="pts">3</span></div></div>`;
+  const H3 = on => `<div class="h3"><span class="kc">Q</span>${TABS.map(([id, t]) => `<div class="t ${id === on ? "on" : ""}">${svg(id)}${t === "⌂" ? "ОБЗОР" : t}${extra(id)}</div>`).join("")}<span class="kc">E</span></div>`;
+  const H4 = on => `<div class="h4"><span class="big">${TABS.find(t => t[0] === on)[1]}</span><span class="kc">Q</span>${TABS.filter(t => t[0] !== on).map(([id, t]) => `<span class="t">${t}${extra(id)}</span>`).join("")}<span class="kc">E</span><span class="sp"></span></div>`;
+
+  const cardHTML = (i, big) => `<div class="card ${big ? "big3" : ""} ${i.sel ? "sel" : ""} ${i.lock ? "lock" : ""}"><div class="ic">${svg(i.id)}</div><div class="gr">${i.g}</div><div class="nm">${big ? i.n : i.s}</div><div class="st"><span>${status(i)}</span>${i.key ? `<span class="kc">${i.key}</span>` : ""}</div></div>`;
+
+  const V1 = () => H1("tools") + `<div class="v1row"><div class="arr">‹</div>${INST.slice(0, 5).map(i => cardHTML(i)).join("")}<div class="arr">›</div></div>
+    <div class="v1pager"><span class="kc">A</span><i class="on"></i><i></i><span class="kc">D</span><span>1 / 2</span></div>
+    <div class="v1desc"><span><b>ИК-СПЕКТРОМЕТР</b>какие связи есть в молекуле</span><span>Enter — открыть</span></div>` + foot();
+
+  const V2 = () => H2("tools") + `<div class="v2">${GROUPS.map(g => {
+      const items = INST.filter(i => i.g === g);
+      const cells = items.map(i => `<div class="hc ${i.sel ? "sel" : ""} ${i.lock ? "lock" : ""}"><div class="ic">${svg(i.id)}</div><div class="tx"><div class="nm">${i.s}</div><div class="st">${status(i)}</div></div><div class="k">${i.key ? `<span class="kc">${i.key}</span>` : ""}</div></div>`);
+      while (cells.length < 3) cells.push(`<div class="hc empty"></div>`);
+      return `<div class="grp"><div class="gl">${g}</div>${cells.join("")}</div>`;
+    }).join("")}</div>` + foot();
+
+  const V3 = () => {
+    let rail = "";
+    GROUPS.forEach(g => { rail += `<div class="gl">${g.slice(0, 4)}</div>`; INST.filter(i => i.g === g).forEach(i => rail += `<div class="r ${i.sel ? "sel" : ""} ${i.lock ? "lock" : ""}">${svg(i.id)}</div>`); });
+    const ir = INST.find(i => i.sel);
+    return H3("tools").replace('class="h3"', 'class="h3" style="top:20px"') + `<div class="rail" style="top:140px;gap:6px">${rail}</div>` + cardHTML(ir, true) +
+      `<div class="det3" style="top:150px"><div class="lb">СВЯЗИ · ПРИБОР 3 ИЗ 9</div><h4>ИК-СПЕКТРОМЕТР</h4><p>Просвечивает образец инфракрасным светом. Каждая связь поглощает в своей зоне.</p>
+      <div class="row"><span>ОБРАЗЕЦ</span><b>КР-01</b></div><div class="row"><span>ОТМЕЧЕНО ЗОН</span><b>0</b></div><div class="row"><span>НА МОНИТОРЕ</span><b>2 · центр</b></div>
+      <div class="go"><span class="kc">↵</span>ОТКРЫТЬ</div></div>` + foot();
+  };
+
+  const V4 = () => {
+    const pos = { mass: [80, 40], gc: [300, 40], ir: [600, 40], uv: [820, 40], nmr: [820, 315], holo: [600, 590], ph: [300, 590], cent: [80, 590], reactor: [80, 315] };
+    const slots = INST.map(i => `<div class="slot ${i.sel ? "sel" : ""} ${i.lock ? "lock" : ""}" style="left:${pos[i.id][0]}px;top:${pos[i.id][1]}px">${svg(i.id)}<span>${i.s}</span>${i.lock ? `<em>+ ${i.lock}</em>` : ""}</div>`).join("");
+    return H4("tools") + `<div class="tbl" style="top:140px"><div class="outline"></div><div class="recv"><div><b>КР-01</b><span>в приёмнике</span></div></div>${slots}</div>
+      <div class="det4"><div class="lb">СВЯЗИ</div><h4>ИК-СПЕКТРОМЕТР</h4><p>Стоит справа сверху на столе. Просвечивает образец инфракрасным светом.</p><p style="color:#9a9a9a">Пунктир — места для приборов из «Улучшений».</p></div>` + foot();
+  };
+
+  const VARS = [
+    ["1 · Ваши карточки в ряд", "верх как сейчас (залитая вкладка), ваши высокие карточки, лишние уходят на следующую страницу A / D", V1,
+      ["Ближе всего к тому, что уже есть: меняется только вкладка «Приборы».", "Видно 5 приборов из 9, остальное на второй странице. Группы видны только подписью над названием.", "«Улучшения» — обычная вкладка справа с числом очков."]],
+    ["2 · Строки по группам", "верх — текст с подчёркиванием, «Улучшения» отдельно справа; карточки горизонтальные: иконка слева, название, статус", V2,
+      ["Влезает до 12 приборов на экран без прокрутки, группы видны сразу.", "Карточки ниже и шире: на меше читаются хорошо, но меньше «предметности».", "«Улучшения» не вкладка, а кнопка с очками справа: всегда на виду."]],
+    ["3 · Рельс и большая карточка", "верх — полоса с иконками над подписями; слева колонка иконок приборов, в центре ваша карточка крупно, справа детали", V3,
+      ["Колонка вмещает 12–14 приборов, выбранный показан крупно в вашем стиле.", "Приборы в колонке узнаются только по иконке, нужны очень разные иконки.", "Похоже на Elite: удобно с геймпада, вверх-вниз по колонке."]],
+    ["4 · Схема стола", "верх — большое название раздела слева и мелкие вкладки; приборы расставлены по схеме стола вокруг приёмника", V4,
+      ["Самый «живой»: интерфейс повторяет реальный стол, игрок запоминает, где стоит прибор.", "Мест на столе ограниченно (около 10–12). Это и плюс: новые места покупаются в «Улучшениях».", "Нужно, чтобы 3D-стол в Unreal совпадал со схемой."]]
+  ];
+  document.getElementById("variants").innerHTML = VARS.map(([t, s, fn, n]) => `<article class="v"><header><h3>${t}</h3><span>${s}</span></header>
+    <div class="comp"><div class="scr">${fn()}</div></div><div class="notes"><p><b>ПЛЮС</b>${n[0]}</p><p><b>МИНУС</b>${n[1]}</p><p><b>ЗАМЕТКА</b>${n[2]}</p></div></article>`).join("");
+
+  const UP = [
+    ["ПРИБОРЫ", [["gc", "ХРОМАТОГРАФ", "открыто", "done"], ["nmr", "ЯМР-СПЕКТРОМЕТР", "2", "sel"], ["reactor", "РЕАКТОР", "1", ""]]],
+    ["ТОЧНОСТЬ", [["mass", "МАСС-СПЕКТР: ДЕСЯТЫЕ ДОЛИ", "1", ""], ["ir", "ИК: УЗКИЕ ЗОНЫ", "1", ""], ["acc", "ЭТАЛОН: 5 СВЕРОК", "2", ""]]],
+    ["СТОЛ", [["tray", "ВТОРОЙ ПРИЁМНИК", "3", ""], ["cent", "ЦЕНТРИФУГА", "1", ""], ["plus", "ЧЕТВЁРТЫЙ МОНИТОР", "5", "far"]]]
+  ];
+  document.getElementById("upgrades").innerHTML = H1("up") + `<div class="upl"><div class="lb">ОЧКИ ИССЛЕДОВАНИЙ</div><div class="n">3</div><div class="u">ЗА 3 ОПРЕДЕЛЁННЫХ ОБРАЗЦА</div>
+    <p>Очки даются за каждое определённое вещество.</p><p>Выбрано: ЯМР-спектрометр. Покажет, как атомы водорода связаны с соседями.</p>
+    <div style="margin-top:34px;display:inline-flex;gap:14px;align-items:center;font-family:var(--mono);font-weight:700;font-size:26px;color:var(--accent)"><span class="kc">↵</span>ОТКРЫТЬ ЗА 2</div></div>
+    <div class="upg">${UP.map(([g, items]) => `<div class="grp"><div class="gl">${g}</div>${items.map(([ic, n, c, cls]) => `<div class="uc ${cls}"><div class="ic">${svg(ic)}</div><div class="nm">${n}</div><div class="ft"><span>${cls === "done" ? "есть" : cls === "far" ? "нужно 5 очков" : "доступно"}</span><span class="cost">${cls === "done" ? "✓" : c + " оч."}</span></div></div>`).join("")}</div>`).join("")}</div>` + foot();
+
+  const fit = () => document.querySelectorAll(".comp").forEach(c => { c.firstElementChild.style.transform = `scale(${c.clientWidth / 1920})`; });
+  new ResizeObserver(fit).observe(document.body);
+  fit();
+})();
+</script>

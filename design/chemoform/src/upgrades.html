@@ -1,0 +1,259 @@
+<title>Хемоформ · Улучшения</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500&display=swap">
+<style>
+@font-face { font-family: "Disket Mono"; font-weight: 400; src: url(data:font/ttf;base64,__DISKET_REG__) format("truetype"); }
+@font-face { font-family: "Disket Mono"; font-weight: 700; src: url(data:font/ttf;base64,__DISKET_BOLD__) format("truetype"); }
+/* Layout: 1920×1080 «Улучшения» screen modelled on the research tree from The Alters: tabs, branch sub-tabs, tree with level gates, queue + detail card on the right. Accent teal replaces Alters' magenta. Single dark look by design. */
+:root {
+  color-scheme: dark;
+  --page: #0a0a0a;
+  --bg: #161717;
+  --text: #ececec;
+  --muted: #a0a0a0;
+  --dim: #5a5a5a;
+  --line: #4a4a4a;
+  --accent: #3dd4c4;
+  --dark: #0b201e;
+  --mono: "Disket Mono", ui-monospace, Menlo, monospace;
+  --body: "Jost", "Segoe UI", system-ui, sans-serif;
+}
+html, body { background: var(--page); color: var(--text); }
+body { font-family: var(--body); font-size: 15px; line-height: 1.45; }
+.wrap { max-width: 1440px; margin: 0 auto; padding-inline: 20px; padding-block: 18px 40px; display: grid; gap: 12px; }
+.wrap > p { margin: 0; color: var(--muted); max-width: 84ch; }
+.stage { position: relative; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; background: var(--bg); outline: none; }
+.stage:focus-visible { box-shadow: 0 0 0 2px var(--accent); }
+.screen { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; background: radial-gradient(ellipse 1300px 900px at 700px 500px, #222424, #141515 80%); font-family: var(--body); color: var(--text); }
+.kc { display: inline-grid; place-items: center; min-width: 32px; height: 30px; padding: 0 7px; border-radius: 5px; background: #d8d8d8; color: #141414; font-family: var(--mono); font-weight: 700; font-size: 16px; box-shadow: 0 4px 0 #8a8a8a; }
+
+/* tabs */
+.tabs { position: absolute; left: 0; right: 0; top: 0; height: 64px; display: flex; justify-content: center; align-items: center; }
+.tabs .kc { margin: 0 28px; }
+.tab { position: relative; height: 64px; padding: 0 30px; display: flex; gap: 10px; align-items: center; font-family: var(--mono); font-weight: 700; font-size: 21px; letter-spacing: .05em; }
+.tab.home { font-size: 27px; }
+.tab.on { background: var(--accent); color: var(--dark); }
+.tab.on::after { content: ""; position: absolute; bottom: -15px; left: 50%; width: 9px; height: 9px; border-right: 2px solid #999; border-bottom: 2px solid #999; transform: translateX(-50%) rotate(45deg); }
+.bang { display: inline-grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; background: var(--accent); color: var(--dark); font-size: 12px; }
+.tab.on .bang { background: var(--dark); color: var(--accent); }
+.pts { display: inline-grid; place-items: center; min-width: 26px; height: 26px; padding: 0 6px; border-radius: 13px; background: var(--accent); color: var(--dark); font-size: 15px; }
+.tab.on .pts { background: var(--dark); color: var(--accent); }
+
+/* branches */
+.branches { position: absolute; left: 320px; top: 84px; display: flex; align-items: flex-start; gap: 6px; }
+.branches .kc { margin-top: 18px; }
+.br { width: 160px; height: 64px; display: grid; justify-items: center; align-content: center; gap: 8px; font-family: var(--mono); font-weight: 700; font-size: 17px; letter-spacing: .06em; color: var(--text); cursor: pointer; }
+.br.on { height: 92px; background: #0c0c0c; }
+.br svg { width: 26px; height: 26px; display: none; } .br.on svg { display: block; }
+.br svg * { fill: none; stroke: var(--text); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.br .bang { margin-left: 8px; vertical-align: 2px; }
+
+.lvl { position: absolute; left: 70px; top: 128px; display: flex; gap: 14px; align-items: center; font-family: var(--mono); font-size: 16px; letter-spacing: .12em; line-height: 1.25; color: var(--muted); }
+.roman { width: 38px; height: 38px; border-radius: 50%; background: var(--text); color: #111; display: grid; place-items: center; font-family: var(--mono); font-weight: 700; font-size: 17px; }
+.points { position: absolute; left: 1130px; top: 124px; display: flex; gap: 16px; align-items: center; font-family: var(--mono); font-size: 16px; letter-spacing: .12em; line-height: 1.25; color: var(--muted); }
+.points b { font-family: var(--mono); font-size: 40px; color: var(--accent); font-weight: 700; letter-spacing: 0; }
+.points .chip { width: 38px; height: 38px; background: var(--text); border-radius: 4px; display: grid; place-items: center; }
+.points .chip svg { width: 26px; height: 26px; } .points .chip svg * { fill: none; stroke: #111; stroke-width: 2.5; stroke-linecap: round; }
+
+/* tree */
+.gateband { position: absolute; left: 50px; top: 790px; width: 1330px; height: 210px; background: rgba(255,255,255,.035); border-radius: 18px; }
+.gatelabel { position: absolute; left: 1100px; top: 960px; display: flex; gap: 12px; align-items: center; font-family: var(--mono); font-size: 17px; letter-spacing: .1em; color: var(--muted); }
+.gatelabel i { font-style: normal; width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--muted); display: grid; place-items: center; font-size: 13px; }
+svg.wires { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; pointer-events: none; }
+.node { position: absolute; width: 230px; margin-left: -115px; display: grid; justify-items: center; gap: 12px; cursor: pointer; text-align: center; }
+.node .sq { width: 76px; height: 76px; border-radius: 7px; display: grid; place-items: center; position: relative; }
+.node .sq svg { width: 50px; height: 50px; }
+.node .sq svg * { fill: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.node .nm { font-family: var(--mono); font-size: 17px; letter-spacing: .03em; line-height: 1.2; }
+.node.done .sq { background: #ececec; } .node.done .sq svg * { stroke: #151515; } .node.done .nm { color: var(--text); }
+.node.avail .sq { background: #0b0b0b; box-shadow: inset 0 0 0 1.5px #5c5c5c; } .node.avail .sq svg * { stroke: var(--text); } .node.avail .nm { color: var(--text); }
+.node.prog .sq { background: #0b0b0b; } .node.prog .sq svg { display: none; } .node.prog .sq b { font-family: var(--mono); font-size: 22px; color: var(--accent); }
+.node.prog .nm { color: var(--text); }
+.node.lock .sq { background: #1f2020; } .node.lock .sq svg * { stroke: #5a5a5a; } .node.lock .nm { color: #6c6c6c; }
+.node.sel .sq { background: var(--accent); box-shadow: none; } .node.sel .sq svg * { stroke: var(--dark); } .node.sel .nm { color: var(--accent); }
+.node.sel .sq::before { content: ""; position: absolute; left: -26px; top: 6px; width: 16px; height: 16px; border: 2px solid var(--accent); }
+.node .cost { position: absolute; left: -24px; top: -6px; width: 26px; height: 26px; background: var(--text); border-radius: 4px; display: none; place-items: center; font-family: var(--mono); font-size: 13px; font-weight: 700; color: #111; }
+.node.avail .cost, .node.sel .cost { display: grid; }
+.node.sel .cost { left: -30px; top: 30px; }
+.gate { position: absolute; width: 64px; height: 64px; margin-left: -32px; border-radius: 50%; border: 2.5px solid #6a6a6a; display: grid; place-items: center; font-family: var(--mono); font-weight: 700; font-size: 22px; color: #9a9a9a; background: #181919; }
+
+/* right */
+.qtitle { position: absolute; right: 70px; top: 124px; font-family: var(--mono); font-weight: 700; font-size: 38px; letter-spacing: .02em; padding-bottom: 8px; background: repeating-linear-gradient(90deg, var(--text) 0 14px, transparent 14px 20px) left bottom / 100% 3px no-repeat; }
+.queue { position: absolute; left: 1440px; right: 70px; top: 196px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.slot { height: 128px; background: #0b0b0b; padding: 12px 14px; position: relative; display: grid; grid-template-rows: auto 1fr; }
+.slot.empty { background: rgba(255,255,255,.04); }
+.slot .t { font-family: var(--mono); font-size: 15px; letter-spacing: .04em; }
+.slot svg { width: 52px; height: 52px; align-self: end; } .slot svg * { fill: none; stroke: var(--text); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.slot .r { position: absolute; right: 14px; bottom: 18px; text-align: right; font-family: var(--mono); font-size: 15px; color: var(--muted); }
+.slot .r b { display: block; font-size: 24px; color: var(--accent); font-weight: 400; }
+.slot .bar { position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: #2a2a2a; } .slot .bar i { display: block; height: 100%; background: var(--accent); }
+.detail { position: absolute; left: 1440px; right: 70px; top: 370px; height: 610px; overflow: hidden; background: #0b0b0b; border-radius: 10px; padding: 28px 34px; display: flex; flex-direction: column; }
+.detail::before, .detail::after { content: ""; position: absolute; width: 18px; height: 18px; border: 1.5px solid #3a3a3a; }
+.detail::before { left: 14px; top: 14px; border-right: 0; border-bottom: 0; } .detail::after { right: 14px; top: 14px; border-left: 0; border-bottom: 0; }
+.detail .art { height: 210px; display: grid; place-items: center; position: relative; }
+.detail .art svg { width: 200px; height: 200px; } .detail .art svg * { fill: none; stroke: #dcdcdc; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.detail .fx { position: absolute; right: 0; top: 10px; display: grid; gap: 6px; text-align: right; font-family: var(--mono); font-weight: 700; font-size: 26px; }
+.detail .fx span { color: var(--text); } .detail .fx small { display: block; font-family: var(--body); font-weight: 400; font-size: 16px; color: var(--muted); }
+.detail h3 { margin: 14px 0 8px; font-family: var(--mono); font-weight: 700; font-size: 26px; letter-spacing: .03em; }
+.detail p { margin: 0; font-size: 19px; line-height: 1.4; color: #cfcfcf; }
+.detail .need { margin-top: 10px; font-size: 18px; color: var(--muted); }
+.detail .need b { color: var(--text); font-weight: 500; }
+.detail .meta { margin-top: auto; display: grid; grid-template-columns: 1fr 1fr; gap: 14px 20px; align-items: end; }
+.detail .meta .go { grid-column: 1 / -1; padding-top: 14px; border-top: 1px solid #2a2a2a; }
+.detail .meta .lb { font-family: var(--mono); font-size: 15px; letter-spacing: .12em; color: var(--muted); }
+.detail .meta .v { font-family: var(--mono); font-size: 24px; margin-top: 6px; display: flex; gap: 10px; align-items: center; }
+.detail .go { font-family: var(--mono); font-weight: 700; font-size: 20px; color: var(--accent); display: flex; gap: 10px; align-items: center; }
+.detail .go.off { color: var(--dim); } .detail .go.off .kc { background: #555; box-shadow: 0 4px 0 #333; }
+
+/* footer */
+.back { position: absolute; left: 1440px; top: 1012px; display: none; }
+.mons { position: absolute; left: 0; right: 0; top: 1012px; display: flex; justify-content: center; gap: 40px; font-family: var(--mono); font-size: 17px; color: var(--muted); }
+.mons span { display: flex; gap: 10px; align-items: center; }
+.mons .on { color: var(--text); } .mons .on .kc { background: var(--accent); box-shadow: 0 4px 0 #1f7d73; }
+.esc { position: absolute; left: 70px; top: 1008px; display: flex; gap: 12px; align-items: center; font-family: var(--mono); font-size: 20px; border: 1.5px solid #666; padding: 7px 12px; }
+</style>
+
+<div class="wrap">
+  <p>Вкладка «Улучшения» по образцу дерева исследований из The Alters. Клик по плитке — выбрать, A / D или клик по ветке — сменить ветку, Enter — исследовать выбранное.</p>
+  <div class="stage" id="stage" tabindex="0" aria-label="Экран улучшений">
+    <div class="screen" id="screen"></div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const IC = {
+    gc: `<rect x="10" y="22" width="56" height="62" rx="3"/><circle cx="38" cy="54" r="16"/><circle cx="38" cy="54" r="8"/><path d="M38 22v-12M66 46h14v26"/>`,
+    mass: `<path d="M8 82h74M18 82v-10M30 82v-16M42 82v-7M54 82v-18M74 82v-66"/>`,
+    ir: `<path d="M6 22h16l6 44l6 -44h14l4 20l4 -20h30M6 82h78"/>`,
+    holo: `<ellipse cx="45" cy="76" rx="28" ry="7"/><circle cx="28" cy="38" r="8"/><circle cx="45" cy="38" r="9"/><circle cx="62" cy="38" r="8"/><path d="M22 70l-4 -34M68 70l4 -34" stroke-dasharray="3 5"/>`,
+    uv: `<circle cx="26" cy="45" r="12"/><path d="M26 24v-8M26 74v-8M8 45h-4M46 45h6M58 30l22 -10M58 45h24M58 60l22 10"/>`,
+    ph: `<path d="M28 30v46a5 5 0 0 0 5 5h24a5 5 0 0 0 5 -5v-46M24 30h42M28 58h34M45 6v16M40 6h10"/>`,
+    nmr: `<ellipse cx="45" cy="22" rx="30" ry="9"/><path d="M15 22v46a30 9 0 0 0 60 0v-46"/><path d="M45 4v52M40 4h10"/><path d="M41 56h8v10h-8z"/>`,
+    etalon: `<circle cx="45" cy="45" r="32"/><circle cx="45" cy="45" r="16"/><circle cx="45" cy="45" r="3"/>`,
+    reactor: `<path d="M24 30a21 11 0 0 1 42 0v44a5 5 0 0 1 -5 5h-32a5 5 0 0 1 -5 -5z"/><path d="M24 50h42M45 18v-12"/>`,
+    chain: `<circle cx="16" cy="56" r="8"/><circle cx="45" cy="34" r="8"/><circle cx="74" cy="56" r="8"/><path d="M22 51l17 -12M51 39l17 12M66 18l14 14M80 18l-14 14"/>`,
+    nmr2: `<path d="M8 80h74M8 80v-72"/><circle cx="30" cy="58" r="5"/><circle cx="52" cy="36" r="5"/><circle cx="66" cy="22" r="5"/><path d="M30 80v-16M52 80v-38"/>`,
+    tray: `<path d="M8 52h74l-8 24h-58zM22 52v-30h46v30"/>`,
+    mon: `<rect x="10" y="14" width="70" height="46" rx="3"/><path d="M34 76h22M45 60v16"/>`,
+    iso: `<circle cx="32" cy="45" r="18"/><circle cx="58" cy="45" r="18"/>`,
+    hint: `<circle cx="45" cy="38" r="20"/><path d="M38 64h14M40 74h10M45 30v10M45 46v2"/>`,
+    root_inst: `<path d="M20 70l28 -28M54 12a14 14 0 0 0 -11 21l-6 6l9 9l6 -6a14 14 0 0 0 21 -11l-9 9l-10 -2l-2 -10z"/>`,
+    root_acc: `<circle cx="45" cy="45" r="30"/><circle cx="45" cy="45" r="14"/><circle cx="45" cy="45" r="3"/>`,
+    root_tbl: `<path d="M8 40h74M16 40v40M74 40v40M24 40v-14h42v14"/>`,
+    pt: `<path d="M20 70l50 -50M30 20h40v40"/>`
+  };
+  const BIG = {
+    nmr: `<ellipse cx="120" cy="56" rx="70" ry="20"/><path d="M50 56v116a70 20 0 0 0 140 0v-116"/><path d="M50 96a70 20 0 0 0 140 0M50 136a70 20 0 0 0 140 0"/><path d="M120 10v120M108 10h24"/><rect x="110" y="120" width="20" height="30" rx="3"/><path d="M200 70l24 -10M200 100h26M200 130l24 10"/><path d="M30 214h180"/>`
+  };
+  const s = (k, vb = "0 0 90 90") => `<svg viewBox="${vb}" aria-hidden="true">${IC[k] || IC.etalon}</svg>`;
+
+  // x — column centre, t — tier (1..3), gate — needs lab level
+  const BRANCHES = [
+    { name: "ПРИБОРЫ", icon: "root_inst", rootX: 425, nodes: [
+      { id: "gc", n: "ХРОМАТОГРАФ", x: 250, t: 1, st: "done", ic: "gc", d: "Делит смесь на отдельные вещества перед масс-спектрометром.", fx: ["+1", "прибор"], cost: 1, time: "1 образец" },
+      { id: "massp", n: "МАСС: ДЕСЯТЫЕ ДОЛИ", x: 560, t: 1, st: "done", ic: "mass", d: "Масс-спектр показывает массу с точностью до десятых.", fx: ["0.1", "точность"], cost: 1, time: "1 образец" },
+      { id: "irn", n: "ИК: УЗКИЕ ЗОНЫ", x: 870, t: 1, st: "done", ic: "ir", d: "Зоны ИК-спектра делятся на более узкие участки.", fx: ["×2", "зон"], cost: 1, time: "1 образец" },
+      { id: "holo6", n: "ГОЛОГРАММА: 6 АТОМОВ", x: 1180, t: 1, st: "avail", ic: "holo", d: "На голограмме можно собирать молекулы до шести тяжёлых атомов.", fx: ["6", "атомов"], cost: 1, time: "1 образец" },
+      { id: "uv", n: "УФ-СПЕКТРОМЕТР", x: 160, t: 2, st: "prog", p: 50, par: ["gc"], ic: "uv", d: "Показывает поглощение ультрафиолета: сопряжённые двойные связи и кольца.", fx: ["+1", "прибор"], cost: 2, time: "2 образца" },
+      { id: "ph", n: "pH-МЕТР", x: 400, t: 2, st: "avail", par: ["gc"], ic: "ph", d: "Измеряет кислотность раствора пробы.", fx: ["+1", "прибор"], cost: 1, time: "1 образец" },
+      { id: "nmr", n: "ЯМР-СПЕКТРОМЕТР", x: 715, t: 2, st: "avail", sel: true, par: ["massp", "irn"], ic: "nmr", d: "Показывает, как атомы водорода связаны с соседями. Помогает различить молекулы с одинаковой массой и связями.", fx: ["+1", "прибор"], cost: 2, time: "2 образца" },
+      { id: "etal", n: "ЭТАЛОН: 5 СВЕРОК", x: 1180, t: 2, st: "lock", par: ["holo6"], ic: "etalon", d: "Сверка с базой на голограмме доступна пять раз вместо трёх.", fx: ["5", "сверок"], cost: 1, time: "1 образец", need: "Голограмма: 6 атомов" },
+      { id: "reactor", n: "РЕАКТОР", x: 400, t: 3, st: "lock", gate: "III", par: ["ph"], ic: "reactor", d: "Синтез, нагрев и фильтрация пробы в центре стола.", fx: ["+1", "прибор"], cost: 3, time: "3 образца", need: "уровень лаборатории III" },
+      { id: "chain", n: "ОЧИСТКА ЦЕПИ", x: 160, t: 3, st: "lock", gate: "III", par: ["uv"], ic: "chain", d: "Голограмма цепочки с заражёнными узлами.", fx: ["+1", "режим"], cost: 3, time: "3 образца", need: "уровень лаборатории III" },
+      { id: "nmr2", n: "ЯМР: ДВУМЕРНЫЙ", x: 715, t: 3, st: "lock", gate: "III", par: ["nmr"], ic: "nmr2", d: "Показывает связи между атомами напрямую.", fx: ["2D", "спектр"], cost: 3, time: "3 образца", need: "уровень лаборатории III" },
+      { id: "hint", n: "РАЗБОР ОШИБОК", x: 1180, t: 3, st: "lock", gate: "III", par: ["etal"], ic: "hint", d: "После неверной проверки журнал подробнее объясняет, что не сошлось.", fx: ["+1", "подсказка"], cost: 2, time: "2 образца", need: "уровень лаборатории III" }
+    ] },
+    { name: "ТОЧНОСТЬ", icon: "root_acc", rootX: 615, nodes: [
+      { id: "a1", n: "МАСС: ДЕСЯТЫЕ ДОЛИ", x: 400, t: 1, st: "done", ic: "mass", d: "Масса с точностью до десятых.", fx: ["0.1", "точность"], cost: 1, time: "1 образец" },
+      { id: "a2", n: "ИК: УЗКИЕ ЗОНЫ", x: 830, t: 1, st: "done", ic: "ir", d: "Зоны ИК делятся на узкие участки.", fx: ["×2", "зон"], cost: 1, time: "1 образец" },
+      { id: "a3", n: "МАСС: ИЗОТОПЫ", x: 400, t: 2, st: "avail", sel: true, par: ["a1"], ic: "iso", d: "Масс-спектр показывает изотопные пики: видно хлор и бром.", fx: ["+M+2", "пики"], cost: 2, time: "2 образца" },
+      { id: "a4", n: "ИК: ПОДПИСИ ПИКОВ", x: 830, t: 2, st: "avail", par: ["a2"], ic: "ir", d: "Точное волновое число при наведении на провал.", fx: ["см⁻¹", "точно"], cost: 1, time: "1 образец" },
+      { id: "a5", n: "ВЫСОКОЕ РАЗРЕШЕНИЕ", x: 615, t: 3, st: "lock", gate: "III", par: ["a3", "a4"], ic: "mass", d: "Масса до тысячных: формулу можно отличить по массе.", fx: ["0.001", "точность"], cost: 3, time: "3 образца", need: "уровень лаборатории III" }
+    ] },
+    { name: "СТОЛ", icon: "root_tbl", rootX: 805, nodes: [
+      { id: "b1", n: "ВТОРОЙ ПРИЁМНИК", x: 560, t: 1, st: "avail", sel: true, ic: "tray", d: "На столе можно держать два образца и сравнивать их.", fx: ["+1", "приёмник"], cost: 3, time: "2 образца" },
+      { id: "b2", n: "ЦЕНТРИФУГА", x: 1050, t: 1, st: "avail", ic: "etalon", d: "Отделяет осадок от раствора.", fx: ["+1", "прибор"], cost: 1, time: "1 образец" },
+      { id: "b3", n: "ЧЕТВЁРТЫЙ МОНИТОР", x: 805, t: 3, st: "lock", gate: "III", par: ["b1", "b2"], ic: "mon", d: "Ещё один монитор на столе.", fx: ["+1", "монитор"], cost: 5, time: "3 образца", need: "уровень лаборатории III" }
+    ] },
+    { name: "СЮЖЕТ", icon: "pt", rootX: 995, bang: true, nodes: [
+      { id: "c1", n: "ПРОТОКОЛ «ЧИСТАЯ ВОДА»", x: 995, t: 1, st: "avail", sel: true, ic: "ph", d: "Открывает сюжетную цепочку станции водоочистки.", fx: ["гл. 1", "сюжет"], cost: 0, time: "сразу" }
+    ] }
+  ];
+  const TABS = [["⌂", "home"], ["АНАЛИЗ"], ["ПРИБОРЫ"], ["БАЗА ДАННЫХ"], ["ЖУРНАЛ", "j"], ["УЛУЧШЕНИЯ", "u"]];
+  const TY = { 1: 300, 2: 520, 3: 740 };
+  let b = 0, points = 3;
+  const $ = id => document.getElementById(id);
+
+  function render() {
+    const br = BRANCHES[b], nodes = br.nodes, sel = nodes.find(n => n.sel) || nodes[0];
+    const byId = Object.fromEntries(nodes.map(n => [n.id, n]));
+    // wires
+    let w = "";
+    const lit = n => n.st === "done";
+    const wire = (x1, y1, x2, y2, on) => { const my = y1 + (y2 - y1) / 2; w += `<path d="M${x1} ${y1}V${my}H${x2}V${y2}" fill="none" stroke="${on ? "#dcdcdc" : "#4a4a4a"}" stroke-width="2.5"/>`; };
+    const rootY = 176;
+    nodes.filter(n => n.t === 1).forEach(n => wire(br.rootX, rootY, n.x, TY[1] - 38, true));
+    nodes.forEach(n => (n.par || []).forEach(pid => { const p = byId[pid]; wire(p.x, TY[p.t] + 90, n.x, TY[n.t] - 38, lit(p)); }));
+    nodes.filter(n => n.gate).forEach(n => { w += `<path d="M${n.x} ${TY[n.t] + 90}V${900}" fill="none" stroke="#4a4a4a" stroke-width="2.5"/>`; });
+
+    const nodeHTML = nodes.map(n => `<div class="node ${n.st} ${n === sel ? "sel" : ""}" data-id="${n.id}" style="left:${n.x}px;top:${TY[n.t] - 38}px">
+      <div class="sq">${n.st === "prog" ? `<b>${n.p}%</b>` : s(n.ic)}<span class="cost">${n.cost}</span></div><div class="nm">${n.n}</div></div>`).join("");
+    const gates = nodes.filter(n => n.gate).map(n => `<div class="gate" style="left:${n.x}px;top:868px">${n.gate}</div>`).join("");
+
+    const canBuy = sel.st === "avail" && points >= sel.cost;
+    const stateLine = { done: "Исследовано.", prog: "Идёт исследование.", lock: `Нужно: <b>${sel.need || "предыдущее улучшение"}</b>.`, avail: points >= sel.cost ? "Доступно." : "Не хватает очков." }[sel.st];
+    const big = BIG[sel.ic] ? `<svg viewBox="0 0 240 230" aria-hidden="true">${BIG[sel.ic]}</svg>` : `<svg viewBox="0 0 90 90" aria-hidden="true">${IC[sel.ic]}</svg>`;
+
+    $("screen").innerHTML = `
+      <div class="tabs"><span class="kc">Q</span>${TABS.map(([t, k]) => `<div class="tab ${k === "home" ? "home" : ""} ${k === "u" ? "on" : ""}">${t}${k === "j" ? '<span class="bang">!</span>' : ""}${k === "u" ? `<span class="pts">${points}</span>` : ""}</div>`).join("")}<span class="kc">E</span></div>
+      <div class="branches"><span class="kc">A</span>${BRANCHES.map((x, i) => `<div class="br ${i === b ? "on" : ""}" data-b="${i}"><span>${x.name}${x.bang ? '<span class="bang">!</span>' : ""}</span><svg viewBox="0 0 90 90">${IC[x.icon]}</svg></div>`).join("")}<span class="kc">D</span></div>
+      <div class="lvl"><svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><rect x="5" y="5" width="24" height="24" fill="none" stroke="#a0a0a0" stroke-width="2"/><rect x="11" y="11" width="12" height="12" fill="#a0a0a0"/></svg><span>УРОВЕНЬ<br>ЛАБОРАТОРИИ:</span><span class="roman">II</span></div>
+      <div class="points"><span class="chip">${s("pt")}</span><span>ОЧКИ<br>ИССЛЕДОВАНИЙ:</span><b>${points}</b></div>
+      <div class="gateband"></div>
+      <svg class="wires" viewBox="0 0 1920 1080">${w}<path d="M${br.rootX} 176V176" /></svg>
+      ${nodeHTML}${gates}
+      <div class="gatelabel">УРОВЕНЬ <i>III</i> · ещё 2 образца</div>
+      <div class="qtitle">ОЧЕРЕДЬ</div>
+      <div class="queue">
+        <div class="slot"><span class="t">УФ-СПЕКТРОМЕТР</span><svg viewBox="0 0 90 90">${IC.uv}</svg><span class="r">1 из 2 обр.<b>50%</b></span><span class="bar"><i style="width:50%"></i></span></div>
+        <div class="slot empty"></div>
+      </div>
+      <div class="detail">
+        <div class="art">${big}<div class="fx"><span>${sel.fx[0]}<small>${sel.fx[1]}</small></span></div></div>
+        <h3>${sel.n}</h3><p>${sel.d}</p><div class="need">${stateLine}</div>
+        <div class="meta"><div><div class="lb">ЦЕНА</div><div class="v"><span class="kc" style="min-width:26px;height:26px;font-size:13px">${s("pt").replace("<svg", '<svg width="16" height="16"')}</span>${sel.cost}</div></div>
+          <div><div class="lb">ВРЕМЯ</div><div class="v">${sel.time}</div></div>
+          <div class="go ${canBuy ? "" : "off"}" data-buy="1"><span class="kc">↵</span>ИССЛЕДОВАТЬ</div></div>
+      </div>
+      <div class="mons">${["ЛЕВЫЙ", "ЦЕНТР", "ПРАВЫЙ", "МОЛЕКУЛА"].map((n, i) => `<span class="${i === 1 ? "on" : ""}"><span class="kc">${i + 1}</span>${n}</span>`).join("")}</div>
+      <div class="esc"><span class="kc">ESC</span>НАЗАД</div>`;
+  }
+
+  function select(id) { BRANCHES[b].nodes.forEach(n => n.sel = n.id === id); render(); }
+  function buy() {
+    const n = BRANCHES[b].nodes.find(x => x.sel);
+    if (!n || n.st !== "avail" || points < n.cost) return;
+    points -= n.cost; n.st = "prog"; n.p = 0; render();
+  }
+  const screen = $("screen"), stage = $("stage");
+  screen.addEventListener("click", e => {
+    stage.focus({ preventScroll: true });
+    const n = e.target.closest(".node"); if (n) return select(n.dataset.id);
+    const br = e.target.closest(".br"); if (br) { b = +br.dataset.b; return render(); }
+    if (e.target.closest("[data-buy]")) buy();
+  });
+  document.addEventListener("keydown", e => {
+    const k = e.key.toLowerCase();
+    if (k === "a" || k === "ф") { b = (b + BRANCHES.length - 1) % BRANCHES.length; render(); }
+    else if (k === "d" || k === "в") { b = (b + 1) % BRANCHES.length; render(); }
+    else if (e.key === "Enter") { e.preventDefault(); buy(); }
+  });
+
+  const fit = () => { screen.style.transform = `scale(${stage.clientWidth / 1920})`; };
+  new ResizeObserver(fit).observe(stage);
+  fit();
+  render();
+})();
+</script>

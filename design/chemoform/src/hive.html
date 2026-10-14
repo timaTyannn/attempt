@@ -1,0 +1,722 @@
+<title>Хемоформ · Улей</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Russo+One&family=Jost:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a 1920×1080 terminal screen (same size as the Figma frames / Unreal widget) scaled to the page, notes below. Single dark look by design: it is a game screen. */
+:root {
+  color-scheme: dark;
+  --page: #0a0d0d;
+  --screen: #0f1413;
+  --cell: #141b1a;
+  --cell-hi: #13302d;
+  --line: rgba(61, 212, 196, 0.32);
+  --line-soft: rgba(61, 212, 196, 0.14);
+  --teal: #3dd4c4;
+  --text: #e4efed;
+  --muted: #8b9e9b;
+  --dim: #4d5c5a;
+  --amber: #e8b13a;
+  --red: #e0563f;
+  --green: #8cc935;
+  --blue: #6b97f0;
+  --display: "Russo One", "Arial Black", system-ui, sans-serif;
+  --body: "Jost", "Segoe UI", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+html, body { background: var(--page); color: var(--text); }
+body { font-family: var(--body); font-size: 15px; line-height: 1.5; }
+.wrap { max-width: 1440px; margin: 0 auto; padding-inline: 20px; padding-block: 20px 48px; display: grid; gap: 18px; }
+
+/* ---------- page header & controls ---------- */
+.top { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 14px 24px; }
+.top h1 { font-family: var(--display); font-weight: 400; font-size: 26px; letter-spacing: .06em; margin: 0; color: var(--teal); text-wrap: balance; }
+.top p { margin: 4px 0 0; color: var(--muted); max-width: 62ch; }
+.controls { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; }
+.ctl { display: grid; gap: 4px; }
+.ctl > span { font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.seg { display: flex; flex-wrap: wrap; border: 1px solid var(--line); }
+.seg button, .btn {
+  font-family: var(--mono); font-size: 12px; letter-spacing: .06em; color: var(--muted);
+  background: transparent; border: 0; padding: 7px 11px; cursor: pointer;
+}
+.seg button + button { border-left: 1px solid var(--line-soft); }
+.seg button[aria-pressed="true"] { background: var(--teal); color: #062522; }
+.btn { border: 1px solid var(--line); }
+.btn:hover, .seg button:hover:not([aria-pressed="true"]) { color: var(--text); background: rgba(61,212,196,.08); }
+button:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+
+/* ---------- stage (scaled 1920×1080 screen) ---------- */
+.tiltwrap { perspective: 1800px; perspective-origin: 50% 0%; }
+.stage { position: relative; width: 100%; aspect-ratio: 16 / 9; max-width: 100%; overflow: hidden; border: 1px solid var(--line-soft); background: var(--screen); transition: transform .6s cubic-bezier(.2,.7,.2,1); transform-origin: 50% 100%; outline: none; }
+.stage.tilted { transform: rotateX(34deg) scale(.9); }
+.stage:focus-visible { border-color: var(--teal); }
+.screen { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; overflow: hidden;
+  background:
+    radial-gradient(ellipse 900px 700px at 560px 590px, rgba(61,212,196,.075), transparent 70%),
+    var(--screen);
+  font-family: var(--body); color: var(--text); }
+.screen::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: repeating-linear-gradient(0deg, rgba(255,255,255,.022) 0 1px, transparent 1px 4px); }
+
+.bar { position: absolute; left: 70px; right: 70px; display: flex; justify-content: space-between; align-items: center; font-family: var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+.bar.h1 { top: 36px; font-size: 26px; color: var(--teal); }
+.bar.h2 { top: 98px; font-size: 20px; color: var(--muted); }
+.rule { position: absolute; left: 70px; right: 70px; height: 2px; background: var(--teal); opacity: .8; }
+.rule.thin { height: 1px; opacity: .35; }
+.bar.foot { top: 1020px; font-size: 20px; color: var(--muted); }
+.bar.foot b { color: var(--teal); font-weight: 500; }
+.keys { display: flex; gap: 26px; }
+.keys kbd { font-family: var(--mono); color: var(--text); border: 1px solid var(--line); padding: 1px 8px; margin-right: 8px; }
+
+svg.hive { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: visible; }
+
+/* hex cells */
+.cell { cursor: pointer; }
+.cell .body { transform-box: fill-box; transform-origin: center; transition: opacity .3s; }
+.cell .hex { fill: var(--cell); stroke: var(--line); stroke-width: 2; transition: fill .2s, stroke .2s; }
+.cell .halo { fill: none; stroke: var(--teal); stroke-width: 2; opacity: 0; }
+.cell .cat { stroke-width: 6; stroke-linecap: square; }
+.cell .ico { fill: none; stroke: var(--text); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; transition: stroke .2s; }
+.cell .lbl { font-family: var(--display); font-size: 19px; letter-spacing: .04em; fill: var(--text); text-anchor: middle; }
+.cell .key rect { fill: none; stroke: var(--line); stroke-width: 1.5; }
+.cell .key text { font-family: var(--mono); font-size: 16px; fill: var(--muted); text-anchor: middle; }
+.cell .done, .cell .lock { display: none; }
+.cell .done path { fill: none; stroke: var(--green); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.cell .lock path, .cell .lock rect { fill: none; stroke: var(--muted); stroke-width: 2; }
+
+.cell.is-sel .hex { fill: var(--cell-hi); stroke: var(--teal); stroke-width: 3; filter: drop-shadow(0 0 14px rgba(61,212,196,.45)); }
+.cell.is-sel .ico { stroke: var(--teal); }
+.cell.is-sel .key rect { stroke: var(--teal); }
+.cell.is-sel .key text { fill: var(--teal); }
+.cell.is-rec .halo { animation: pulse 1.6s ease-in-out infinite; }
+.cell.is-done .done { display: inline; }
+.cell.is-off .ico, .cell.is-off .lbl { opacity: .32; }
+.cell.is-off .hex { stroke-dasharray: 6 6; }
+.cell.is-locked .ico, .cell.is-locked .lbl, .cell.is-locked .cat { opacity: .28; }
+.cell.is-locked .hex { fill: #101615; stroke: var(--line-soft); }
+.cell.is-locked .lock { display: inline; }
+.cell.is-hidden { display: none; }
+.cell.is-kin:not(.is-sel) .hex { stroke: rgba(61,212,196,.6); }
+
+.core .hex { fill: #0f2422; stroke: var(--teal); stroke-width: 3; }
+.core .ring { fill: none; stroke: var(--line); stroke-width: 1.5; stroke-dasharray: 3 7; }
+.core .t1 { font-family: var(--display); font-size: 30px; fill: var(--text); text-anchor: middle; }
+.core .t2 { font-family: var(--mono); font-size: 16px; fill: var(--teal); text-anchor: middle; letter-spacing: .06em; }
+.core .pip { fill: var(--cell); stroke: var(--line); stroke-width: 1.5; }
+.core .pip.on { fill: var(--teal); stroke: var(--teal); }
+.core.is-sel .hex { fill: #13332f; }
+.core.empty .t1 { fill: var(--amber); font-size: 22px; }
+
+.ghost polygon { fill: none; stroke: var(--line-soft); stroke-width: 1.5; stroke-dasharray: 5 7; }
+.ghost path { stroke: var(--line-soft); stroke-width: 2; }
+.ghost.is-hidden { display: none; }
+
+.clabel text { font-family: var(--mono); font-size: 20px; letter-spacing: .18em; }
+.clabel .n { fill: var(--muted); font-size: 16px; letter-spacing: .08em; }
+
+.enter { animation: enter .55s cubic-bezier(.2,.9,.3,1.25) both; animation-delay: var(--d, 0ms); }
+.shake { animation: shake .4s ease both; }
+@keyframes enter { from { opacity: 0; transform: scale(.2); } to { opacity: 1; transform: scale(1); } }
+@keyframes pulse { 0%, 100% { opacity: .15; } 50% { opacity: .95; } }
+@keyframes shake { 0%,100% { transform: translateX(0); } 20% { transform: translateX(-10px); } 40% { transform: translateX(9px); } 60% { transform: translateX(-6px); } 80% { transform: translateX(4px); } }
+
+/* info panel */
+.info { position: absolute; left: 1170px; top: 176px; width: 680px; height: 800px; display: flex; flex-direction: column; gap: 22px; }
+.info .eyebrow { font-family: var(--mono); font-size: 20px; letter-spacing: .2em; color: var(--muted); display: flex; align-items: center; gap: 14px; }
+.info .eyebrow i { width: 34px; height: 6px; display: inline-block; }
+.info h2 { font-family: var(--display); font-weight: 400; font-size: 54px; line-height: 1.05; margin: 0; letter-spacing: .03em; }
+.chip { align-self: start; font-family: var(--mono); font-size: 20px; letter-spacing: .12em; padding: 6px 14px; border: 1.5px solid currentColor; }
+.chip.rec { color: var(--teal); }
+.chip.ok { color: var(--text); border-color: var(--line); }
+.chip.need { color: var(--amber); }
+.chip.lock { color: var(--muted); }
+.chip.done { color: var(--green); }
+.chip.flash { animation: flash .9s ease 2; }
+@keyframes flash { 50% { background: rgba(232,177,58,.18); } }
+.info .desc { font-size: 27px; line-height: 1.42; margin: 0; color: var(--text); max-width: 30ch; }
+.info .out { border-top: 1px solid var(--line-soft); padding-top: 18px; display: grid; gap: 6px; }
+.info .out span { font-family: var(--mono); font-size: 18px; letter-spacing: .16em; color: var(--muted); }
+.info .out b { font-weight: 500; font-size: 26px; }
+.fields { display: grid; grid-template-columns: auto 1fr; gap: 10px 28px; font-size: 25px; border-top: 1px solid var(--line-soft); padding-top: 18px; }
+.fields dt { font-family: var(--mono); font-size: 19px; letter-spacing: .12em; color: var(--muted); align-self: center; }
+.fields dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
+.fields dd.q { color: var(--dim); }
+.fields dd.hit { color: var(--teal); }
+.go { margin-top: auto; display: flex; align-items: center; gap: 22px; }
+.go button { font-family: var(--display); font-size: 30px; letter-spacing: .08em; color: #062522; background: var(--teal); border: 0; padding: 18px 34px; cursor: pointer; display: flex; align-items: center; gap: 18px; }
+.go button kbd { font-family: var(--mono); font-size: 16px; border: 1.5px solid rgba(6,37,34,.5); padding: 2px 8px; }
+.go button:disabled { background: #22302e; color: var(--dim); cursor: not-allowed; }
+.go small { font-family: var(--mono); font-size: 19px; color: var(--muted); letter-spacing: .08em; }
+
+/* boot + open overlays */
+.overlay { position: absolute; inset: 0; background: var(--screen); display: grid; place-items: center; transition: opacity .45s; z-index: 5; }
+.overlay.gone { opacity: 0; pointer-events: none; }
+.boot { display: grid; justify-items: center; gap: 22px; }
+.boot svg path { fill: none; stroke: var(--teal); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+.boot .name { font-family: var(--display); font-size: 110px; letter-spacing: .08em; color: var(--teal); line-height: 1; }
+.boot .sub { font-family: var(--mono); font-size: 26px; letter-spacing: .3em; color: var(--teal); }
+.boot .bar2 { width: 560px; height: 6px; background: rgba(61,212,196,.15); }
+.boot .bar2 i { display: block; height: 100%; width: 0; background: var(--teal); transition: width 1.4s linear; }
+.boot ul { list-style: none; margin: 8px 0 0; padding: 0; width: 560px; font-family: var(--mono); font-size: 20px; color: var(--muted); display: grid; gap: 6px; min-height: 190px; }
+.boot li::before { content: "> "; color: var(--teal); }
+.boot li.ok { color: var(--text); }
+
+.panel { width: 1100px; display: grid; gap: 26px; justify-items: start; }
+.panel .eyebrow { font-family: var(--mono); font-size: 22px; letter-spacing: .2em; color: var(--muted); }
+.panel h3 { font-family: var(--display); font-weight: 400; font-size: 72px; margin: 0; color: var(--teal); letter-spacing: .04em; }
+.panel p { font-size: 30px; margin: 0; max-width: 46ch; }
+.panel .prog { width: 700px; height: 8px; background: rgba(61,212,196,.15); }
+.panel .prog i { display: block; height: 100%; width: 0; background: var(--teal); }
+.panel .res { font-family: var(--mono); font-size: 28px; color: var(--green); min-height: 1.4em; }
+.panel .back { font-family: var(--mono); font-size: 24px; color: var(--text); background: transparent; border: 1.5px solid var(--line); padding: 12px 22px; cursor: pointer; }
+.panel .back kbd { font-family: var(--mono); color: var(--teal); margin-right: 10px; }
+
+/* ---------- notes ---------- */
+.notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 28px 36px; padding-top: 10px; }
+.notes section { min-width: 0; }
+.notes h3 { font-family: var(--display); font-weight: 400; font-size: 17px; letter-spacing: .08em; color: var(--teal); margin: 0 0 8px; text-transform: uppercase; }
+.notes ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; color: #c9d6d4; }
+.notes code { font-family: var(--mono); font-size: 13px; color: var(--teal); }
+
+@media (prefers-reduced-motion: reduce) {
+  .cell.is-rec .halo { animation: none; opacity: .8; }
+  .enter, .shake, .chip.flash { animation: none; }
+  .stage, .overlay { transition: none; }
+}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>ХЕМОФОРМ · УЛЕЙ ФУНКЦИЙ</h1>
+      <p>Прототип стартового экрана терминала стола. Наведите на соту, кликните или управляйте с клавиатуры. Пульсирует следующий шаг: можно пройти весь цикл анализа образца.</p>
+    </div>
+    <div class="controls">
+      <div class="ctl"><span>Состояние стола</span>
+        <div class="seg" id="stateSeg" role="group" aria-label="Состояние стола"></div>
+      </div>
+      <div class="ctl"><span>Масштаб улья</span>
+        <div class="seg" id="modeSeg" role="group" aria-label="Масштаб улья">
+          <button type="button" id="modeNow" data-mode="now" aria-pressed="true">Сейчас · 7</button>
+          <button type="button" id="modeFut" data-mode="future" aria-pressed="false">Расширение · 17</button>
+        </div>
+      </div>
+      <div class="ctl"><span>Проверка</span>
+        <div class="controls">
+          <button type="button" class="btn" id="tiltBtn" aria-pressed="false">Вид на столе</button>
+          <button type="button" class="btn" id="bootBtn">Перезагрузить</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="tiltwrap">
+    <div class="stage" id="stage" tabindex="0" aria-label="Экран терминала стола. Стрелки — выбор соты, Enter — открыть, Esc — назад, 1–4 — приборы.">
+      <div class="screen" id="screen">
+        <div class="bar h1"><span>Станция Нексус</span><span>Лаб. Хемоформ</span></div>
+        <div class="rule" style="top:82px"></div>
+        <div class="bar h2"><span>Терминал стола · выбор функции</span><span id="hdrSample">[ образец: — ]</span></div>
+        <div class="rule thin" style="top:140px"></div>
+
+        <svg class="hive" id="hive" viewBox="0 0 1920 1080" aria-hidden="true"></svg>
+
+        <div class="info" id="info"></div>
+
+        <div class="rule" style="top:996px"></div>
+        <div class="bar foot">
+          <span>Вер. <b>2.0.0</b></span>
+          <span class="keys"><span><kbd>←↑↓→</kbd>выбор</span><span><kbd>1–4</kbd>приборы</span><span><kbd>Enter</kbd>открыть</span><span><kbd>Esc</kbd>назад</span></span>
+        </div>
+
+        <div class="overlay gone" id="openOv">
+          <div class="panel">
+            <div class="eyebrow" id="ovEyebrow"></div>
+            <h3 id="ovTitle"></h3>
+            <p id="ovText"></p>
+            <div class="prog" id="ovProg"><i id="ovProgBar"></i></div>
+            <div class="res" id="ovRes"></div>
+            <button type="button" class="back" id="ovBack"><kbd>ESC</kbd>Назад в улей</button>
+          </div>
+        </div>
+
+        <div class="overlay" id="bootOv">
+          <div class="boot">
+            <svg width="96" height="110" viewBox="0 0 96 110" aria-hidden="true"><path d="M34 6h28M40 6v34L10 96a6 6 0 0 0 5 9h66a6 6 0 0 0 5-9L56 40V6M22 74h52"/></svg>
+            <div class="name">ХЕМОФОРМ</div>
+            <div class="sub">ТЕРМИНАЛ ЛАБОРАТОРИИ</div>
+            <div class="bar2"><i id="bootBar"></i></div>
+            <ul id="bootLog"></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="notes">
+    <section>
+      <h3>Как устроен улей</h3>
+      <ul>
+        <li>В центре — образец на столе. От того, что лежит на столе, зависит, какие соты активны.</li>
+        <li>Соты собраны в кластеры: Образец, Знания, Приборы, Задания. Цвет кластера — полоска на верхней грани соты.</li>
+        <li>Следующий шаг пульсирует. Игрок не теряется, но может открыть любую доступную соту.</li>
+      </ul>
+    </section>
+    <section>
+      <h3>Как он растёт</h3>
+      <ul>
+        <li>Новая функция — новая сота на внешнем краю своего кластера. Старые соты не двигаются, и игроку не надо переучиваться.</li>
+        <li>Новая категория — новый кластер, до шести вокруг центра.</li>
+        <li>Пунктир в режиме «Сейчас» показывает места для роста. Закрытые соты видны заранее с подписью, когда откроются.</li>
+      </ul>
+    </section>
+    <section>
+      <h3>Управление</h3>
+      <ul>
+        <li>Мышь: наведение выбирает соту, клик открывает.</li>
+        <li>Стрелки или WASD — к соседней соте. Так же будет работать геймпад.</li>
+        <li><code>1</code>–<code>4</code> — сразу Справочник, Масс-спектр, ИК-спектр, Голограмма. Те же клавиши переключают экраны внутри приборов.</li>
+      </ul>
+    </section>
+    <section>
+      <h3>Для Rive и Unreal</h3>
+      <ul>
+        <li>Сота — один компонент с состояниями: скрыта, закрыта, нужен образец, обычная, выбрана, следующий шаг, выполнена. В Rive это одна state machine с входами <code>isHovered</code>, <code>isRecommended</code>, <code>state</code>.</li>
+        <li>Место соты задаётся координатами улья <code>(q, r)</code>, а не пикселями: новая функция добавляется строкой данных.</li>
+        <li>Текст не мельче 20 px при 1920×1080: экран висит на меше под углом. Проверьте кнопкой «Вид на столе».</li>
+      </ul>
+    </section>
+  </div>
+</div>
+
+<script>
+(() => {
+  const NS = "http://www.w3.org/2000/svg";
+  const R = 92, r = 86, HX = 560, HY = 590, S3 = Math.sqrt(3);
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const CATS = {
+    sample: { name: "ОБРАЗЕЦ", color: "var(--amber)" },
+    know:   { name: "ЗНАНИЯ",  color: "var(--blue)" },
+    inst:   { name: "ПРИБОРЫ", color: "var(--teal)" },
+    task:   { name: "ЗАДАНИЯ", color: "var(--green)" }
+  };
+
+  const ICONS = {
+    tube: "M-7 -20h14M-5 -20v30a5 5 0 0 0 10 0v-30M-5 -4h6M-5 4h4",
+    folder: "M-21 -13h13l4 5h25v24h-42zM-21 -3h42",
+    book: "M-21 -15h14a7 7 0 0 1 7 7v25a5 5 0 0 0 -5 -5h-16zM21 -15h-14a7 7 0 0 0 -7 7v25a5 5 0 0 1 5 -5h16z",
+    db: "M0 -21l18 10v21l-18 10l-18 -10v-21zM-8 -6h16M-8 1h16M-8 8h16",
+    mass: "M-22 17h44M-15 17v-6M-8 17v-13M-1 17v-5M15 17v-34",
+    ir: "M-22 -13h9l4 25l4 -25h7l3 13l3 -13h14",
+    atom: "M0 0m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0M-21 0a21 8 0 1 0 42 0a21 8 0 1 0 -42 0M-10.5 -18.2a21 8 60 1 0 21 36.4a21 8 60 1 0 -21 -36.4",
+    gc: "M-22 16h7q4 -32 8 0h4q3 -18 6 0h4q4 -26 8 0h7",
+    drop: "M0 -21q15 18 15 26a15 15 0 0 1 -30 0q0 -8 15 -26zM-7 6h14",
+    reactor: "M-15 -19h30v38h-30zM0 0m-8 0a8 8 0 1 0 16 0a8 8 0 1 0 -16 0M-15 -10h-6M15 10h6",
+    chain: "M-15 9m-5 0a5 5 0 1 0 10 0a5 5 0 1 0 -10 0M0 -8m-5 0a5 5 0 1 0 10 0a5 5 0 1 0 -10 0M15 9m-5 0a5 5 0 1 0 10 0a5 5 0 1 0 -10 0M-11 5l7 -9M4 -4l7 9",
+    table: "M-21 -15h8v8h-8zM-21 -3h8v8h-8zM-9 -3h8v8h-8zM3 -3h8v8h-8zM13 -15h8v8h-8zM13 -3h8v8h-8zM-21 9h42v8h-42z",
+    atlas: "M-21 -17h42v34h-42zM-21 8l10 -12l8 6l9 -14l15 18",
+    flag: "M-13 21v-42M-13 -19h27l-7 9l7 9h-27",
+    flask: "M-6 -20h12M-4 -20v13l-14 22a4 4 0 0 0 3 6h30a4 4 0 0 0 3 -6l-14 -22v-13M-12 8h24",
+    medal: "M0 4m-11 0a11 11 0 1 0 22 0a11 11 0 1 0 -22 0M-8 -5l-6 -16h8l6 10l6 -10h8l-6 16",
+    boxes: "M-20 -4h18v18h-18zM2 -4h18v18h-18zM-9 -22h18v18h-18z"
+  };
+
+  // q, r = hex coordinates of the hive (flat-top, axial). phase "now" = what the lab has today.
+  const CELLS = [
+    { id: "new",     q: -1, r: 1,  cat: "sample", lines: ["НОВЫЙ", "АНАЛИЗ"], icon: "tube", phase: "now",
+      title: "Новый анализ", desc: "Поместите пробирку в приёмник стола. Сканер заведёт карточку образца: масса, тип, место находки.", out: "Карточка образца" },
+    { id: "journal", q: -2, r: 1,  cat: "sample", lines: ["ЖУРНАЛ"], icon: "folder", phase: "now",
+      title: "Журнал", desc: "Архив прошлых исследований: что изучали, какими приборами и к какому выводу пришли.", out: "Записи об образцах" },
+    { id: "ref",     q: -1, r: 0,  cat: "know", lines: ["СПРАВОЧНИК"], icon: "book", key: 1, phase: "now",
+      title: "Справочник", desc: "Как работает каждый прибор и как читать его график. Зоны ИК-спектра, массы атомов, подсказки.", out: "Знания для расшифровки" },
+    { id: "db",      q: 0,  r: -1, cat: "know", lines: ["БАЗА", "ДАННЫХ"], icon: "db", phase: "now",
+      title: "База данных", desc: "Эталоны известных земных веществ. Пополняется после каждого определённого образца.", out: "Эталонные вещества" },
+    { id: "mass",    q: 1,  r: -1, cat: "inst", lines: ["МАСС-", "СПЕКТР"], icon: "mass", key: 2, phase: "now", needsSample: true,
+      title: "Масс-спектрометр", desc: "Разбивает молекулы на заряженные осколки и сортирует их по массе. Крайний правый крупный пик — масса целой молекулы.", out: "Масса молекулы → состав" },
+    { id: "ir",      q: 1,  r: 0,  cat: "inst", lines: ["ИК-", "СПЕКТР"], icon: "ir", key: 3, phase: "now", needsSample: true,
+      title: "ИК-спектрометр", desc: "Просвечивает образец инфракрасным светом. Каждый тип связи (O–H, C=O, C–H) поглощает свет в своей зоне.", out: "Какие связи в молекуле" },
+    { id: "holo",    q: 0,  r: 1,  cat: "inst", lines: ["ГОЛО-", "ГРАММА"], icon: "atom", key: 4, phase: "now", needsSample: true,
+      title: "Голограмма", desc: "Объёмная модель над столом. Собирайте молекулу и меняйте связи: модель сразу сверяется со спектрами образца.", out: "Структура вещества" },
+
+    { id: "gc",      q: 2,  r: -1, cat: "inst", lines: ["ХРОМАТО-", "ГРАФ"], icon: "gc", phase: "future", locked: "Глава 2", needsSample: true,
+      title: "Газовый хроматограф", desc: "Делит смесь на отдельные вещества, прежде чем отправить каждое в масс-спектрометр.", out: "Компоненты смеси" },
+    { id: "ph",      q: 2,  r: -2, cat: "inst", lines: ["pH-ТЕСТ"], icon: "drop", phase: "future", locked: "Глава 2", needsSample: true,
+      title: "Цветной индикатор", desc: "Капли кислоты, основания и воды. Цвет индикатора показывает, кислая среда или щелочная.", out: "pH раствора" },
+    { id: "reactor", q: 2,  r: 0,  cat: "inst", lines: ["РЕАКТОР"], icon: "reactor", phase: "future", locked: "Глава 3", needsSample: true,
+      title: "Реакторный блок", desc: "Синтез, смешивание, нагрев и фильтрация образца в центре стола.", out: "Новое вещество" },
+    { id: "chain",   q: 1,  r: 1,  cat: "inst", lines: ["ОЧИСТКА", "ЦЕПИ"], icon: "chain", phase: "future", locked: "Глава 3", needsSample: true,
+      title: "Очистка цепи", desc: "Голограмма цепочки с заражёнными узлами. Удалите токсичные фрагменты, не разрушив скелет.", out: "Очищенная структура" },
+    { id: "table",   q: -1, r: -1, cat: "know", lines: ["ТАБЛИЦА", "МЕНДЕЛЕЕВА"], icon: "table", phase: "future",
+      title: "Таблица Менделеева", desc: "Карточки элементов: валентность, атомная масса, группа, период.", out: "Свойства элементов" },
+    { id: "atlas",   q: -2, r: 0,  cat: "know", lines: ["АТЛАС", "СПЕКТРОВ"], icon: "atlas", phase: "future",
+      title: "Атлас спектров", desc: "Эталонные ИК- и масс-спектры известных веществ для сравнения с образцом.", out: "Спектры-эталоны" },
+    { id: "storage", q: -2, r: 2,  cat: "sample", lines: ["ХРАНИЛИЩЕ"], icon: "boxes", phase: "future",
+      title: "Хранилище", desc: "Все образцы, привезённые с планеты. Выберите, какой положить на стол.", out: "Очередь образцов" },
+    { id: "lab",     q: 0,  r: -2, cat: "task", lines: ["ЛАБ.", "РАБОТЫ"], icon: "flask", phase: "future",
+      title: "Лабораторные работы", desc: "Учебные задания по школьной программе с проверкой результата.", out: "Оценка и разбор" },
+    { id: "mission", q: 1,  r: -2, cat: "task", lines: ["МИССИИ"], icon: "flag", phase: "future",
+      title: "Миссии станции", desc: "Сюжетные задания, например «Протокол „Чистая вода“».", out: "Прогресс сюжета" },
+    { id: "olymp",   q: 2,  r: -3, cat: "task", lines: ["ОЛИМПИАДА"], icon: "medal", phase: "future", locked: "После 10 образцов",
+      title: "Олимпиадный режим", desc: "Задачи уровня Всероссийской олимпиады на время.", out: "Рейтинг" }
+  ];
+
+  // Analysis loop: each state names the recommended next cell and what opening it does.
+  const STATES = [
+    { name: "Пусто",      rec: "new",     core: ["СТОЛ ПУСТ", "НУЖЕН ОБРАЗЕЦ"] },
+    { name: "Образец",    rec: "mass",    core: ["КР-01", "ЛЁД · 14.2 Г"] },
+    { name: "Масса",      rec: "ir",      core: ["КР-01", "M = 44"] },
+    { name: "Связи",      rec: "holo",    core: ["КР-01", "44 · C=O"] },
+    { name: "Определено", rec: "journal", core: ["CO₂", "ОПРЕДЕЛЕНО"] }
+  ];
+  const ADVANCE = {
+    new:     { from: 0, to: 1, run: "Сканирование образца…", res: "Образец КР-01 принят: лёд, ледник «Северный», 14.2 г" },
+    mass:    { from: 1, to: 2, run: "Ионизация и разделение по массе…", res: "Пик молекулы: m/z 44. Осколки: 28, 16, 12" },
+    ir:      { from: 2, to: 3, run: "Снятие ИК-спектра…", res: "Поглощение в зоне двойных связей: C=O" },
+    holo:    { from: 3, to: 4, run: "Сверка модели со спектрами…", res: "Модель O=C=O совпала с обоими спектрами → CO₂" },
+    journal: { from: 4, to: 0, run: "Запись в журнал…", res: "КР-01 сохранён в журнал. Стол готов к новому образцу" }
+  };
+
+  let state = 1, mode = "now", sel = "core", openId = null, pendingTo = null, booting = false;
+  const timers = [];
+  const clearTimers = () => { while (timers.length) clearTimeout(timers.pop()); };
+  const later = (fn, ms) => timers.push(setTimeout(fn, ms));
+
+  const pos = (q, rr) => ({ x: HX + 1.5 * R * q, y: HY + S3 * R * (rr + q / 2) });
+  const hexPts = rad => Array.from({ length: 6 }, (_, i) => {
+    const a = Math.PI / 3 * i;
+    return (rad * Math.cos(a)).toFixed(1) + "," + (rad * Math.sin(a)).toFixed(1);
+  }).join(" ");
+  const el = (tag, attrs = {}, parent) => {
+    const n = document.createElementNS(NS, tag);
+    for (const k in attrs) n.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(n);
+    return n;
+  };
+  const dist = c => (Math.abs(c.q) + Math.abs(c.r) + Math.abs(c.q + c.r)) / 2;
+
+  const hive = document.getElementById("hive");
+  const gGhost = el("g", {}, hive), gLabels = el("g", {}, hive), gCells = el("g", {}, hive);
+  const nodes = {};
+
+  // ghost slots for future cells
+  for (const c of CELLS.filter(c => c.phase === "future")) {
+    const p = pos(c.q, c.r);
+    const g = el("g", { class: "ghost", transform: `translate(${p.x},${p.y})` }, gGhost);
+    el("polygon", { points: hexPts(r) }, g);
+    el("path", { d: "M-9 0h18M0 -9v18" }, g);
+    c.ghost = g;
+  }
+
+  // core
+  {
+    const p = pos(0, 0);
+    const g = el("g", { class: "cell core", "data-id": "core", transform: `translate(${p.x},${p.y})` }, gCells);
+    const b = el("g", { class: "body" }, g);
+    el("polygon", { class: "ring", points: hexPts(r + 16) }, b);
+    el("polygon", { class: "halo", points: hexPts(r + 9) }, b);
+    el("polygon", { class: "hex", points: hexPts(r) }, b);
+    const t1 = el("text", { class: "t1", y: -4 }, b);
+    const t2 = el("text", { class: "t2", y: 24 }, b);
+    const pips = [-26, 0, 26].map(x => el("polygon", { class: "pip", points: hexPts(9), transform: `translate(${x},50)` }, b));
+    nodes.core = { g, b, t1, t2, pips, c: { id: "core", q: 0, r: 0 } };
+  }
+
+  for (const c of CELLS) {
+    const p = pos(c.q, c.r);
+    const g = el("g", { class: "cell", "data-id": c.id, transform: `translate(${p.x},${p.y})` }, gCells);
+    const b = el("g", { class: "body" }, g);
+    el("polygon", { class: "halo", points: hexPts(r + 9) }, b);
+    el("polygon", { class: "hex", points: hexPts(r) }, b);
+    const yTop = -(S3 / 2) * r + 4;
+    el("line", { class: "cat", x1: -r / 2 + 10, y1: yTop, x2: r / 2 - 10, y2: yTop, stroke: CATS[c.cat].color }, b);
+    const two = c.lines.length > 1;
+    el("path", { class: "ico", d: ICONS[c.icon], transform: `translate(0,${two ? -26 : -16})` }, b);
+    c.lines.forEach((t, i) => {
+      const tx = el("text", { class: "lbl", y: (two ? 22 : 34) + i * 22 }, b);
+      if (t.length >= 9) tx.style.fontSize = "16px";
+      tx.textContent = t;
+    });
+    if (c.key) {
+      const k = el("g", { class: "key", transform: "translate(35,-51)" }, b);
+      el("rect", { x: -11, y: -11, width: 22, height: 22 }, k);
+      const kt = el("text", { y: 6 }, k); kt.textContent = c.key;
+    }
+    const d = el("g", { class: "done", transform: "translate(-35,-51)" }, b);
+    el("path", { d: "M-8 0l5 6l11 -12" }, d);
+    const l = el("g", { class: "lock", transform: "translate(-35,-51)" }, b);
+    el("rect", { x: -8, y: -3, width: 16, height: 12 }, l);
+    el("path", { d: "M-5 -3v-4a5 5 0 0 1 10 0v4" }, l);
+    nodes[c.id] = { g, b, c };
+  }
+
+  const visible = c => c.phase === "now" || mode === "future";
+  const status = c => {
+    if (c.id === "core") return "core";
+    if (c.locked && mode === "future") return "locked";
+    if (STATES[state].rec === c.id) return "rec";
+    if (isDone(c.id)) return "done";
+    if (c.needsSample && state === 0) return "need";
+    return "ok";
+  };
+  const isDone = id => ({ mass: 2, ir: 3, holo: 4 })[id] !== undefined && state >= ({ mass: 2, ir: 3, holo: 4 })[id];
+
+  function renderLabels() {
+    gLabels.textContent = "";
+    for (const key of Object.keys(CATS)) {
+      const cs = CELLS.filter(c => c.cat === key && visible(c));
+      if (!cs.length) continue;
+      const pts = cs.map(c => pos(c.q, c.r));
+      const cx = pts.reduce((s, p) => s + p.x, 0) / pts.length, cy = pts.reduce((s, p) => s + p.y, 0) / pts.length;
+      let dx = cx - HX, dy = cy - HY; const len = Math.hypot(dx, dy) || 1; dx /= len; dy /= len;
+      const far = Math.max(...pts.map(p => (p.x - cx) * dx + (p.y - cy) * dy));
+      const lx = cx + dx * (far + 118), ly = Math.min(Math.max(cy + dy * (far + 118), 200), 940);
+      const right = dx >= 0;
+      const g = el("g", { class: "clabel", transform: `translate(${lx},${ly})` }, gLabels);
+      el("rect", { x: right ? 0 : -36, y: -16, width: 36, height: 5, fill: CATS[key].color }, g);
+      const t = el("text", { x: right ? 0 : 0, y: 16, "text-anchor": right ? "start" : "end", fill: CATS[key].color }, g);
+      t.textContent = CATS[key].name;
+      const total = CELLS.filter(c => c.cat === key && visible(c)).length;
+      const n = el("text", { class: "n", x: 0, y: 40, "text-anchor": right ? "start" : "end" }, g);
+      n.textContent = total + (total === 1 ? " функция" : total < 5 ? " функции" : " функций");
+    }
+  }
+
+  function render() {
+    const st = STATES[state];
+    // core
+    const core = nodes.core;
+    core.g.classList.toggle("empty", state === 0);
+    core.g.classList.toggle("is-sel", sel === "core");
+    core.t1.textContent = st.core[0];
+    core.t2.textContent = st.core[1];
+    core.pips.forEach((p, i) => p.classList.toggle("on", state >= i + 2));
+    document.getElementById("hdrSample").textContent = state === 0 ? "[ образец: — ]" : state === 4 ? "[ образец: КР-01 · CO₂ ]" : "[ образец: КР-01 ]";
+
+    const selCat = CELLS.find(c => c.id === sel)?.cat;
+    for (const c of CELLS) {
+      const n = nodes[c.id], s = status(c), vis = visible(c);
+      n.g.classList.toggle("is-hidden", !vis);
+      n.g.classList.toggle("is-locked", s === "locked");
+      n.g.classList.toggle("is-rec", s === "rec");
+      n.g.classList.toggle("is-done", s === "done");
+      n.g.classList.toggle("is-off", s === "need");
+      n.g.classList.toggle("is-sel", sel === c.id);
+      n.g.classList.toggle("is-kin", !!selCat && c.cat === selCat);
+      if (c.ghost) c.ghost.classList.toggle("is-hidden", mode === "future");
+    }
+    renderLabels();
+    renderInfo();
+    renderStateSeg();
+  }
+
+  const info = document.getElementById("info");
+  const esc = s => String(s).replace(/[&<>"]/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[ch]);
+
+  function renderInfo() {
+    if (sel === "core") {
+      const known = v => v ? `<dd class="hit">${v}</dd>` : `<dd class="q">?</dd>`;
+      const rows = state === 0
+        ? `<dt>Приёмник</dt><dd class="q">пусто</dd><dt>Следующий шаг</dt><dd>Новый анализ</dd>`
+        : `<dt>Источник</dt><dd>ледник «Северный»</dd>
+           <dt>Проба</dt><dd>лёд, глубина 2 м</dd>
+           <dt>Масса молекулы</dt>${known(state >= 2 && "44")}
+           <dt>Связи</dt>${known(state >= 3 && "C=O, двойные")}
+           <dt>Вещество</dt>${known(state >= 4 && "CO₂")}`;
+      info.innerHTML = `
+        <div class="eyebrow"><i style="background:var(--teal)"></i>ЦЕНТР УЛЬЯ</div>
+        <h2>${state === 0 ? "Стол пуст" : "Образец КР-01"}</h2>
+        <span class="chip ${state === 0 ? "need" : state === 4 ? "done" : "ok"}">${state === 0 ? "ОЖИДАНИЕ ОБРАЗЦА" : state === 4 ? "ВЕЩЕСТВО ОПРЕДЕЛЕНО" : "ИДЁТ ИССЛЕДОВАНИЕ"}</span>
+        <dl class="fields">${rows}</dl>
+        <div class="go"><small>Следующий шаг пульсирует в улье</small></div>`;
+      return;
+    }
+    const c = CELLS.find(x => x.id === sel), s = status(c);
+    const chip = {
+      rec: ["rec", "● СЛЕДУЮЩИЙ ШАГ"], ok: ["ok", "ДОСТУПНО"], done: ["done", "✓ ВЫПОЛНЕНО"],
+      need: ["need", "НУЖЕН ОБРАЗЕЦ"], locked: ["lock", "ОТКРОЕТСЯ: " + (c.locked || "").toUpperCase()]
+    }[s];
+    info.innerHTML = `
+      <div class="eyebrow"><i style="background:${CATS[c.cat].color}"></i>${CATS[c.cat].name}</div>
+      <h2>${esc(c.title)}</h2>
+      <span class="chip ${chip[0]}" id="chip">${chip[1]}</span>
+      <p class="desc">${esc(c.desc)}</p>
+      <div class="out"><span>РЕЗУЛЬТАТ</span><b>${esc(c.out)}</b></div>
+      <div class="go">
+        <button type="button" id="goBtn" ${s === "locked" || s === "need" ? "disabled" : ""}>ОТКРЫТЬ <kbd>ENTER</kbd></button>
+        ${c.key ? `<small>или клавиша ${c.key}</small>` : ""}
+      </div>`;
+    document.getElementById("goBtn").addEventListener("click", () => openCell(c.id));
+  }
+
+  function renderStateSeg() {
+    const seg = document.getElementById("stateSeg");
+    if (!seg.childElementCount) {
+      STATES.forEach((s, i) => {
+        const b = document.createElement("button");
+        b.type = "button"; b.textContent = s.name; b.id = "st" + i;
+        b.addEventListener("click", () => { if (openId) closeOpen(false); state = i; render(); });
+        seg.appendChild(b);
+      });
+    }
+    [...seg.children].forEach((b, i) => b.setAttribute("aria-pressed", String(i === state)));
+  }
+
+  function shake(id, msg) {
+    const n = nodes[id];
+    n.b.classList.remove("shake"); void n.b.getBBox(); n.b.classList.add("shake");
+    const chip = document.getElementById("chip");
+    if (chip) { chip.textContent = msg; chip.classList.remove("flash"); void chip.offsetWidth; chip.classList.add("flash"); }
+  }
+
+  // ---------- open / close a function ----------
+  const ov = document.getElementById("openOv");
+  function openCell(id) {
+    if (booting || openId) return;
+    if (id === "core") return;
+    const c = CELLS.find(x => x.id === id);
+    if (!visible(c)) return;
+    sel = id; render();
+    const s = status(c);
+    if (s === "locked") return shake(id, "ОТКРОЕТСЯ: " + c.locked.toUpperCase());
+    if (s === "need") return shake(id, "СНАЧАЛА — НОВЫЙ АНАЛИЗ");
+    openId = id;
+    const adv = ADVANCE[id] && ADVANCE[id].from === state ? ADVANCE[id] : null;
+    document.getElementById("ovEyebrow").textContent = CATS[c.cat].name + " · ЭКРАН";
+    document.getElementById("ovTitle").textContent = c.title.toUpperCase();
+    const bar = document.getElementById("ovProgBar"), res = document.getElementById("ovRes");
+    res.textContent = "";
+    document.getElementById("ovProg").hidden = !adv;
+    if (adv) {
+      document.getElementById("ovText").textContent = adv.run;
+      bar.style.transition = "none"; bar.style.width = "0";
+      void bar.offsetWidth;
+      bar.style.transition = reduce ? "none" : "width 1.1s linear"; bar.style.width = "100%";
+      later(() => { res.textContent = adv.res; pendingTo = adv.to; }, reduce ? 0 : 1150);
+    } else {
+      document.getElementById("ovText").textContent = "Здесь будет экран прибора, как в бете из Rive. Этот прототип проверяет только улей.";
+      pendingTo = null;
+    }
+    ov.classList.remove("gone");
+  }
+  function closeOpen(apply = true) {
+    if (!openId) return;
+    clearTimers();
+    ov.classList.add("gone");
+    const from = openId; openId = null;
+    if (apply && pendingTo !== null) {
+      state = pendingTo;
+      sel = STATES[state].rec || from;
+    }
+    pendingTo = null;
+    render();
+  }
+  document.getElementById("ovBack").addEventListener("click", () => closeOpen());
+
+  // ---------- pointer ----------
+  gCells.addEventListener("pointerover", e => {
+    const g = e.target.closest(".cell"); if (!g || openId || booting) return;
+    if (sel !== g.dataset.id) { sel = g.dataset.id; render(); }
+  });
+  gCells.addEventListener("click", e => {
+    const g = e.target.closest(".cell"); if (!g) return;
+    stage.focus({ preventScroll: true });
+    openCell(g.dataset.id);
+  });
+
+  // ---------- keyboard ----------
+  const DIRS = { ArrowUp: [0, -1], ArrowDown: [0, 1], ArrowLeft: [-1, 0], ArrowRight: [1, 0], w: [0, -1], s: [0, 1], a: [-1, 0], d: [1, 0] };
+  function move([dx, dy]) {
+    const all = [{ id: "core", q: 0, r: 0 }, ...CELLS.filter(visible)];
+    const cur = all.find(c => c.id === sel) || all[0], cp = pos(cur.q, cur.r);
+    let best = null, bestScore = Infinity;
+    for (const c of all) {
+      if (c.id === cur.id) continue;
+      const p = pos(c.q, c.r), vx = p.x - cp.x, vy = p.y - cp.y, len = Math.hypot(vx, vy);
+      const dot = (vx * dx + vy * dy) / len;
+      if (dot < 0.5) continue;
+      const score = len * (2 - dot);
+      if (score < bestScore) { bestScore = score; best = c; }
+    }
+    if (best) { sel = best.id; render(); }
+  }
+  const stage = document.getElementById("stage");
+  document.addEventListener("keydown", e => {
+    if (e.target.closest && e.target.closest("button") && (e.key === "Enter" || e.key === " ")) return;
+    if (e.ctrlKey || e.metaKey || e.altKey || booting) return;
+    const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+    if (openId) { if (k === "Escape" || k === "Backspace") { e.preventDefault(); closeOpen(); } return; }
+    if (DIRS[k]) { e.preventDefault(); move(DIRS[k]); return; }
+    if (k === "Enter" || k === " ") { e.preventDefault(); openCell(sel); return; }
+    const hot = CELLS.find(c => String(c.key) === k);
+    if (hot) { e.preventDefault(); openCell(hot.id); }
+  });
+
+  // ---------- mode / tilt / boot ----------
+  function setMode(m) {
+    if (m === mode) return;
+    mode = m;
+    document.getElementById("modeNow").setAttribute("aria-pressed", String(m === "now"));
+    document.getElementById("modeFut").setAttribute("aria-pressed", String(m === "future"));
+    const sc = CELLS.find(c => c.id === sel);
+    if (sc && !visible(sc)) sel = "core";
+    render();
+    if (m === "future" && !reduce) {
+      CELLS.filter(c => c.phase === "future").forEach((c, i) => {
+        const b = nodes[c.id].b;
+        b.classList.remove("enter"); b.style.setProperty("--d", (i * 55) + "ms");
+        void b.getBBox(); b.classList.add("enter");
+      });
+    }
+  }
+  document.getElementById("modeNow").addEventListener("click", () => setMode("now"));
+  document.getElementById("modeFut").addEventListener("click", () => setMode("future"));
+
+  const tiltBtn = document.getElementById("tiltBtn");
+  tiltBtn.addEventListener("click", () => {
+    const on = !stage.classList.contains("tilted");
+    stage.classList.toggle("tilted", on);
+    tiltBtn.setAttribute("aria-pressed", String(on));
+  });
+
+  function assemble() {
+    const list = [nodes.core, ...CELLS.filter(visible).map(c => nodes[c.id])];
+    for (const n of list) {
+      n.b.classList.remove("enter");
+      n.b.style.setProperty("--d", (dist(n.c) * 110 + (n.c.q + 3) * 12) + "ms");
+      void n.b.getBBox();
+      n.b.classList.add("enter");
+    }
+  }
+
+  const bootOv = document.getElementById("bootOv");
+  const LOG = ["Инициализация квантового ядра — ОК", "Загрузка профиля лаборанта — Хемоформ", "Орбита планеты — Kepler-442b", "Калибровка приборов — ОК", "Подключение к базе образцов — Земля", "Готово"];
+  function boot() {
+    clearTimers();
+    if (openId) closeOpen(false);
+    if (reduce) { bootOv.classList.add("gone"); booting = false; render(); return; }
+    booting = true;
+    bootOv.classList.remove("gone");
+    const ul = document.getElementById("bootLog"), bar = document.getElementById("bootBar");
+    ul.textContent = "";
+    bar.style.transition = "none"; bar.style.width = "0"; void bar.offsetWidth;
+    bar.style.transition = "width 1.4s linear"; bar.style.width = "100%";
+    LOG.forEach((t, i) => later(() => {
+      const li = document.createElement("li"); li.textContent = t;
+      if (i === LOG.length - 1) li.className = "ok";
+      ul.appendChild(li);
+    }, 150 + i * 230));
+    later(() => { bootOv.classList.add("gone"); booting = false; render(); assemble(); }, 1750);
+  }
+  document.getElementById("bootBtn").addEventListener("click", boot);
+
+  // ---------- scale the 1920×1080 screen to the stage ----------
+  const screen = document.getElementById("screen");
+  const fit = () => { screen.style.transform = `scale(${stage.clientWidth / 1920})`; };
+  new ResizeObserver(fit).observe(stage);
+  fit();
+
+  render();
+  boot();
+})();
+</script>

@@ -1,0 +1,332 @@
+<title>Хемоформ · Терминал</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Russo+One&family=Jura:wght@500;600;700&family=Jost:wght@400;500&display=swap">
+<style>
+/* Layout: 1920×1080 terminal. Tabs → sub-tabs; left: card of the section; centre: groups and rows with values; right: about the hovered row; bottom: back + main action. Follows the team's own tab screen and the Bioform settings layout. Single dark look by design. */
+:root {
+  color-scheme: dark;
+  --page: #0b0b0b;
+  --bg: #121212;
+  --card: #3a3a3a;
+  --card-top: #2e2e2e;
+  --row: #222222;
+  --row-hi: #2c2c2c;
+  --val: #17403c;
+  --line: #333;
+  --teal: #3dd4c4;
+  --ink: #0d1f1d;
+  --text: #ececec;
+  --muted: #a3a3a3;
+  --dim: #5f5f5f;
+  --tab: "Russo One", "Arial Black", system-ui, sans-serif;
+  --disp: "Jura", "Segoe UI", system-ui, sans-serif;
+  --body: "Jost", "Segoe UI", system-ui, sans-serif;
+}
+html, body { background: var(--page); color: var(--text); }
+body { font-family: var(--body); font-size: 15px; line-height: 1.45; }
+.wrap { max-width: 1440px; margin: 0 auto; padding-inline: 20px; padding-block: 18px 40px; display: grid; gap: 12px; }
+.wrap > p { margin: 0; color: var(--muted); max-width: 84ch; }
+.stage { position: relative; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; background: var(--bg); outline: none; }
+.stage:focus-visible { box-shadow: 0 0 0 2px var(--teal); }
+.screen { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; background: var(--bg); }
+
+.key { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 4px; background: #d9d9d9; color: #111; font-family: var(--disp); font-weight: 700; font-size: 16px; box-shadow: 0 3px 0 #8a8a8a; }
+
+/* tabs */
+.tabs { position: absolute; top: 0; left: 0; right: 0; height: 54px; display: flex; justify-content: center; align-items: center; gap: 4px; }
+.tab { position: relative; height: 54px; display: grid; place-items: center; padding: 0 34px; font-family: var(--tab); font-size: 21px; letter-spacing: .05em; color: var(--text); cursor: pointer; }
+.tab.on { background: var(--teal); color: var(--ink); }
+.tab.on::after { content: ""; position: absolute; bottom: -14px; left: 50%; width: 8px; height: 8px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: translateX(-50%) rotate(45deg); }
+.tabs .key:first-child { margin-right: 24px; } .tabs .key:last-child { margin-left: 24px; }
+.subs { position: absolute; top: 75px; left: 0; right: 0; display: flex; justify-content: center; align-items: center; gap: 20px; }
+.sub { height: 38px; display: grid; place-items: center; padding: 0 22px; background: #2a2a2a; font-family: var(--disp); font-weight: 600; font-size: 17px; letter-spacing: .1em; color: var(--text); cursor: pointer; }
+.sub.on { background: var(--teal); color: var(--ink); font-weight: 700; }
+
+/* left card */
+.card { position: absolute; left: 110px; top: 186px; width: 310px; height: 714px; background: var(--card); }
+.card .ic { height: 180px; background: var(--card-top); display: grid; place-items: center; }
+.card .ic svg { width: 150px; height: 150px; }
+.card .ic path, .card .ic circle, .card .ic rect, .card .ic ellipse { fill: none; stroke: #8e8e8e; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.card h2 { margin: 22px 16px 0; font-family: var(--disp); font-weight: 600; font-size: 33px; letter-spacing: .06em; line-height: 1.05; text-transform: uppercase; }
+.card p { margin: 16px 16px 0; font-size: 18px; line-height: 1.4; color: #c4c4c4; }
+.card .st { position: absolute; left: 16px; right: 16px; bottom: 18px; display: grid; gap: 8px; font-size: 17px; }
+.card .st div { display: flex; justify-content: space-between; border-top: 1px solid #4a4a4a; padding-top: 8px; color: var(--muted); }
+.card .st b { font-weight: 500; color: var(--text); }
+.card .st b.t { color: var(--teal); }
+
+/* centre list */
+.list { position: absolute; left: 450px; top: 186px; width: 720px; height: 714px; overflow: hidden; display: grid; align-content: start; gap: 4px; }
+.grp { display: grid; grid-template-columns: 28px 1fr; align-items: center; gap: 12px; height: 44px; padding: 0 12px; background: var(--row); cursor: pointer; font-family: var(--disp); font-weight: 600; font-size: 18px; letter-spacing: .08em; text-transform: uppercase; }
+.grp .chev { width: 24px; height: 24px; border: 1.5px solid var(--muted); display: grid; place-items: center; font-size: 12px; color: var(--muted); }
+.grp.open .chev { border-color: var(--teal); color: var(--teal); }
+.it { display: grid; grid-template-columns: 1fr 330px; gap: 8px; height: 44px; cursor: pointer; }
+.it .nm { display: flex; align-items: center; padding-left: 52px; background: var(--row); font-family: var(--disp); font-weight: 600; font-size: 18px; letter-spacing: .06em; text-transform: uppercase; color: #d6d6d6; }
+.it .v { display: flex; align-items: center; justify-content: space-between; padding: 0 14px; background: var(--val); font-family: var(--disp); font-weight: 700; font-size: 18px; letter-spacing: .05em; color: var(--teal); text-transform: uppercase; }
+.it .v.plain { background: var(--row); color: var(--muted); }
+.it .v.q { background: var(--row); color: var(--dim); }
+.it .v.go { background: transparent; border: 1.5px solid var(--teal); }
+.it .v.off { background: #1c1c1c; color: var(--dim); }
+.it .v .arr { font-size: 14px; }
+.it .bar { flex: 1; height: 3px; background: #2f6c66; margin-right: 12px; position: relative; }
+.it .bar i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--teal); }
+.it .bar i::after { content: ""; position: absolute; right: -6px; top: -5px; width: 12px; height: 12px; border-radius: 50%; background: var(--teal); }
+.it.sel .nm { background: var(--row-hi); color: var(--teal); }
+.it.sel .v { box-shadow: inset 0 0 0 2px #2a8fd8; }
+.it.lock .nm { color: var(--dim); }
+.scroll { position: absolute; left: 1186px; top: 186px; width: 6px; height: 714px; background: #1d1d1d; }
+.scroll i { position: absolute; left: 0; right: 0; top: 0; height: 240px; background: #4a4a4a; }
+
+/* right about */
+.about { position: absolute; left: 1230px; top: 186px; width: 580px; }
+.about .lb { font-family: var(--disp); font-weight: 700; font-size: 16px; letter-spacing: .14em; color: var(--teal); text-transform: uppercase; }
+.about h3 { margin: 10px 0 18px; font-family: var(--disp); font-weight: 600; font-size: 36px; letter-spacing: .05em; text-transform: uppercase; line-height: 1.1; }
+.about p { margin: 0 0 14px; font-size: 20px; line-height: 1.45; color: #c9c9c9; max-width: 34ch; }
+.about p b { font-weight: 500; color: var(--text); }
+
+/* bottom */
+.back { position: absolute; left: 110px; top: 980px; font-family: var(--disp); font-weight: 600; font-size: 34px; letter-spacing: .08em; cursor: pointer; display: flex; align-items: center; gap: 14px; }
+.main { position: absolute; right: 110px; top: 980px; font-family: var(--disp); font-weight: 700; font-size: 34px; letter-spacing: .08em; color: var(--teal); cursor: pointer; display: flex; align-items: center; gap: 14px; }
+.main.dis { color: var(--dim); cursor: default; }
+.toast { position: absolute; left: 50%; top: 988px; transform: translateX(-50%); font-family: var(--disp); font-weight: 600; font-size: 22px; letter-spacing: .06em; color: var(--muted); }
+</style>
+
+<div class="wrap">
+  <p>Терминал стола. Q / E — разделы, A / D — подразделы, ↑ ↓ — строки, Enter — переключить значение или выполнить, Esc — назад. Справа описание строки под курсором, внизу главное действие раздела.</p>
+  <div class="stage" id="stage" tabindex="0" aria-label="Терминал лаборатории Хемоформ">
+    <div class="screen" id="screen">
+      <div class="tabs" id="tabs"></div>
+      <div class="subs" id="subs"></div>
+      <div class="card" id="card"></div>
+      <div class="list" id="list"></div>
+      <div class="scroll"><i></i></div>
+      <div class="about" id="about"></div>
+      <div class="back" id="back"><span class="key">⎋</span>НАЗАД</div>
+      <div class="toast" id="toast"></div>
+      <div class="main" id="main"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const ICON = {
+    analysis: `<path d="M58 18h34M64 18v34l-30 52a8 8 0 0 0 7 12h68a8 8 0 0 0 7 -12l-30 -52v-34"/><path d="M44 88h62"/><circle cx="68" cy="100" r="4"/><circle cx="86" cy="94" r="3"/>`,
+    tasks: `<rect x="30" y="20" width="90" height="112" rx="4"/><path d="M58 20v-6h34v6"/><path d="M48 54l8 8l14 -16M80 56h26M48 86l8 8l14 -16M80 88h26M80 116h26"/>`,
+    atom: `<circle cx="75" cy="75" r="8"/><ellipse cx="75" cy="75" rx="56" ry="20"/><ellipse cx="75" cy="75" rx="56" ry="20" transform="rotate(60 75 75)"/><ellipse cx="75" cy="75" rx="56" ry="20" transform="rotate(-60 75 75)"/>`,
+    mass: `<rect x="14" y="98" width="36" height="26" rx="2"/><path d="M50 111h18a42 42 0 0 0 42 -42v-18"/><path d="M68 122a52 52 0 0 0 52 -52"/><rect x="98" y="24" width="30" height="20" rx="2"/><circle cx="32" cy="111" r="5"/><path d="M8 136h134"/>`,
+    ir: `<circle cx="22" cy="74" r="11"/><path d="M33 74h20"/><rect x="53" y="58" width="14" height="32"/><path d="M67 74h14"/><path d="M81 94l17 -40l17 40z"/><path d="M110 64l16 -10M112 74h16M110 84l16 10"/><rect x="128" y="46" width="10" height="56"/><path d="M8 118h134"/>`,
+    holo: `<ellipse cx="75" cy="120" rx="42" ry="10"/><path d="M33 120v8a42 10 0 0 0 84 0v-8"/><path d="M42 114l-8 -64M108 114l8 -64" stroke-dasharray="4 6"/><circle cx="54" cy="62" r="10"/><circle cx="75" cy="62" r="13"/><circle cx="96" cy="62" r="10"/>`,
+    journal: `<rect x="34" y="16" width="84" height="118" rx="4"/><path d="M48 16v118"/><path d="M62 46h42M62 64h42M62 82h26"/>`,
+    db: `<ellipse cx="75" cy="34" rx="44" ry="13"/><path d="M31 34v82a44 13 0 0 0 88 0v-82"/><path d="M31 62a44 13 0 0 0 88 0M31 90a44 13 0 0 0 88 0"/>`
+  };
+
+  // value kinds: list (cycles options), go (action), text (read only), q (unknown), slider
+  const TABS = [
+    { name: "АНАЛИЗ", subs: [
+      { name: "ТЕКУЩИЙ", icon: "analysis", title: "Анализ", desc: "Исследование образца, который сейчас лежит на столе.",
+        stats: [["образец", "КР-01"], ["этап", "2 из 4", 1]], main: "ПРОДОЛЖИТЬ АНАЛИЗ", toast: "Переход к ИК-спектрометру",
+        groups: [
+          { name: "Образец КР-01", rows: [
+            { n: "Источник", v: { k: "text", t: "ледник «Северный»" }, a: "Откуда привезена проба: ледник «Северный», глубина 2 м." },
+            { n: "Проба", v: { k: "text", t: "лёд · 14.2 г" }, a: "Тип и масса пробы, которую сканер принял на столе." } ] },
+          { name: "Этапы", rows: [
+            { n: "Масса молекулы", v: { k: "text", t: "44", hit: true }, a: "Получена на масс-спектрометре: пик целой молекулы на m/z 44." },
+            { n: "Связи", v: { k: "go", t: "ИК-спектрометр" }, a: "<b>Следующий шаг.</b> Снимите ИК-спектр, чтобы узнать, какие связи есть в молекуле." },
+            { n: "Структура", v: { k: "q", t: "?" }, a: "Соберите молекулу на голограмме, когда известны масса и связи." },
+            { n: "Вещество", v: { k: "q", t: "?" }, a: "Определится, когда модель совпадёт с обоими спектрами." } ] }
+        ] },
+      { name: "НОВЫЙ", icon: "analysis", title: "Новый анализ", desc: "Принять на стол новый образец с планеты.",
+        stats: [["приёмник", "пуст"], ["в хранилище", "3 образца"]], main: "НАЧАТЬ НОВЫЙ АНАЛИЗ", toast: "Поместите пробирку в приёмник",
+        groups: [
+          { name: "Приём", rows: [
+            { n: "Образец", v: { k: "list", o: ["КР-02 · грунт", "КР-03 · вода", "КР-04 · газ"] }, a: "Какой образец из хранилища положить на стол." },
+            { n: "Сканирование", v: { k: "list", o: ["Быстрое", "Полное"] }, a: "<b>Быстрое</b> — только масса и тип. <b>Полное</b> — ещё координаты и примеси, дольше." },
+            { n: "Текущий образец", v: { k: "list", o: ["В журнал", "Удалить"] }, a: "Что сделать с КР-01, если начать новый анализ: сохранить в журнал или удалить." } ] }
+        ] }
+    ] },
+    { name: "ЗАДАЧИ", subs: [
+      { name: "АКТИВНЫЕ", icon: "tasks", title: "Задачи", desc: "Что станция просит изучить.",
+        stats: [["активных", "2"], ["выполнено", "1"]], main: "ПОКАЗАТЬ НА СТОЛЕ", toast: "Задача отмечена на столе",
+        groups: [
+          { name: "Глава 1 · Чистая вода", rows: [
+            { n: "Определить КР-01", v: { k: "text", t: "в работе", hit: true }, a: "Найти, что за вещество во льду с ледника «Северный»." },
+            { n: "Проверить пробу воды", v: { k: "q", t: "не начато" }, a: "Колонисты жалуются на вкус воды, датчики показывают норму." } ] },
+          { name: "Обучение", rows: [
+            { n: "Первый спектр", v: { k: "text", t: "выполнено" }, a: "Снять первый масс-спектр и найти пик молекулы." } ] }
+        ] },
+      { name: "ВЫПОЛНЕННЫЕ", icon: "tasks", title: "Выполненные", desc: "Закрытые задачи и что они дали.",
+        stats: [["выполнено", "1"]], main: "", groups: [
+          { name: "Обучение", rows: [
+            { n: "Первый спектр", v: { k: "text", t: "вода · H₂O" }, a: "Тренировочный образец: вода, масса 18." } ] } ] }
+    ] },
+    { name: "ПРИБОРЫ", subs: [
+      { name: "МАСС-СПЕКТРОМЕТР", icon: "mass", title: "Масс-спектр", desc: "Разбивает молекулы на осколки и сортирует их по массе.",
+        stats: [["статус", "готов"], ["результат", "44", 1]], main: "СНЯТЬ СПЕКТР", toast: "Спектр снят: пик молекулы 44",
+        groups: [
+          { name: "Настройки", rows: [
+            { n: "Ионизация", v: { k: "list", o: ["Электронный удар", "Мягкая"] }, a: "<b>Электронный удар</b> даёт много осколков. <b>Мягкая</b> почти не дробит молекулу: виден только её пик." },
+            { n: "Диапазон m/z", v: { k: "list", o: ["10 — 60", "10 — 200"] }, a: "Какие массы показывать. Для лёгких молекул хватает 10–60." },
+            { n: "Чувствительность", v: { k: "slider", p: .6 }, a: "Выше — видны слабые осколки, но больше шума." } ] },
+          { name: "Результат", rows: [
+            { n: "Пик молекулы", v: { k: "text", t: "44", hit: true }, a: "Крайний правый крупный пик. Это масса целой молекулы." },
+            { n: "Осколки", v: { k: "text", t: "28 · 16 · 12" }, a: "Части молекулы после удара: 28 — CO, 16 — O, 12 — C." },
+            { n: "Подбор состава", v: { k: "go", t: "открыть" }, a: "Подберите атомы, сумма масс которых даёт 44." } ] }
+        ] },
+      { name: "ИК-СПЕКТРОМЕТР", icon: "ir", title: "ИК-спектр", desc: "Показывает, какие связи есть в молекуле.",
+        stats: [["статус", "готов"], ["результат", "?"]], main: "СНЯТЬ СПЕКТР", toast: "Спектр снят: найдены двойные связи C=O",
+        groups: [
+          { name: "Настройки", rows: [
+            { n: "Диапазон", v: { k: "list", o: ["4000 — 500 см⁻¹", "4000 — 1500 см⁻¹"] }, a: "Волновые числа, в которых снимается спектр." },
+            { n: "Модель", v: { k: "list", o: ["Наложить", "Скрыть"] }, a: "Показывать поверх спектра образца кривую модели с голограммы." },
+            { n: "Подписи зон", v: { k: "list", o: ["Вкл", "Выкл"] }, a: "Подписывать зоны O–H, C–H, двойных и тройных связей." } ] },
+          { name: "Результат", rows: [
+            { n: "Связи", v: { k: "q", t: "?" }, a: "Появятся после снятия спектра." },
+            { n: "Совпадение с моделью", v: { k: "q", t: "—" }, a: "Сравнение спектра образца с моделью с голограммы." } ] }
+        ] },
+      { name: "ГОЛОГРАММА", icon: "holo", title: "Голограмма", desc: "Собрать молекулу над столом и сверить со спектрами.",
+        stats: [["атомов", "3"], ["сверок", "3 из 3"]], main: "ОТКРЫТЬ ГОЛОГРАММУ", toast: "Голограмма над столом",
+        groups: [
+          { name: "Сборка", rows: [
+            { n: "Атомы", v: { k: "text", t: "C · O · O" }, a: "Атомы из подбора состава на масс-спектрометре." },
+            { n: "Тип связи", v: { k: "list", o: ["Одинарная", "Двойная", "Тройная"] }, a: "Клик по связи на голограмме меняет её тип." },
+            { n: "Сверка с базой", v: { k: "text", t: "осталось 3" }, a: "Показать эталон на 3 секунды. Не больше трёх раз за пазл." } ] }
+        ] },
+      { name: "ХРОМАТОГРАФ", lock: true, icon: "atom", title: "Хроматограф", desc: "Откроется в главе 2.", stats: [["статус", "закрыт"]], main: "", groups: [] }
+    ] },
+    { name: "ЖУРНАЛ", subs: [
+      { name: "ВСЕ", icon: "journal", title: "Журнал", desc: "Все исследования станции.",
+        stats: [["записей", "2"]], main: "ОТКРЫТЬ ЗАПИСЬ", toast: "Запись открыта",
+        groups: [
+          { name: "Kepler-442b", rows: [
+            { n: "КР-01 · лёд", v: { k: "text", t: "в работе", hit: true }, a: "Ледник «Северный». Масса 44, связи пока неизвестны." },
+            { n: "КР-00 · вода", v: { k: "text", t: "H₂O" }, a: "Тренировочный образец. Масса 18, связи O–H." } ] }
+        ] }
+    ] },
+    { name: "БАЗА ДАННЫХ", subs: [
+      { name: "ВЕЩЕСТВА", icon: "db", title: "База веществ", desc: "Эталоны земных веществ.",
+        stats: [["открыто", "1 из 12"]], main: "СРАВНИТЬ С ОБРАЗЦОМ", toast: "Эталон показан рядом с образцом",
+        groups: [
+          { name: "Открытые", rows: [
+            { n: "Вода", v: { k: "text", t: "H₂O · 18" }, a: "Связи O–H, широкая полоса в ИК около 3400 см⁻¹." } ] },
+          { name: "Закрытые", rows: [
+            { n: "???", lock: true, v: { k: "q", t: "масса 44" }, a: "Откроется, когда вы определите вещество с такой массой." },
+            { n: "???", lock: true, v: { k: "q", t: "масса 16" }, a: "Откроется позже." } ] }
+        ] },
+      { name: "ЭЛЕМЕНТЫ", icon: "atom", title: "Элементы", desc: "Массы и валентность атомов.",
+        stats: [["элементов", "4"]], main: "", groups: [
+          { name: "Неметаллы", rows: [
+            { n: "Водород · H", v: { k: "text", t: "1 · вал. 1" }, a: "Самый лёгкий атом, одна связь." },
+            { n: "Углерод · C", v: { k: "text", t: "12 · вал. 4" }, a: "Образует четыре связи." },
+            { n: "Азот · N", v: { k: "text", t: "14 · вал. 3" }, a: "Образует три связи." },
+            { n: "Кислород · O", v: { k: "text", t: "16 · вал. 2" }, a: "Образует две связи." } ] } ] },
+      { name: "СПРАВОЧНИК", icon: "journal", title: "Справочник", desc: "Как работают приборы и как читать графики.",
+        stats: [["статей", "3"]], main: "ЧИТАТЬ", toast: "Статья открыта", groups: [
+          { name: "Приборы", rows: [
+            { n: "Как читать масс-спектр", v: { k: "go", t: "читать" }, a: "Где искать пик молекулы и что значат осколки." },
+            { n: "Зоны ИК-спектра", v: { k: "go", t: "читать" }, a: "Какая связь в какой зоне поглощает свет." } ] },
+          { name: "Химия", rows: [
+            { n: "Валентность", v: { k: "go", t: "читать" }, a: "Сколько связей может образовать каждый атом." } ] } ] }
+    ] }
+  ];
+
+  let t = 2, s = 0, r = 0, closed = new Set(), sel = {};
+  const $ = id => document.getElementById(id);
+  const cur = () => TABS[t].subs[s];
+  const rows = () => {
+    const out = [];
+    cur().groups.forEach((g, gi) => {
+      out.push({ g: gi, head: true });
+      if (!closed.has(t + "." + s + "." + gi)) g.rows.forEach((row, ri) => out.push({ g: gi, r: ri, row }));
+    });
+    return out;
+  };
+
+  function valHTML(v, id) {
+    if (v.k === "list") { const i = sel[id] || 0; return `<div class="v">${v.o[i]}<span class="arr">▼</span></div>`; }
+    if (v.k === "slider") return `<div class="v"><span class="bar"><i style="width:${v.p * 100}%"></i></span></div>`;
+    if (v.k === "go") return `<div class="v go">${v.t}<span class="arr">→</span></div>`;
+    if (v.k === "q") return `<div class="v q">${v.t}</div>`;
+    return `<div class="v ${v.hit ? "" : "plain"}">${v.t}</div>`;
+  }
+
+  function render() {
+    $("tabs").innerHTML = `<span class="key">Q</span>` + TABS.map((x, i) => `<div class="tab ${i === t ? "on" : ""}" data-t="${i}">${x.name}</div>`).join("") + `<span class="key">E</span>`;
+    const subs = TABS[t].subs;
+    $("subs").innerHTML = (subs.length > 1 ? `<span class="key">A</span>` : "") +
+      subs.map((x, i) => `<div class="sub ${i === s ? "on" : ""}" data-s="${i}" ${x.lock ? 'style="color:#5f5f5f"' : ""}>${x.name}</div>`).join("") +
+      (subs.length > 1 ? `<span class="key">D</span>` : "");
+
+    const c = cur();
+    $("card").innerHTML = `<div class="ic"><svg viewBox="0 0 150 150" aria-hidden="true">${ICON[c.icon]}</svg></div>
+      <h2>${c.title}</h2><p>${c.desc}</p>
+      <div class="st">${c.stats.map(([k, v, hit]) => `<div><span>${k}</span><b class="${hit ? "t" : ""}">${v}</b></div>`).join("")}</div>`;
+
+    const list = rows();
+    if (!list.length) {
+      $("list").innerHTML = `<div class="grp"><span class="chev">—</span>Откроется позже</div>`;
+    } else {
+      r = Math.max(0, Math.min(r, list.length - 1));
+      $("list").innerHTML = list.map((x, i) => {
+        if (x.head) {
+          const open = !closed.has(t + "." + s + "." + x.g);
+          return `<div class="grp ${open ? "open" : ""} ${i === r ? "sel" : ""}" data-i="${i}" style="${i === r ? "background:#2c2c2c;color:var(--teal)" : ""}"><span class="chev">${open ? "▲" : "▼"}</span>${c.groups[x.g].name}</div>`;
+        }
+        const id = [t, s, x.g, x.r].join(".");
+        return `<div class="it ${i === r ? "sel" : ""} ${x.row.lock ? "lock" : ""}" data-i="${i}"><div class="nm">${x.row.n}</div>${valHTML(x.row.v, id)}</div>`;
+      }).join("");
+    }
+
+    const x = list[r];
+    if (x && !x.head) $("about").innerHTML = `<div class="lb">Про эту строку</div><h3>${x.row.n}</h3><p>${x.row.a}</p>`;
+    else $("about").innerHTML = `<div class="lb">Про этот раздел</div><h3>${c.title}</h3><p>${c.desc}</p>`;
+
+    const m = $("main");
+    m.className = "main" + (c.main ? "" : " dis");
+    m.innerHTML = c.main ? `${c.main}<span class="key">↵</span>` : "";
+  }
+
+  function toast(msg) { $("toast").textContent = msg; clearTimeout(toast.t); toast.t = setTimeout(() => $("toast").textContent = "", 2600); }
+  function activate(i) {
+    const list = rows(), x = list[i]; if (!x) return;
+    r = i;
+    if (x.head) { const key = t + "." + s + "." + x.g; closed.has(key) ? closed.delete(key) : closed.add(key); render(); return; }
+    const v = x.row.v, id = [t, s, x.g, x.r].join(".");
+    if (v.k === "list") { sel[id] = ((sel[id] || 0) + 1) % v.o.length; render(); }
+    else if (v.k === "go") { render(); toast("Открывается: " + x.row.n.toLowerCase()); }
+    else render();
+  }
+  function setTab(n) { t = (n + TABS.length) % TABS.length; s = 0; r = 1; render(); }
+  function setSub(n) { const k = TABS[t].subs.length; s = (n + k) % k; r = 1; render(); }
+
+  const stage = $("stage"), screen = $("screen");
+  screen.addEventListener("mouseover", e => { const el = e.target.closest("[data-i]"); if (el && +el.dataset.i !== r) { r = +el.dataset.i; render(); } });
+  screen.addEventListener("click", e => {
+    stage.focus({ preventScroll: true });
+    const tb = e.target.closest(".tab"); if (tb) return setTab(+tb.dataset.t);
+    const sb = e.target.closest(".sub"); if (sb) return setSub(+sb.dataset.s);
+    const el = e.target.closest("[data-i]"); if (el) return activate(+el.dataset.i);
+    if (e.target.closest("#main") && cur().main) return toast(cur().toast);
+    if (e.target.closest("#back")) return toast("Назад к столу");
+  });
+  document.addEventListener("keydown", e => {
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+    const act = {
+      q: () => setTab(t - 1), "й": () => setTab(t - 1), e: () => setTab(t + 1), "у": () => setTab(t + 1),
+      a: () => setSub(s - 1), "ф": () => setSub(s - 1), d: () => setSub(s + 1), "в": () => setSub(s + 1),
+      ArrowUp: () => { r = Math.max(0, r - 1); render(); }, w: () => { r = Math.max(0, r - 1); render(); },
+      ArrowDown: () => { r = Math.min(rows().length - 1, r + 1); render(); }, s: () => { r = Math.min(rows().length - 1, r + 1); render(); },
+      Enter: () => activate(r), " ": () => activate(r),
+      Escape: () => toast("Назад к столу")
+    }[k];
+    if (act) { e.preventDefault(); act(); }
+  });
+
+  const fit = () => { screen.style.transform = `scale(${stage.clientWidth / 1920})`; };
+  new ResizeObserver(fit).observe(stage);
+  fit();
+  r = 1;
+  render();
+})();
+</script>

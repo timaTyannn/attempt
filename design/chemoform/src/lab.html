@@ -1,0 +1,371 @@
+<title>Хемоформ · Лаборатория</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: 1920×1080 terminal screen, The Alters–style production layout: tabs → sub-tabs → card grid | big preview | protocol, readouts at the bottom. Single dark look by design. */
+:root {
+  color-scheme: dark;
+  --page: #0c0d0d;
+  --bg: #1f2121;
+  --card: #2a2c2c;
+  --card-2: #252727;
+  --sel: #0e0f0f;
+  --line: #3a3d3d;
+  --text: #e9ecec;
+  --muted: #9a9f9f;
+  --dim: #5d6262;
+  --draw: #b9bebe;
+  --teal: #3dd4c4;
+  --cond: "Roboto Condensed", "Arial Narrow", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+html, body { background: var(--page); color: var(--text); }
+body { font-family: var(--cond); font-size: 15px; line-height: 1.45; }
+.wrap { max-width: 1440px; margin: 0 auto; padding-inline: 20px; padding-block: 18px 40px; display: grid; gap: 12px; }
+.wrap > p { margin: 0; color: var(--muted); max-width: 80ch; }
+.stage { position: relative; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; background: var(--bg); outline: none; }
+.stage:focus-visible { box-shadow: 0 0 0 2px var(--teal); }
+.screen { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0;
+  background: radial-gradient(ellipse 1200px 800px at 960px 520px, #262929, #1a1c1c 75%); font-family: var(--cond); }
+
+kbd.k { display: inline-grid; place-items: center; min-width: 30px; height: 30px; padding: 0 6px; background: var(--text); color: #111; font-family: var(--cond); font-weight: 700; font-size: 18px; border-radius: 3px; }
+
+/* tabs */
+.tabs { position: absolute; top: 0; left: 0; right: 0; height: 64px; display: flex; justify-content: center; align-items: center; gap: 6px; }
+.tab { position: relative; height: 64px; display: flex; align-items: center; gap: 10px; padding: 0 22px; font-weight: 700; font-size: 21px; letter-spacing: .04em; color: var(--muted); cursor: pointer; }
+.tab.on { background: #121313; color: var(--text); }
+.tab.on::after { content: ""; position: absolute; left: 50%; bottom: -12px; width: 10px; height: 10px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: translateX(-50%) rotate(45deg) scale(.7); }
+.tab.off { color: var(--dim); }
+.dot { width: 14px; height: 14px; border-radius: 50%; background: var(--teal); display: inline-block; flex: none; }
+.subtabs { position: absolute; top: 80px; left: 0; right: 0; display: flex; justify-content: center; align-items: center; gap: 10px; }
+.sub { display: flex; align-items: center; gap: 8px; padding: 6px 14px; font-weight: 700; font-size: 16px; letter-spacing: .12em; color: var(--muted); cursor: pointer; }
+.sub.on { background: #121313; color: var(--text); }
+
+/* titles */
+.title { position: absolute; top: 132px; font-weight: 700; font-size: 38px; letter-spacing: .02em; line-height: 1; padding-bottom: 8px;
+  background: repeating-linear-gradient(90deg, var(--text) 0 14px, transparent 14px 20px) left bottom / 100% 3px no-repeat; }
+
+/* grid */
+.grid { position: absolute; left: 60px; top: 196px; width: 690px; }
+.row { display: grid; grid-template-columns: 136px repeat(3, 172px); gap: 10px; margin-bottom: 10px; }
+.rlabel { justify-self: end; padding-top: 12px; font-weight: 700; font-size: 15px; letter-spacing: .06em; color: var(--text); display: flex; gap: 10px; align-items: center; }
+.rlabel i { width: 12px; height: 7px; border-top: 2px solid var(--teal); border-bottom: 2px solid var(--teal); }
+.card { position: relative; height: 245px; background: var(--card); cursor: pointer; padding: 12px 12px 10px; display: flex; flex-direction: column; transition: background .12s; }
+.card.empty { background: var(--card-2); cursor: default; }
+.card .nm { font-weight: 700; font-size: 18px; line-height: 1.02; letter-spacing: .02em; text-transform: uppercase; color: var(--muted); min-height: 38px; }
+.card .art { flex: 1; display: grid; place-items: center; }
+.card .art svg { width: 116px; height: 116px; }
+.card .art path, .card .art circle, .card .art rect, .card .art ellipse { fill: none; stroke: var(--draw); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.card .ft { display: flex; justify-content: space-between; align-items: center; height: 30px; }
+.card .gives { font-family: var(--mono); font-size: 15px; color: var(--muted); }
+.card .badge { width: 28px; height: 28px; border-radius: 50%; background: #c9cdcd; color: #1a1a1a; font-weight: 700; font-size: 16px; display: grid; place-items: center; }
+.card .alert { position: absolute; top: 10px; right: 10px; width: 26px; height: 26px; border-radius: 50%; background: var(--teal); color: #072421; font-weight: 700; font-size: 18px; display: grid; place-items: center; }
+.card:hover:not(.empty) { background: #313434; }
+.card.sel { background: var(--sel); }
+.card.sel .nm { color: var(--text); }
+.card.sel .art path, .card.sel .art circle, .card.sel .art rect, .card.sel .art ellipse { stroke: var(--text); }
+.card.lock .art, .card.lock .nm { opacity: .35; }
+.card.lock .gives { color: var(--dim); }
+.card.done .gives { color: var(--teal); }
+.card.nope { animation: nope .35s ease; }
+@keyframes nope { 30% { transform: translateX(-7px); } 70% { transform: translateX(5px); } }
+
+/* preview */
+.preview { position: absolute; left: 790px; top: 196px; width: 380px; height: 755px; }
+.preview .corner { position: absolute; width: 50px; height: 46px; border: 2px solid #8d9292; }
+.preview .tl { left: 0; top: 0; border-right: 0; border-bottom: 0; border-top-left-radius: 10px; }
+.preview .tr { right: 0; top: 0; border-left: 0; border-bottom: 0; border-top-right-radius: 10px; }
+.preview .bl { left: 0; bottom: 0; border-right: 0; border-top: 0; border-bottom-left-radius: 10px; }
+.preview .br { right: 0; bottom: 0; border-left: 0; border-top: 0; border-bottom-right-radius: 10px; }
+.pv { position: absolute; inset: 40px 34px; display: flex; flex-direction: column; gap: 16px; }
+.pv .big { height: 280px; display: grid; place-items: center; }
+.pv .big svg { width: 250px; height: 250px; }
+.pv .big path, .pv .big circle, .pv .big rect, .pv .big ellipse { fill: none; stroke: var(--text); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.pv h2 { margin: 0; font-weight: 700; font-size: 34px; line-height: 1.05; text-transform: uppercase; }
+.pv p { margin: 0; font-size: 21px; line-height: 1.35; color: #c7cccc; }
+.pv .meta { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 16px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 12px; }
+.pv .meta b { font-weight: 500; color: var(--text); }
+.pv .go { margin-top: auto; display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 20px; letter-spacing: .06em; cursor: pointer; align-self: flex-start; }
+.pv .go.disabled { color: var(--dim); cursor: default; }
+.pv .go.disabled kbd.k { background: var(--dim); }
+
+/* protocol */
+.proto { position: absolute; left: 1210px; top: 196px; width: 650px; display: grid; gap: 8px; }
+.step { height: 64px; background: #232525; display: grid; grid-template-columns: 54px 1fr auto; align-items: center; padding-right: 18px; }
+.step .n { font-family: var(--mono); font-size: 18px; color: var(--dim); text-align: center; }
+.step .t { font-weight: 500; font-size: 21px; color: var(--muted); }
+.step .t small { display: block; font-family: var(--mono); font-size: 14px; color: var(--dim); letter-spacing: .04em; }
+.step .v { font-family: var(--mono); font-size: 20px; color: var(--dim); }
+.step.done .t { color: var(--text); }
+.step.done .v { color: var(--teal); }
+.step.done .n { color: var(--teal); }
+.step.now { background: #121313; box-shadow: inset 4px 0 0 var(--teal); }
+.step.now .t { color: var(--text); }
+.step.now .v { color: var(--teal); }
+.step.blank { background: #212323; }
+
+/* bottom */
+.bottom { position: absolute; left: 520px; top: 1000px; width: 880px; height: 80px; background: #151616; display: flex; align-items: center; justify-content: space-around; }
+.read { text-align: center; }
+.read b { display: block; font-family: var(--mono); font-weight: 500; font-size: 22px; color: var(--text); }
+.read b.q { color: var(--dim); }
+.read span { font-size: 16px; color: var(--muted); }
+.close { position: absolute; right: 60px; top: 1010px; display: flex; align-items: center; gap: 10px; border: 1.5px solid #6c7171; padding: 8px 12px; font-weight: 500; font-size: 20px; cursor: pointer; }
+
+/* opened */
+.open { position: absolute; inset: 0; background: #151616; display: grid; place-items: center; transition: opacity .25s; }
+.open.gone { opacity: 0; pointer-events: none; }
+.open .box { width: 1000px; display: grid; gap: 22px; }
+.open .lb { font-weight: 700; font-size: 18px; letter-spacing: .14em; color: var(--muted); }
+.open h3 { margin: 0; font-weight: 700; font-size: 72px; text-transform: uppercase; line-height: 1; }
+.open p { margin: 0; font-size: 28px; color: var(--muted); }
+.open .bar { width: 600px; height: 4px; background: var(--line); }
+.open .bar i { display: block; height: 100%; width: 0; background: var(--teal); }
+.open .res { font-family: var(--mono); font-size: 30px; color: var(--teal); min-height: 1.3em; }
+.open .back { display: flex; align-items: center; gap: 10px; font-weight: 500; font-size: 22px; cursor: pointer; }
+
+@media (prefers-reduced-motion: reduce) { .card.nope { animation: none; } .open { transition: none; } }
+</style>
+
+<div class="wrap">
+  <p>Терминал стола в духе экрана производства из The Alters. Q / E — разделы, A / D — подразделы, стрелки — карточки, Enter — открыть, Esc — назад. Бирюзовая точка ведёт к следующему шагу анализа.</p>
+  <div class="stage" id="stage" tabindex="0" aria-label="Терминал лаборатории">
+    <div class="screen" id="screen">
+      <div class="tabs" id="tabs"></div>
+      <div class="subtabs" id="subtabs"></div>
+      <div class="title" style="left:196px">ДОСТУПНО</div>
+      <div class="title" style="right:60px">ПРОТОКОЛ</div>
+      <div class="grid" id="grid"></div>
+      <div class="preview">
+        <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+        <div class="pv" id="pv"></div>
+      </div>
+      <div class="proto" id="proto"></div>
+      <div class="bottom" id="bottom"></div>
+      <div class="close" id="closeBtn"><kbd class="k">ESC</kbd>ЗАКРЫТЬ</div>
+
+      <div class="open gone" id="open">
+        <div class="box">
+          <div class="lb" id="oLb"></div>
+          <h3 id="oT"></h3>
+          <p id="oP"></p>
+          <div class="bar" id="oBar"><i id="oFill"></i></div>
+          <div class="res" id="oRes"></div>
+          <div class="back" id="oBack"><kbd class="k">ESC</kbd>НАЗАД</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  // Line drawings of the instruments, 120×120.
+  const ART = {
+    mass: `<rect x="10" y="78" width="30" height="22" rx="2"/><path d="M40 89h14a34 34 0 0 0 34 -34v-14"/><path d="M54 98a42 42 0 0 0 42 -42"/><rect x="80" y="20" width="24" height="16" rx="2"/><circle cx="25" cy="89" r="4"/><path d="M62 72l10 10M70 64l10 10"/><path d="M6 108h108"/>`,
+    ir: `<circle cx="18" cy="60" r="9"/><path d="M14 52v-6M22 52v-6"/><path d="M27 60h16"/><rect x="43" y="48" width="12" height="24" rx="1"/><path d="M55 60h12"/><path d="M67 76l14 -32l14 32z"/><path d="M90 52l14 -8M92 60h14M90 68l14 8"/><rect x="104" y="38" width="8" height="44"/><path d="M6 96h108"/>`,
+    holo: `<ellipse cx="60" cy="96" rx="34" ry="8"/><path d="M26 96v8a34 8 0 0 0 68 0v-8"/><path d="M34 92l-6 -52M86 92l6 -52" stroke-dasharray="3 5"/><circle cx="44" cy="52" r="8"/><circle cx="60" cy="52" r="10"/><circle cx="76" cy="52" r="8"/><path d="M52 49h-1M52 55h-1M69 49h-1M69 55h-1"/><path d="M52 50h0M51 48h2M51 56h2M68 48h2M68 56h2"/>`,
+    gc: `<rect x="14" y="34" width="70" height="66" rx="3"/><circle cx="49" cy="67" r="20"/><circle cx="49" cy="67" r="13"/><circle cx="49" cy="67" r="6"/><path d="M49 34v-18M43 16h12"/><path d="M84 60h14v30h12"/><path d="M98 50h12v20h-12z"/>`,
+    ph: `<path d="M34 50v46a6 6 0 0 0 6 6h40a6 6 0 0 0 6 -6v-46"/><path d="M30 50h60"/><path d="M34 78h52"/><path d="M60 10v24M54 10h12"/><path d="M60 34q-5 7 0 10q5 -3 0 -10z"/>`,
+    reactor: `<path d="M34 40a26 14 0 0 1 52 0v52a6 6 0 0 1 -6 6h-40a6 6 0 0 1 -6 -6z"/><path d="M34 62h52"/><circle cx="60" cy="80" r="8"/><path d="M60 26v-14M20 70h14M86 70h14M100 70v24"/>`,
+    chain: `<circle cx="22" cy="72" r="10"/><circle cx="60" cy="44" r="10"/><circle cx="98" cy="72" r="10"/><path d="M30 66l22 -16M68 50l22 16"/><path d="M90 30l16 16M106 30l-16 16"/><path d="M60 54v28"/><circle cx="60" cy="92" r="8"/>`,
+    tube: `<path d="M48 12h24M52 12v74a8 8 0 0 0 16 0v-74"/><path d="M52 58h16"/><path d="M30 34h60M30 34v70M90 34v70M24 104h72"/>`,
+    storage: `<path d="M10 40h100M10 76h100M10 108h100M16 40v68M104 40v68"/><rect x="24" y="16" width="18" height="24"/><rect x="50" y="20" width="18" height="20"/><rect x="24" y="52" width="18" height="24"/><rect x="76" y="54" width="18" height="22"/><rect x="50" y="84" width="18" height="24"/>`,
+    journal: `<rect x="26" y="14" width="68" height="92" rx="3"/><path d="M36 14v92"/><path d="M48 36h34M48 50h34M48 64h22"/>`,
+    refInst: `<rect x="18" y="26" width="84" height="64" rx="3"/><path d="M28 78l14 -30l12 22l10 -14l16 22"/><path d="M40 104h40M60 90v14"/>`,
+    refChem: `<circle cx="60" cy="60" r="8"/><ellipse cx="60" cy="60" rx="44" ry="16"/><ellipse cx="60" cy="60" rx="44" ry="16" transform="rotate(60 60 60)"/><ellipse cx="60" cy="60" rx="44" ry="16" transform="rotate(-60 60 60)"/>`,
+    refPlay: `<rect x="16" y="40" width="88" height="44" rx="22"/><path d="M38 54v16M30 62h16"/><circle cx="80" cy="56" r="4"/><circle cx="88" cy="66" r="4"/>`,
+    db: `<ellipse cx="60" cy="28" rx="34" ry="10"/><path d="M26 28v64a34 10 0 0 0 68 0v-64"/><path d="M26 50a34 10 0 0 0 68 0M26 72a34 10 0 0 0 68 0"/>`,
+    atlas: `<path d="M12 22v80h96"/><path d="M12 34h18l6 40l6 -40h22l5 20l5 -20h28"/>`,
+    table: `<rect x="10" y="24" width="14" height="14"/><rect x="96" y="24" width="14" height="14"/><rect x="10" y="44" width="14" height="14"/><rect x="28" y="44" width="14" height="14"/><rect x="60" y="44" width="14" height="14"/><rect x="78" y="44" width="14" height="14"/><rect x="96" y="44" width="14" height="14"/><rect x="10" y="64" width="14" height="14"/><rect x="28" y="64" width="14" height="14"/><rect x="46" y="64" width="14" height="14"/><rect x="64" y="64" width="14" height="14"/><rect x="82" y="64" width="14" height="14"/><rect x="28" y="88" width="64" height="12"/>`,
+    mission: `<path d="M30 108v-96M30 16h56l-12 16l12 16h-56"/>`,
+    lab: `<path d="M50 14h20M52 14v30l-26 46a8 8 0 0 0 7 12h54a8 8 0 0 0 7 -12l-26 -46v-30"/><path d="M36 76h48"/>`,
+    olymp: `<circle cx="60" cy="74" r="24"/><path d="M48 52l-14 -40h18l8 22l8 -22h18l-14 40"/><path d="M60 62l4 8h8l-6 6l2 8l-8 -4l-8 4l2 -8l-6 -6h8z"/>`
+  };
+
+  const TABS = [
+    { key: "sample", name: "ОБРАЗЕЦ", subs: [
+      { key: "in", name: "ПРИЁМ", rows: [["СТОЛ", ["new"]], ["СКЛАД", ["storage"]]] },
+      { key: "arch", name: "АРХИВ", rows: [["ИССЛЕДОВАНИЯ", ["journal"]]] } ] },
+    { key: "inst", name: "ПРИБОРЫ", subs: [
+      { key: "an", name: "АНАЛИЗ", rows: [["СОСТАВ", ["mass", "gc"]], ["СВЯЗИ", ["ir", "ph"]]] },
+      { key: "mol", name: "МОЛЕКУЛА", rows: [["МОДЕЛЬ", ["holo"]], ["СИНТЕЗ", ["reactor", "chain"]]] } ] },
+    { key: "know", name: "ЗНАНИЯ", subs: [
+      { key: "ref", name: "СПРАВОЧНИК", rows: [["РАЗДЕЛЫ", ["refInst", "refChem", "refPlay"]]] },
+      { key: "base", name: "БАЗА", rows: [["ВЕЩЕСТВА", ["db", "atlas"]], ["ЭЛЕМЕНТЫ", ["table"]]] } ] },
+    { key: "task", name: "ЗАДАНИЯ", subs: [
+      { key: "all", name: "ВСЕ", rows: [["СЮЖЕТ", ["mission"]], ["УЧЁБА", ["lab", "olymp"]]] } ] }
+  ];
+
+  const IT = {
+    new:     { n: "Новый анализ", gives: "→ карточка", d: "Положите пробирку в приёмник. Сканер заведёт карточку образца." },
+    storage: { n: "Хранилище", gives: "образцы", lock: "ГЛАВА 2", d: "Образцы, привезённые с планеты. Выберите, какой положить на стол." },
+    journal: { n: "Журнал", gives: "записи", d: "Прошлые исследования: приборы, результаты и выводы." },
+    mass:    { n: "Масс-спектрометр", key: 2, gives: "→ масса", d: "Разбивает молекулы на осколки и сортирует по массе. Правый крупный пик — масса целой молекулы." },
+    gc:      { n: "Хроматограф", gives: "→ смесь", lock: "ГЛАВА 2", d: "Делит смесь на отдельные вещества перед масс-спектрометром." },
+    ir:      { n: "ИК-спектрометр", key: 3, gives: "→ связи", d: "Просвечивает образец инфракрасным светом. Каждая связь поглощает в своей зоне." },
+    ph:      { n: "Цветной индикатор", gives: "→ pH", lock: "ГЛАВА 2", d: "Капли кислоты, основания и воды; цвет показывает кислотность." },
+    holo:    { n: "Голограмма", key: 4, gives: "→ структура", d: "Соберите молекулу над столом. Модель сверяется с обоими спектрами." },
+    reactor: { n: "Реактор", gives: "→ синтез", lock: "ГЛАВА 3", d: "Синтез, нагрев и фильтрация в центре стола." },
+    chain:   { n: "Очистка цепи", gives: "→ очистка", lock: "ГЛАВА 3", d: "Уберите токсичные узлы, не разрушив цепочку." },
+    refInst: { n: "Приборы", key: 1, gives: "как читать", d: "Как работает каждый прибор и как читать его график." },
+    refChem: { n: "Химия", gives: "основы", d: "Массы атомов, валентность, типы связей, зоны ИК-спектра." },
+    refPlay: { n: "Как играть", gives: "управление", d: "Управление столом и голограммой, подсказки станции." },
+    db:      { n: "База веществ", gives: "эталоны", d: "Земные вещества: формула, масса, структура и оба спектра." },
+    atlas:   { n: "Атлас спектров", gives: "эталоны", lock: "ГЛАВА 2", d: "Эталонные спектры для сравнения с образцом." },
+    table:   { n: "Таблица Менделеева", gives: "элементы", lock: "ГЛАВА 2", d: "Карточки элементов: валентность, масса, группа, период." },
+    mission: { n: "Миссии станции", gives: "сюжет", lock: "СКОРО", d: "Сюжетные задания станции." },
+    lab:     { n: "Лаб. работы", gives: "учёба", lock: "СКОРО", d: "Учебные задания с проверкой." },
+    olymp:   { n: "Олимпиада", gives: "на время", lock: "СКОРО", d: "Задачи олимпиадного уровня." }
+  };
+
+  const STEPS = [
+    { id: "new",     t: "Принять образец", w: "новый анализ", v: "КР-01" },
+    { id: "mass",    t: "Масса молекулы",  w: "масс-спектрометр", v: "44" },
+    { id: "ir",      t: "Связи",           w: "ИК-спектрометр", v: "C=O" },
+    { id: "holo",    t: "Структура",       w: "голограмма", v: "CO₂" },
+    { id: "journal", t: "Запись в журнал", w: "журнал", v: "✓" }
+  ];
+  const RUN = {
+    new: ["Сканирую образец…", "Принят образец КР-01: лёд, ледник «Северный»"],
+    mass: ["Разделяю осколки по массе…", "Масса молекулы — 44"],
+    ir: ["Снимаю ИК-спектр…", "Есть двойные связи C=O"],
+    holo: ["Сверяю модель со спектрами…", "Совпало: CO₂"],
+    journal: ["Записываю…", "Сохранено в журнал. Стол свободен"]
+  };
+
+  let step = 1, tab = 1, sub = 0, sel = "mass", opened = null, pending = false, tmr = null;
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const $ = id => document.getElementById(id);
+  const rec = () => STEPS[step].id;
+  const where = id => {
+    for (let t = 0; t < TABS.length; t++) for (let s = 0; s < TABS[t].subs.length; s++)
+      for (const [, ids] of TABS[t].subs[s].rows) if (ids.includes(id)) return { t, s };
+    return { t: 0, s: 0 };
+  };
+  const needsSample = id => ["mass", "ir", "holo", "gc", "ph", "reactor", "chain"].includes(id);
+  const doneVal = id => { const i = STEPS.findIndex(s => s.id === id); return i > 0 && i < 4 && step > i ? STEPS[i].v : null; };
+  const svg = (id, big) => `<svg viewBox="0 0 120 120" aria-hidden="true">${ART[id]}</svg>`;
+
+  function render() {
+    const r = where(rec());
+    $("tabs").innerHTML = `<kbd class="k">Q</kbd>` + TABS.map((t, i) =>
+      `<div class="tab ${i === tab ? "on" : ""} ${t.key === "task" ? "off" : ""}" data-t="${i}">${r.t === i ? '<span class="dot"></span>' : ""}${t.name}</div>`).join("") + `<kbd class="k">E</kbd>`;
+    const subs = TABS[tab].subs;
+    $("subtabs").innerHTML = (subs.length > 1 ? `<kbd class="k">A</kbd>` : "") + subs.map((s, i) =>
+      `<div class="sub ${i === sub ? "on" : ""}" data-s="${i}">${r.t === tab && r.s === i ? '<span class="dot" style="width:11px;height:11px"></span>' : ""}${s.name}</div>`).join("") + (subs.length > 1 ? `<kbd class="k">D</kbd>` : "");
+
+    $("grid").innerHTML = subs[sub].rows.map(([label, ids]) => {
+      const cells = ids.map(id => {
+        const it = IT[id], dv = doneVal(id);
+        const cls = [sel === id ? "sel" : "", it.lock ? "lock" : "", dv ? "done" : ""].join(" ");
+        return `<div class="card ${cls}" data-id="${id}">
+          ${rec() === id ? '<span class="alert">!</span>' : ""}
+          <div class="nm">${it.n}</div>
+          <div class="art">${svg(id)}</div>
+          <div class="ft"><span class="gives">${it.lock ? it.lock : dv ? "✓ " + dv : it.gives}</span>${it.key ? `<span class="badge">${it.key}</span>` : ""}</div>
+        </div>`;
+      });
+      while (cells.length < 3) cells.push(`<div class="card empty"></div>`);
+      return `<div class="row"><div class="rlabel">${label}<i></i></div>${cells.join("")}</div>`;
+    }).join("");
+
+    const it = IT[sel], dv = doneVal(sel);
+    const blocked = it.lock || (needsSample(sel) && step === 0);
+    $("pv").innerHTML = `
+      <div class="big">${svg(sel)}</div>
+      <h2>${it.n}</h2>
+      <p>${it.d}</p>
+      <div class="meta"><span>${TABS[where(sel).t].name} · ${TABS[where(sel).t].subs[where(sel).s].name}</span><b>${it.lock ? it.lock : dv ? "✓ " + dv : rec() === sel ? "СЛЕДУЮЩИЙ ШАГ" : ""}</b></div>
+      <div class="go ${blocked ? "disabled" : ""}" id="go"><kbd class="k">ENTER</kbd>${it.lock ? "ЗАКРЫТО" : blocked ? "НУЖЕН ОБРАЗЕЦ" : "ОТКРЫТЬ"}</div>`;
+
+    $("proto").innerHTML = STEPS.map((s, i) => {
+      const cls = i < step ? "done" : i === step ? "now" : "";
+      return `<div class="step ${cls}"><span class="n">${i < step ? "✓" : "0" + (i + 1)}</span>
+        <span class="t">${s.t}<small>${s.w}</small></span><span class="v">${i < step ? s.v : i === step ? "ДАЛЕЕ" : "—"}</span></div>`;
+    }).join("") + Array.from({ length: 4 }, () => `<div class="step blank"></div>`).join("");
+
+    const rd = (label, v) => `<div class="read"><b class="${v ? "" : "q"}">${v || "—"}</b><span>${label}</span></div>`;
+    $("bottom").innerHTML = rd("образец", step > 0 ? "КР-01" : "") + rd("источник", step > 0 ? "лёд · 2 м" : "") +
+      rd("масса", step > 1 ? "044" : "") + rd("связи", step > 2 ? "C=O" : "") + rd("вещество", step > 3 ? "CO₂" : "");
+  }
+
+  function select(id) { sel = id; render(); }
+  function setTab(t, s = 0) {
+    tab = (t + TABS.length) % TABS.length; sub = s;
+    const first = TABS[tab].subs[sub].rows[0][1][0];
+    sel = first; render();
+  }
+  function setSub(s) { const n = TABS[tab].subs.length; sub = (s + n) % n; sel = TABS[tab].subs[sub].rows[0][1][0]; render(); }
+  function move(dx, dy) {
+    const rows = TABS[tab].subs[sub].rows.map(r => r[1]);
+    let ri = rows.findIndex(r => r.includes(sel)), ci = rows[ri].indexOf(sel);
+    if (dy) { ri = Math.max(0, Math.min(rows.length - 1, ri + dy)); ci = Math.min(ci, rows[ri].length - 1); }
+    if (dx) ci = Math.max(0, Math.min(rows[ri].length - 1, ci + dx));
+    select(rows[ri][ci]);
+  }
+
+  function openIt(id) {
+    if (opened) return;
+    const it = IT[id];
+    if (it.lock || (needsSample(id) && step === 0)) {
+      const c = document.querySelector(`.card[data-id="${id}"]`);
+      if (c) { c.classList.remove("nope"); void c.offsetWidth; c.classList.add("nope"); }
+      return;
+    }
+    opened = id;
+    const go = rec() === id && RUN[id];
+    $("oLb").textContent = TABS[where(id).t].name;
+    $("oT").textContent = it.n;
+    $("oRes").textContent = "";
+    $("oBar").hidden = !go;
+    if (go) {
+      $("oP").textContent = RUN[id][0];
+      const f = $("oFill"); f.style.transition = "none"; f.style.width = "0"; void f.offsetWidth;
+      f.style.transition = reduce ? "none" : "width 1s linear"; f.style.width = "100%";
+      tmr = setTimeout(() => { $("oRes").textContent = RUN[id][1]; pending = true; }, reduce ? 0 : 1050);
+    } else { $("oP").textContent = "Здесь будет экран функции."; pending = false; }
+    $("open").classList.remove("gone");
+  }
+  function closeIt() {
+    if (!opened) return;
+    clearTimeout(tmr); $("open").classList.add("gone"); opened = null;
+    if (pending) {
+      step = (step + 1) % STEPS.length; pending = false;
+      const w = where(rec()); tab = w.t; sub = w.s; sel = rec();
+    }
+    render();
+  }
+
+  const stage = $("stage"), screen = $("screen");
+  screen.addEventListener("mouseover", e => { const c = e.target.closest(".card:not(.empty)"); if (c && !opened && c.dataset.id !== sel) select(c.dataset.id); });
+  screen.addEventListener("click", e => {
+    stage.focus({ preventScroll: true });
+    const c = e.target.closest(".card:not(.empty)"); if (c) return openIt(c.dataset.id);
+    const t = e.target.closest(".tab"); if (t) return setTab(+t.dataset.t);
+    const s = e.target.closest(".sub"); if (s) return setSub(+s.dataset.s);
+    if (e.target.closest("#go")) return openIt(sel);
+    if (e.target.closest("#oBack")) return closeIt();
+  });
+  document.addEventListener("keydown", e => {
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+    if (opened) { if (k === "Escape" || k === "Backspace") { e.preventDefault(); closeIt(); } return; }
+    const act = {
+      q: () => setTab(tab - 1), "й": () => setTab(tab - 1), e: () => setTab(tab + 1), "у": () => setTab(tab + 1),
+      a: () => setSub(sub - 1), "ф": () => setSub(sub - 1), d: () => setSub(sub + 1), "в": () => setSub(sub + 1),
+      ArrowLeft: () => move(-1, 0), ArrowRight: () => move(1, 0), ArrowUp: () => move(0, -1), ArrowDown: () => move(0, 1),
+      Enter: () => openIt(sel), " ": () => openIt(sel)
+    }[k];
+    if (act) { e.preventDefault(); act(); return; }
+    const hot = Object.keys(IT).find(id => String(IT[id].key) === k);
+    if (hot) { e.preventDefault(); const w = where(hot); tab = w.t; sub = w.s; sel = hot; render(); openIt(hot); }
+  });
+
+  const fit = () => { screen.style.transform = `scale(${stage.clientWidth / 1920})`; };
+  new ResizeObserver(fit).observe(stage);
+  fit();
+  render();
+})();
+</script>

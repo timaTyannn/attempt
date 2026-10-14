@@ -1,0 +1,319 @@
+<title>Хемоформ · Выбор функции</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jura:wght@400;500;600&family=Jost:wght@400;500&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+/* Layout: 1920×1080 terminal screen scaled to the page. Left: the sample, large. Right: a plain grouped list; only the focused group is open. Single dark look by design. */
+:root {
+  color-scheme: dark;
+  --page: #0b0d0d;
+  --screen: #131515;
+  --line: #2a3231;
+  --teal: #3dd4c4;
+  --text: #e2e8e6;
+  --muted: #7f8d8a;
+  --dim: #475250;
+  --display: "Jura", "Segoe UI", system-ui, sans-serif;
+  --body: "Jost", "Segoe UI", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+html, body { background: var(--page); color: var(--text); }
+body { font-family: var(--body); font-size: 15px; line-height: 1.5; }
+.wrap { max-width: 1440px; margin: 0 auto; padding-inline: 20px; padding-block: 20px 40px; display: grid; gap: 16px; }
+.top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 12px 24px; }
+.top p { margin: 0; color: var(--muted); max-width: 60ch; }
+.controls { display: flex; flex-wrap: wrap; gap: 8px 16px; }
+.seg { display: flex; flex-wrap: wrap; border: 1px solid var(--line); }
+.seg button { font-family: var(--body); font-size: 13px; color: var(--muted); background: none; border: 0; padding: 6px 12px; cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { color: var(--page); background: var(--text); }
+button:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+
+.stage { position: relative; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; background: var(--screen); outline: none; }
+.stage:focus-visible { box-shadow: 0 0 0 2px var(--teal); }
+.screen { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; background: var(--screen); }
+
+.hdr { position: absolute; left: 80px; right: 80px; top: 44px; display: flex; justify-content: space-between; font-family: var(--mono); font-size: 22px; letter-spacing: .08em; color: var(--teal); }
+.rule { position: absolute; left: 80px; right: 80px; height: 1px; background: var(--teal); opacity: .6; }
+.ftr { position: absolute; left: 80px; right: 80px; top: 1012px; display: flex; justify-content: space-between; font-family: var(--mono); font-size: 20px; color: var(--muted); }
+
+/* left: sample */
+.sample { position: absolute; left: 80px; top: 170px; width: 620px; }
+.label { font-family: var(--mono); font-size: 18px; color: var(--muted); letter-spacing: .06em; }
+.sample .id { font-family: var(--display); font-weight: 500; font-size: 150px; line-height: 1; margin: 18px 0 26px; letter-spacing: .02em; }
+.sample .id.empty { color: var(--dim); }
+.sample .src { font-size: 28px; line-height: 1.45; }
+.sample .src span { color: var(--muted); }
+.reads { margin-top: 64px; border-top: 1px solid var(--line); }
+.reads div { display: flex; justify-content: space-between; align-items: baseline; padding: 16px 0; border-bottom: 1px solid var(--line); font-size: 26px; }
+.reads div span { color: var(--muted); }
+.reads b { font-family: var(--display); font-weight: 500; font-size: 34px; }
+.reads b.q { color: var(--dim); }
+.reads b.hit { color: var(--teal); }
+
+.divider { position: absolute; left: 790px; top: 170px; width: 1px; height: 790px; background: var(--line); }
+
+/* right: list */
+.menu { position: absolute; left: 870px; top: 170px; width: 970px; height: 700px; }
+.group + .group { margin-top: 30px; }
+.ghead { display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 10px; border-bottom: 1px solid var(--line); cursor: pointer; }
+.ghead .label { font-size: 19px; }
+.ghead .n { font-family: var(--mono); font-size: 18px; color: var(--dim); }
+.group.closed .ghead { border-bottom-color: transparent; }
+.group.closed .ghead .label::after { content: "  →"; color: var(--dim); }
+.group.closed .ghead:hover .label { color: var(--text); }
+.row { position: relative; display: grid; grid-template-columns: 52px 1fr auto; align-items: baseline; padding: 13px 0 13px 0; cursor: pointer; }
+.row .k { font-family: var(--mono); font-size: 20px; color: var(--dim); }
+.row .t { font-family: var(--body); font-size: 36px; line-height: 1.15; }
+.row .s { font-family: var(--mono); font-size: 19px; color: var(--muted); }
+.row.sel .t { color: var(--teal); }
+.row.sel::before { content: ""; position: absolute; left: -26px; top: 18px; bottom: 18px; width: 3px; background: var(--teal); }
+.row.sel .k { color: var(--teal); }
+.row.rec .s { color: var(--teal); }
+.row.off .t, .row.lock .t { color: var(--dim); }
+.row.lock .s { color: var(--dim); }
+.row.done .s { color: var(--text); }
+.row.nope { animation: nope .35s ease; }
+@keyframes nope { 30% { transform: translateX(-8px); } 70% { transform: translateX(6px); } }
+
+.hint { position: absolute; left: 870px; top: 900px; width: 970px; display: flex; justify-content: space-between; align-items: baseline; gap: 40px; font-size: 25px; color: var(--muted); }
+.hint b { font-weight: 400; color: var(--text); }
+.hint kbd { font-family: var(--mono); font-size: 19px; color: var(--text); border: 1px solid var(--line); padding: 2px 10px; white-space: nowrap; }
+
+/* opened function */
+.open { position: absolute; inset: 0; background: var(--screen); padding: 170px 80px 0; transition: opacity .25s; }
+.open.gone { opacity: 0; pointer-events: none; }
+.open h2 { font-family: var(--display); font-weight: 500; font-size: 96px; margin: 18px 0 30px; line-height: 1; }
+.open p { font-size: 30px; margin: 0; max-width: 40ch; color: var(--muted); }
+.open .res { margin-top: 40px; font-family: var(--display); font-weight: 500; font-size: 44px; color: var(--teal); min-height: 1.2em; }
+.open .bar { margin-top: 40px; width: 620px; height: 2px; background: var(--line); }
+.open .bar i { display: block; height: 100%; width: 0; background: var(--teal); }
+.open .back { position: absolute; left: 80px; top: 900px; font-family: var(--body); font-size: 25px; color: var(--muted); background: none; border: 0; cursor: pointer; padding: 0; }
+.open .back kbd { font-family: var(--mono); font-size: 19px; color: var(--text); border: 1px solid var(--line); padding: 2px 10px; margin-right: 12px; }
+
+@media (prefers-reduced-motion: reduce) { .row.nope { animation: none; } .open { transition: none; } }
+</style>
+
+<div class="wrap">
+  <div class="top">
+    <p>Экран выбора на терминале стола. Наведите мышь или ходите стрелками, Enter открывает, Esc возвращает. Вверху справа — состояние стола и объём функций для проверки.</p>
+    <div class="controls">
+      <div class="seg" id="stateSeg" role="group" aria-label="Состояние стола"></div>
+      <div class="seg" role="group" aria-label="Объём функций">
+        <button type="button" id="modeNow" aria-pressed="true">7 функций</button>
+        <button type="button" id="modeFut" aria-pressed="false">17 функций</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="stage" id="stage" tabindex="0" aria-label="Терминал стола: стрелки — выбор, Enter — открыть, Esc — назад, 1–4 — приборы.">
+    <div class="screen" id="screen">
+      <div class="hdr"><span>СТАНЦИЯ НЕКСУС</span><span>ЛАБ. ХЕМОФОРМ</span></div>
+      <div class="rule" style="top:96px"></div>
+
+      <div class="sample" id="sample"></div>
+      <div class="divider"></div>
+      <div class="menu" id="menu"></div>
+      <div class="hint" id="hint"></div>
+
+      <div class="rule" style="top:990px"></div>
+      <div class="ftr"><span>вер. 2.2</span><span id="ftrRight"></span></div>
+
+      <div class="open gone" id="open">
+        <div class="label" id="oLabel"></div>
+        <h2 id="oTitle"></h2>
+        <p id="oText"></p>
+        <div class="bar" id="oBar"><i id="oFill"></i></div>
+        <div class="res" id="oRes"></div>
+        <button type="button" class="back" id="oBack"><kbd>Esc</kbd>назад</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const GROUPS = [
+    { key: "inst",   name: "приборы" },
+    { key: "sample", name: "образец" },
+    { key: "know",   name: "знания" },
+    { key: "task",   name: "задания" }
+  ];
+  const ITEMS = [
+    { id: "mass",    g: "inst", t: "масс-спектрометр", key: 2, now: true, needs: true, d: "Показывает массу молекулы и её осколков." },
+    { id: "ir",      g: "inst", t: "ИК-спектрометр", key: 3, now: true, needs: true, d: "Показывает, какие связи есть в молекуле." },
+    { id: "holo",    g: "inst", t: "голограмма", key: 4, now: true, needs: true, d: "Соберите молекулу над столом и сверьте со спектрами." },
+    { id: "gc",      g: "inst", t: "хроматограф", lock: "глава 2", needs: true, d: "Делит смесь на отдельные вещества." },
+    { id: "ph",      g: "inst", t: "цветной индикатор", lock: "глава 2", needs: true, d: "Показывает кислотность раствора цветом." },
+    { id: "reactor", g: "inst", t: "реактор", lock: "глава 3", needs: true, d: "Синтез, нагрев и фильтрация." },
+    { id: "chain",   g: "inst", t: "очистка цепи", lock: "глава 3", needs: true, d: "Уберите токсичные фрагменты из цепочки." },
+    { id: "new",     g: "sample", t: "новый анализ", now: true, d: "Положите пробирку в приёмник, сканер заведёт карточку образца." },
+    { id: "journal", g: "sample", t: "журнал", now: true, d: "Все прошлые исследования и выводы." },
+    { id: "storage", g: "sample", t: "хранилище", d: "Образцы, привезённые с планеты." },
+    { id: "ref",     g: "know", t: "справочник", key: 1, now: true, d: "Как работают приборы и как читать их графики." },
+    { id: "db",      g: "know", t: "база данных", now: true, d: "Эталоны известных земных веществ." },
+    { id: "table",   g: "know", t: "таблица Менделеева", d: "Валентность, масса, группа и период элементов." },
+    { id: "atlas",   g: "know", t: "атлас спектров", d: "Эталонные спектры для сравнения." },
+    { id: "lab",     g: "task", t: "лабораторные работы", d: "Учебные задания с проверкой." },
+    { id: "mission", g: "task", t: "миссии станции", d: "Сюжетные задания." },
+    { id: "olymp",   g: "task", t: "олимпиада", lock: "после 10 образцов", d: "Задачи на время." }
+  ];
+  const STATES = [
+    { name: "пусто", rec: "new" },
+    { name: "образец", rec: "mass" },
+    { name: "масса", rec: "ir" },
+    { name: "связи", rec: "holo" },
+    { name: "готово", rec: "journal" }
+  ];
+  const ADV = {
+    new:     { from: 0, run: "Сканирую образец…", res: "Принят образец КР-01" },
+    mass:    { from: 1, run: "Разделяю осколки по массе…", res: "Масса молекулы — 44" },
+    ir:      { from: 2, run: "Снимаю ИК-спектр…", res: "Есть двойные связи C=O" },
+    holo:    { from: 3, run: "Сверяю модель со спектрами…", res: "Совпало: CO₂" },
+    journal: { from: 4, run: "Записываю в журнал…", res: "Сохранено. Стол свободен" }
+  };
+  const DONE = { mass: [2, "44"], ir: [3, "C=O"], holo: [4, "CO₂"] };
+
+  let state = 1, wide = false, sel = "mass", openGroup = "inst", opened = null, pending = false, tmr = null;
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const $ = id => document.getElementById(id);
+  const shown = it => it.now || wide;
+  const groups = () => GROUPS.map(g => ({ ...g, items: ITEMS.filter(i => i.g === g.key && shown(i)) })).filter(g => g.items.length);
+  const isOpen = key => !wide || key === openGroup;
+
+  function status(it) {
+    if (it.lock && wide) return ["lock", it.lock];
+    if (STATES[state].rec === it.id) return ["rec", "далее"];
+    if (DONE[it.id] && state >= DONE[it.id][0]) return ["done", DONE[it.id][1]];
+    if (it.needs && state === 0) return ["off", "нужен образец"];
+    return ["", ""];
+  }
+
+  function renderSample() {
+    const r = (label, at, v) => `<div><span>${label}</span><b class="${state >= at ? "hit" : "q"}">${state >= at ? v : "?"}</b></div>`;
+    $("sample").innerHTML = state === 0
+      ? `<div class="label">образец</div><div class="id empty">—</div>
+         <div class="src">Приёмник пуст.<br><span>Положите пробирку и выберите «новый анализ».</span></div>`
+      : `<div class="label">образец</div><div class="id">КР-01</div>
+         <div class="src">ледник «Северный»<br><span>проба льда, глубина 2 м</span></div>
+         <div class="reads">${r("масса молекулы", 2, "44")}${r("связи", 3, "C=O")}${r("вещество", 4, "CO₂")}</div>`;
+  }
+
+  function render() {
+    renderSample();
+    const gs = groups();
+    $("menu").innerHTML = gs.map(g => {
+      const open = isOpen(g.key);
+      const rows = open ? g.items.map(it => {
+        const [cls, s] = status(it);
+        return `<div class="row ${cls} ${sel === it.id ? "sel" : ""}" data-id="${it.id}">
+          <span class="k">${it.key || ""}</span><span class="t">${it.t}</span><span class="s">${s}</span></div>`;
+      }).join("") : "";
+      return `<div class="group ${open ? "" : "closed"}">
+        <div class="ghead" data-g="${g.key}"><span class="label">${g.name}</span><span class="n">${g.items.length}</span></div>${rows}</div>`;
+    }).join("");
+    const it = ITEMS.find(i => i.id === sel);
+    $("hint").innerHTML = `<span><b>${it.t[0].toUpperCase() + it.t.slice(1)}.</b> ${it.d}</span><kbd>Enter — открыть</kbd>`;
+    $("ftrRight").textContent = state === 0 ? "ожидание образца" : state === 4 ? "образец определён" : "идёт анализ";
+    [...$("stateSeg").children].forEach((b, i) => b.setAttribute("aria-pressed", String(i === state)));
+  }
+
+  function flat() { return groups().flatMap(g => isOpen(g.key) ? g.items.map(i => ({ type: "item", id: i.id, g: g.key })) : [{ type: "group", g: g.key }]); }
+  function step(d) {
+    const list = flat();
+    let i = list.findIndex(x => x.type === "item" && x.id === sel);
+    i = Math.max(0, Math.min(list.length - 1, i + d));
+    const x = list[i];
+    if (x.type === "group") { openGroup = x.g; const gi = groups().find(g => g.key === x.g).items; sel = (d > 0 ? gi[0] : gi[gi.length - 1]).id; }
+    else sel = x.id;
+    render();
+  }
+
+  function openItem(id) {
+    if (opened) return;
+    const it = ITEMS.find(i => i.id === id);
+    if (!it || !shown(it)) return;
+    sel = id; openGroup = it.g; render();
+    const [cls] = status(it);
+    if (cls === "lock" || cls === "off") {
+      const row = document.querySelector(`.row[data-id="${id}"]`);
+      if (row) { row.classList.remove("nope"); void row.offsetWidth; row.classList.add("nope"); }
+      return;
+    }
+    opened = id;
+    const a = ADV[id] && ADV[id].from === state ? ADV[id] : null;
+    $("oLabel").textContent = GROUPS.find(g => g.key === it.g).name;
+    $("oTitle").textContent = it.t[0].toUpperCase() + it.t.slice(1);
+    $("oRes").textContent = "";
+    $("oBar").hidden = !a;
+    const fill = $("oFill");
+    if (a) {
+      $("oText").textContent = a.run;
+      fill.style.transition = "none"; fill.style.width = "0"; void fill.offsetWidth;
+      fill.style.transition = reduce ? "none" : "width 1s linear"; fill.style.width = "100%";
+      tmr = setTimeout(() => { $("oRes").textContent = a.res; pending = true; }, reduce ? 0 : 1050);
+    } else {
+      $("oText").textContent = "Здесь будет экран функции.";
+      pending = false;
+    }
+    $("open").classList.remove("gone");
+  }
+  function closeItem(apply = true) {
+    if (!opened) return;
+    clearTimeout(tmr);
+    $("open").classList.add("gone");
+    opened = null;
+    if (apply && pending) {
+      state = (state + 1) % STATES.length;
+      sel = STATES[state].rec;
+      openGroup = ITEMS.find(i => i.id === sel).g;
+    }
+    pending = false;
+    render();
+  }
+  $("oBack").addEventListener("click", () => closeItem());
+
+  const stage = $("stage"), screen = $("screen");
+  screen.addEventListener("mouseover", e => {
+    const r = e.target.closest(".row"); if (!r || opened) return;
+    if (sel !== r.dataset.id) { sel = r.dataset.id; render(); }
+  });
+  screen.addEventListener("click", e => {
+    const r = e.target.closest(".row");
+    if (r) { stage.focus({ preventScroll: true }); openItem(r.dataset.id); return; }
+    const h = e.target.closest(".ghead");
+    if (h && wide && h.dataset.g !== openGroup) { openGroup = h.dataset.g; sel = groups().find(g => g.key === openGroup).items[0].id; render(); }
+  });
+  document.addEventListener("keydown", e => {
+    if (e.target.closest && e.target.closest("button") && (e.key === "Enter" || e.key === " ")) return;
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+    if (opened) { if (k === "Escape" || k === "Backspace") { e.preventDefault(); closeItem(); } return; }
+    if (k === "ArrowDown" || k === "s") { e.preventDefault(); step(1); }
+    else if (k === "ArrowUp" || k === "w") { e.preventDefault(); step(-1); }
+    else if (k === "Enter" || k === " ") { e.preventDefault(); openItem(sel); }
+    else { const hot = ITEMS.find(i => String(i.key) === k); if (hot) { e.preventDefault(); openItem(hot.id); } }
+  });
+
+  STATES.forEach((s, i) => {
+    const b = document.createElement("button");
+    b.type = "button"; b.id = "st" + i; b.textContent = s.name;
+    b.addEventListener("click", () => { closeItem(false); state = i; render(); });
+    $("stateSeg").appendChild(b);
+  });
+  function setWide(v) {
+    wide = v;
+    $("modeNow").setAttribute("aria-pressed", String(!v));
+    $("modeFut").setAttribute("aria-pressed", String(v));
+    openGroup = ITEMS.find(i => i.id === sel).g;
+    render();
+  }
+  $("modeNow").addEventListener("click", () => setWide(false));
+  $("modeFut").addEventListener("click", () => setWide(true));
+
+  const fit = () => { screen.style.transform = `scale(${stage.clientWidth / 1920})`; };
+  new ResizeObserver(fit).observe(stage);
+  fit();
+  render();
+})();
+</script>
