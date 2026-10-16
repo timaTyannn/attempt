@@ -105,7 +105,7 @@ h1 { font-family: var(--mono); font-weight: 700; font-size: clamp(26px, 4vw, 40p
 .acc .tile.sel .col { opacity: 0; }
 .acc .open { position: absolute; left: 0; top: 0; width: 580px; height: 100%; padding: 44px 44px; opacity: 0; transition: opacity .3s var(--ease) .08s; display: flex; flex-direction: column; gap: 18px; }
 .acc .tile.sel .open { opacity: 1; }
-.acc .art { right: -96px; bottom: -84px; }
+.acc .art { right: -96px; bottom: -84px; transition: transform .45s var(--ease), color .32s var(--ease), opacity .24s var(--ease) .06s; }
 .acc .tile:not(.sel) .art { opacity: 0; }
 
 /* ---------- B · hub around the sample ---------- */
@@ -118,7 +118,7 @@ h1 { font-family: var(--mono); font-weight: 700; font-size: clamp(26px, 4vw, 40p
 .kpi b.q { color: #3e4040; }
 
 @media (prefers-reduced-motion: reduce) {
-  .tile, .tile .art, .acc .tile, .acc .open, .acc .col, .tile::before, .tile::after { transition: none; }
+  .tile, .tile .art, .acc .tile, .acc .art, .acc .open, .acc .col, .tile::before, .tile::after { transition: none; }
   .tile.sel, .tile.sel .art { transform: none; }
 }
 </style>

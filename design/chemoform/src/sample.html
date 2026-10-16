@@ -1,0 +1,418 @@
+<title>Хемоформ · Вкладка «Образец»</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500&display=swap">
+<style>
+
+@font-face { font-family: "Disket Mono"; font-weight: 400; src: url(data:font/ttf;base64,__DISKET_REG__) format("truetype"); }
+@font-face { font-family: "Disket Mono"; font-weight: 700; src: url(data:font/ttf;base64,__DISKET_BOLD__) format("truetype"); }
+/* Layout: three takes on the terminal home screen (Обзор), each a live 1920×1080 screen; hover moves the selection. Single dark look by design. */
+:root {
+  color-scheme: dark;
+  --page: #0b0b0b; --ink: #e8e8e8; --muted: #9a9a9a; --rule: #2a2a2a;
+  --bg: #121212; --card: #1b1c1c; --card-on: #222424; --card-off: #141515; --line: #2c2e2e;
+  --text: #ececec; --grey: #8a8a8a; --dim: #5a5a5a;
+  --accent: #3dd4c4; --dark: #0b201e;
+  --mono: "Disket Mono", ui-monospace, Menlo, monospace;
+  --body: "Jost", "Segoe UI", system-ui, sans-serif;
+  --ease: cubic-bezier(.2, .7, .2, 1);
+}
+html, body { background: var(--page); color: var(--ink); }
+body { font-family: var(--body); font-size: 17px; line-height: 1.55; }
+.doc { max-width: 1240px; margin: 0 auto; padding-inline: 20px; padding-block: 34px 80px; }
+h1 { font-family: var(--mono); font-weight: 700; font-size: clamp(26px, 4vw, 40px); margin: 0 0 8px; text-wrap: balance; }
+.lead { color: var(--muted); max-width: 70ch; margin: 0 0 8px; }
+.v { margin-top: 46px; }
+.v header { display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: baseline; margin-bottom: 10px; }
+.v header h2 { font-family: var(--mono); font-size: 22px; margin: 0; }
+.v header span { color: var(--muted); max-width: 72ch; }
+.notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 10px 32px; margin-top: 12px; }
+.notes p { margin: 0; color: #c6c6c6; min-width: 0; }
+.notes b { display: block; font-family: var(--mono); font-weight: 400; font-size: 12px; letter-spacing: .1em; color: var(--muted); }
+
+.comp { position: relative; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; }
+.scr { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; overflow: hidden; background: var(--bg); color: var(--text); font-family: var(--body); }
+.scr * { box-sizing: border-box; }
+.scr sub { font-size: .56em; vertical-align: baseline; position: relative; top: .22em; }
+.kc { display: inline-grid; place-items: center; min-width: 32px; height: 30px; padding: 0 7px; border-radius: 5px; background: #d8d8d8; color: #141414; font-family: var(--mono); font-weight: 700; font-size: 16px; box-shadow: 0 4px 0 #8a8a8a; }
+.ab { position: absolute; }
+.ey { font-family: var(--mono); font-size: 20px; letter-spacing: .14em; color: var(--grey); }
+.ey.ac { color: var(--accent); }
+.big { font-family: var(--mono); font-weight: 700; line-height: .92; }
+.txt { font-size: 26px; line-height: 1.45; color: #c6c6c6; }
+.sep { width: 146px; height: 1px; background: #bdbdbd; }
+.kv { display: flex; justify-content: space-between; align-items: baseline; gap: 24px; padding: 15px 0; border-top: 1px solid #333; }
+.kv > span { font-family: var(--mono); font-size: 20px; letter-spacing: .1em; color: var(--grey); white-space: nowrap; }
+.kv > b { font-family: var(--mono); font-weight: 400; font-size: 26px; text-align: right; }
+.kv > b.q { color: var(--dim); }
+.mini { display: flex; flex-direction: column; gap: 4px; }
+.mini span { font-family: var(--mono); font-size: 20px; letter-spacing: .1em; color: #9a9a9a; }
+.mini b { font-weight: 400; font-size: 24px; color: var(--text); }
+.dotn { width: 12px; height: 12px; border-radius: 50%; background: var(--accent); flex: none; }
+
+/* ---------- header Б, active tab lit from below ---------- */
+.hdr { position: absolute; left: 100px; right: 100px; top: 22px; height: 70px; display: flex; justify-content: center; align-items: stretch; border-bottom: 1px solid #2c2c2c; }
+.hdr > .kc { align-self: center; margin: 0 18px; }
+.ht { position: relative; display: flex; align-items: center; gap: 12px; padding: 0 24px; font-family: var(--mono); font-size: 18px; letter-spacing: .06em; color: var(--grey); }
+.ht svg { width: 26px; height: 26px; position: relative; }
+.ht svg * { fill: none; stroke: var(--grey); stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; }
+.ht span { position: relative; }
+.ht.on { color: #fff; }
+.ht.on svg * { stroke: #fff; }
+.ht.on::before { content: ""; position: absolute; left: 0; right: 0; top: 5px; bottom: 0; background: linear-gradient(to bottom, rgba(61, 212, 196, 0), rgba(61, 212, 196, .34)); }
+.ht.on::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 4px; background: var(--accent); }
+.ht .dot { width: 12px; height: 12px; border-radius: 50%; background: var(--accent); }
+.ht .pts { min-width: 26px; height: 26px; padding: 0 6px; border-radius: 13px; background: var(--accent); color: var(--dark); font-weight: 700; font-size: 15px; display: grid; place-items: center; }
+
+/* ---------- footer: on the home screen ESC does nothing, so it is not shown ---------- */
+.foot { position: absolute; left: 0; right: 0; top: 1000px; display: flex; justify-content: center; gap: 44px; font-family: var(--mono); font-size: 19px; color: var(--muted); }
+.foot span { display: flex; gap: 12px; align-items: center; }
+.foot .on { color: var(--text); } .foot .on .kc { background: var(--accent); box-shadow: 0 4px 0 #1f7d73; }
+
+/* ---------- selectable card: base, lit and moving toward the player ---------- */
+.tile { position: absolute; overflow: hidden; background: var(--card); cursor: pointer; outline: none;
+  transition: transform .32s var(--ease), background-color .32s var(--ease); }
+.tile::before, .tile::after { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .32s var(--ease); z-index: 3; }
+.tile::after { background: linear-gradient(to top, rgba(61, 212, 196, .30), rgba(61, 212, 196, 0) 72%); }
+.tile::before { padding: 3px; background: linear-gradient(to top, #3dd4c4, rgba(61, 212, 196, 0) 88%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
+.tile.sel { background: var(--card-on); transform: translateY(-6px) scale(1.012); z-index: 2; }
+.tile.sel::before, .tile.sel::after { opacity: 1; }
+.tile .art { position: absolute; color: #4a4d4d; transition: transform .45s var(--ease), color .32s var(--ease); z-index: 1; }
+.tile.sel .art { color: var(--accent); transform: scale(1.05) translate(-8px, -6px); }
+.tile .art svg path[fill] { fill: var(--card); transition: fill .32s var(--ease); }
+.tile.sel .art svg path[fill] { fill: var(--card-on); }
+.tile .in { position: relative; z-index: 2; }
+.tile .nm { font-family: var(--mono); font-weight: 700; color: #bdbdbd; transition: color .32s var(--ease); }
+.tile.sel .nm { color: #fff; }
+.tile .q { font-family: var(--mono); font-size: 20px; letter-spacing: .14em; color: var(--grey); transition: color .32s var(--ease); }
+.tile.sel .q { color: var(--accent); }
+.tile .ds { font-size: 24px; line-height: 1.4; color: var(--grey); transition: color .32s var(--ease); }
+.tile.sel .ds { color: #d0d0d0; }
+.tile .ic { width: 34px; height: 34px; }
+.tile .ic * { fill: none; stroke: #6a6a6a; stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; transition: stroke .32s var(--ease); }
+.tile.sel .ic * { stroke: var(--accent); }
+.tile .dotn { position: absolute; right: 24px; top: 26px; z-index: 2; }
+.pic { display: block; overflow: visible; }
+
+/* ---------- A · section strips ---------- */
+.acc { position: absolute; left: 680px; right: 100px; top: 128px; height: 832px; display: flex; gap: 10px; }
+.acc .tile { position: relative; flex: 0 0 132px; transition: flex-grow .42s var(--ease), transform .32s var(--ease), background-color .32s var(--ease); }
+.acc .tile.sel { flex: 1 0 132px; transform: none; }
+.acc .col { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; padding: 28px 0 30px; gap: 22px; transition: opacity .2s var(--ease); }
+.acc .col .vt { writing-mode: vertical-rl; transform: rotate(180deg); font-family: var(--mono); font-size: 27px; letter-spacing: .06em; color: #bdbdbd; flex: 1; }
+.acc .col .d { width: 12px; height: 12px; border-radius: 50%; background: #333; }
+.acc .col .d.on { background: var(--accent); }
+.acc .tile.sel .col { opacity: 0; }
+.acc .open { position: absolute; left: 0; top: 0; width: 580px; height: 100%; padding: 44px 44px; opacity: 0; transition: opacity .3s var(--ease) .08s; display: flex; flex-direction: column; gap: 18px; }
+.acc .tile.sel .open { opacity: 1; }
+.acc .art { right: -96px; bottom: -84px; transition: transform .45s var(--ease), color .32s var(--ease), opacity .24s var(--ease) .06s; }
+.acc .tile:not(.sel) .art { opacity: 0; }
+
+/* ---------- B · hub around the sample ---------- */
+.hub .tile .in { position: absolute; left: 34px; top: 30px; right: 34px; display: flex; flex-direction: column; gap: 12px; }
+
+/* ---------- C · bento ---------- */
+.kpi { display: flex; flex-direction: column; gap: 8px; padding-left: 26px; border-left: 1px solid var(--line); }
+.kpi span { font-family: var(--mono); font-size: 20px; letter-spacing: .12em; color: var(--grey); }
+.kpi b { font-family: var(--mono); font-weight: 700; font-size: 44px; line-height: 1; }
+.kpi b.q { color: #3e4040; }
+
+@media (prefers-reduced-motion: reduce) {
+  .tile, .tile .art, .acc .tile, .acc .art, .acc .open, .acc .col, .tile::before, .tile::after { transition: none; }
+  .tile.sel, .tile.sel .art { transform: none; }
+}
+
+/* ---------- subtabs (A / D) and breadcrumbs ---------- */
+.sub { position: absolute; left: 100px; right: 100px; top: 100px; height: 62px; display: flex; align-items: stretch; border-bottom: 1px solid #222; }
+.sub > .kc { align-self: center; }
+.sub > .kc:first-child { margin-right: 10px; }
+.st2 { position: relative; display: flex; align-items: center; gap: 10px; padding: 0 22px; font-family: var(--mono); font-size: 20px; letter-spacing: .1em; color: #7a7a7a; }
+.st2.on { color: #fff; }
+.st2.on::after { content: ""; position: absolute; left: 22px; right: 22px; bottom: -1px; height: 2px; background: var(--accent); }
+.st2.off { color: #3f4141; }
+.sub .rt { margin-left: auto; align-self: center; font-family: var(--mono); font-size: 20px; letter-spacing: .1em; color: #6a6a6a; }
+.sub .rt b { font-weight: 400; color: var(--text); }
+.crumb { display: flex; align-items: center; gap: 16px; font-family: var(--mono); font-size: 20px; letter-spacing: .1em; color: #6a6a6a; }
+.crumb b { font-weight: 400; color: #fff; }
+
+
+/* ---------- sample tab: flat, 1 px lines, the accent only on what is selected ---------- */
+.ht.off { color: #444; }
+.ht.off svg * { stroke: #444; }
+.kc.pad { border-radius: 15px; min-width: 48px; }
+.hcmp { position: relative; width: 100%; aspect-ratio: 1920 / 176; overflow: hidden; background: var(--bg); }
+.hcmp .scr { height: 176px; }
+.cap { font-family: var(--mono); font-size: 12px; letter-spacing: .12em; color: var(--muted); margin: 18px 0 6px; }
+.cap span { color: #6a6a6a; letter-spacing: 0; font-family: var(--body); font-size: 15px; margin-left: 10px; }
+.pros { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 14px 32px; margin-top: 18px; }
+.pros div { min-width: 0; }
+.pros b { display: block; font-family: var(--mono); font-weight: 400; font-size: 12px; letter-spacing: .1em; color: var(--muted); margin-bottom: 6px; }
+.pros ul { margin: 0; padding-left: 18px; color: #c6c6c6; }
+.pros li { margin: 0 0 6px; }
+.pros .rec b { color: var(--accent); }
+[data-pick] { cursor: pointer; outline: none; }
+.go2 { display: none; align-items: center; gap: 12px; font-family: var(--mono); font-weight: 700; font-size: 20px; letter-spacing: .06em; color: var(--accent); white-space: nowrap; }
+.sel .go2 { display: inline-flex; }
+.sel .src { display: none; }
+.src { font-size: 22px; color: #7a7a7a; white-space: nowrap; }
+.kv > b { font-family: var(--body); font-size: 24px; }
+.kv > b.m { font-family: var(--mono); font-size: 26px; }
+.ck { width: 26px; height: 26px; fill: none; stroke: var(--text); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---------- A · label ---------- */
+.lbl { position: absolute; left: 100px; top: 196px; width: 1720px; height: 764px; border: 1px solid #3a3c3c; background: #151616; display: grid; grid-template-columns: 600px 1fr; grid-template-rows: 112px 1fr; }
+.lbl .top { grid-column: 1 / -1; display: grid; grid-template-columns: 600px 1fr 1fr 1fr; border-bottom: 1px solid #333; }
+.lbl .cell { padding: 0 32px; border-left: 1px solid #333; display: flex; flex-direction: column; justify-content: center; gap: 8px; min-width: 0; }
+.lbl .cell:first-child { border-left: 0; }
+.lbl .cell span { font-family: var(--mono); font-size: 18px; letter-spacing: .14em; color: var(--grey); }
+.lbl .cell b { font-weight: 400; font-size: 24px; color: var(--text); white-space: nowrap; }
+.lbl .cell b.m { font-family: var(--mono); font-weight: 700; font-size: 30px; letter-spacing: .08em; }
+.lbl .side { border-right: 1px solid #333; padding: 34px 32px 32px; display: flex; flex-direction: column; min-height: 0; }
+.bar { display: block; margin-top: 26px; }
+.bc { font-family: var(--mono); font-size: 18px; letter-spacing: .2em; color: #6a6a6a; margin-top: 10px; }
+.por { display: flex; align-items: center; gap: 12px; margin-top: 26px; padding-top: 18px; border-top: 1px solid #333; }
+.por .ey { margin-right: auto; }
+.pq { width: 24px; height: 24px; border: 1px solid #6a6a6a; }
+.pq.on { background: #bdbdbd; border-color: #bdbdbd; }
+.por b { font-family: var(--mono); font-weight: 400; font-size: 24px; margin-left: 10px; }
+.lbl .form { padding: 30px 40px 0; display: flex; flex-direction: column; min-height: 0; }
+.frow { position: relative; display: grid; grid-template-columns: 64px 250px 1fr auto; align-items: end; gap: 0 20px; height: 94px; padding: 0 20px 18px; border-bottom: 1px solid #262828; transition: background-color .2s var(--ease); }
+.frow::before { content: ""; position: absolute; left: 0; top: 0; bottom: -1px; width: 4px; background: var(--accent); opacity: 0; transition: opacity .2s var(--ease); }
+.frow.sel { background: #1c1e1e; }
+.frow.sel::before { opacity: 1; }
+.frow .n { font-family: var(--mono); font-size: 20px; color: #5a5a5a; padding-bottom: 6px; }
+.frow .f { font-family: var(--mono); font-size: 22px; letter-spacing: .1em; color: #9a9a9a; padding-bottom: 6px; }
+.frow.sel .f { color: #fff; }
+.frow .fv { font-family: var(--mono); font-weight: 700; font-size: 44px; line-height: 1; color: #fff; padding-bottom: 8px; border-bottom: 1px solid #555; margin-right: 24px; min-height: 52px; }
+.frow .fv.blank { border-bottom: 1px dashed #4a4c4c; }
+.frow .src, .frow .go2 { padding-bottom: 6px; }
+.stw { display: flex; align-items: center; gap: 24px; margin-top: auto; padding: 0 0 32px 20px; }
+.stamp { border: 2px solid #6a6a6a; padding: 10px 20px 8px; font-family: var(--mono); font-weight: 700; font-size: 28px; letter-spacing: .14em; color: #8a8a8a; }
+.stw .txt { font-size: 22px; color: #6a6a6a; }
+
+/* ---------- B · formula ---------- */
+.fx { position: absolute; left: 100px; top: 196px; width: 1720px; height: 764px; display: grid; grid-template-columns: repeat(4, 240px) 1fr; grid-template-rows: 1fr 96px; }
+.slot, .stc { display: flex; flex-direction: column; min-width: 0; }
+.slot { padding-left: 28px; border-left: 1px solid #2c2e2e; }
+.slot:first-child { padding-left: 0; border-left: 0; }
+.stc { padding-left: 56px; border-left: 1px solid #2c2e2e; }
+.fx .hd { height: 52px; }
+.elw { position: relative; height: 360px; display: flex; align-items: flex-end; padding-bottom: 26px; border-bottom: 1px solid #2c2e2e; }
+.elw::after { content: ""; position: absolute; left: 0; right: 28px; bottom: -1px; height: 4px; background: var(--accent); opacity: 0; transition: opacity .2s var(--ease); }
+.stc .elw::after { right: 0; }
+.sel .elw::after { opacity: 1; }
+.el { font-family: var(--mono); font-weight: 700; font-size: 200px; line-height: .8; color: #fff; }
+.cnt { font-family: var(--mono); font-weight: 700; font-size: 84px; line-height: .8; color: #fff; margin-left: 10px; }
+.slot.zero .el, .slot.zero .cnt { color: #3e4040; transition: color .2s var(--ease); }
+.slot.zero.sel .el, .slot.zero.sel .cnt { color: #6a6a6a; }
+.why { height: 128px; padding-top: 22px; display: flex; flex-direction: column; gap: 8px; }
+.why b { font-family: var(--mono); font-weight: 400; font-size: 20px; letter-spacing: .04em; color: #bdbdbd; }
+.sel .why b { color: #fff; }
+.slot .go2 { font-size: 18px; letter-spacing: 0; gap: 10px; }
+.term { height: 96px; display: flex; align-items: center; font-family: var(--mono); font-size: 46px; color: #8a8a8a; border-top: 1px solid #2c2e2e; margin-right: -1px; }
+.stc .term { color: #fff; gap: 18px; }
+.stc .term .ey { margin-left: 10px; }
+.mol2 { display: block; margin: 0 auto 0 0; }
+.info { grid-column: 1 / -1; display: flex; align-items: center; gap: 40px; border-top: 1px solid #333; font-size: 23px; color: #c6c6c6; }
+.info .ey { margin-right: 14px; }
+.info > div:last-child { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+
+/* ---------- C · tube in section ---------- */
+.tube { position: absolute; left: 690px; top: 180px; overflow: visible; }
+.tube .o { fill: none; stroke: #8a8a8a; stroke-width: 1; }
+.lay .fl { stroke: none; }
+.lay .hl { fill: none; stroke: var(--accent); stroke-width: 2; opacity: 0; transition: opacity .2s var(--ease); }
+.lay .ld { stroke: #444; stroke-width: 1; transition: stroke .2s var(--ease); }
+.lay .dt { fill: #444; transition: fill .2s var(--ease); }
+.lay.sel .hl { opacity: 1; }
+.lay.sel .ld { stroke: var(--accent); }
+.lay.sel .dt { fill: var(--accent); }
+.trow { position: absolute; left: 1060px; width: 760px; height: 150px; display: flex; align-items: center; gap: 24px; padding-left: 20px; border-top: 1px solid #262828; }
+.trow > .ey { width: 250px; flex: none; white-space: nowrap; letter-spacing: .08em; }
+.trow .src, .trow .go2 { margin-left: auto; }
+.trow .ey { transition: color .2s var(--ease); }
+.trow.sel .ey { color: #fff; }
+.trow .fv { white-space: nowrap; font-family: var(--mono); font-weight: 700; font-size: 52px; line-height: 1; color: #fff; }
+.trow .fv.q { color: #3e4040; }
+</style>
+
+<main class="doc">
+  <h1>Хемоформ · вкладка «Образец»</h1>
+  <p class="lead">Свечение снизу и бирюзовый чертёж остаются за «Приборами». У «Образца» свой язык — плоский, линии 1 px, акцент только у выбранного. Три подхода к карточке: бланк-этикетка, формула, пробирка в разрезе. Наведите курсор — строки, ячейки и слои выбираются. Внизу — шапка с Q/E и без них.</p>
+  <div id="screens"></div>
+  <article class="v" id="qe">
+    <header><h2>Q и E: убирать?</h2><span>Та же шапка в трёх видах. Клавиши в любом случае можно оставить рабочими — вопрос только в том, рисовать ли их.</span></header>
+    <div class="cap">СЕЙЧАС<span>клавиши у шапки и у подвкладок</span></div><div class="hcmp"><div class="scr" id="h1"></div></div>
+    <div class="cap">БЕЗ КЛАВИШ<span>вкладки — только слова, переключение кликом; Q/E и A/D работают, но не нарисованы</span></div><div class="hcmp"><div class="scr" id="h2"></div></div>
+    <div class="cap">ГЕЙМПАД<span>LB/RB и LT/RT появляются, только когда игрок взял геймпад</span></div><div class="hcmp"><div class="scr" id="h3"></div></div>
+    <div class="pros">
+      <div><b>ЗА — УБРАТЬ</b><ul>
+        <li>Шапка чище: только слова, на меше клавиши-плашки рябят сильнее текста.</li>
+        <li>Терминал выглядит прибором в мире, а не оверлеем игры.</li>
+        <li>Вкладок пять — мышью до любой один клик, а Q/E листают по одной.</li>
+        <li>Q и E в игре от первого лица часто заняты: «использовать», наклоны, выход из-за стола.</li>
+        <li>В Rive меньше слоёв: нет клавиш и их состояний.</li></ul></div>
+      <div><b>ПРОТИВ</b><ul>
+        <li>На геймпаде без LB/RB вкладки листать нечем — только водить курсор.</li>
+        <li>С клавиатуры Q/E быстрее мыши, когда скачешь между «Приборами» и «Базой данных».</li>
+        <li>Нарисованные клавиши сами учат управлению; без них это должно сказать обучение.</li>
+        <li>Убирать — так обе пары: без Q/E, но с A/D логика ломается.</li></ul></div>
+      <div class="rec"><b>ПРЕДЛАГАЮ</b><ul>
+        <li>С мышью и клавиатурой — не рисовать ни Q/E, ни A/D; клавиши оставить рабочими.</li>
+        <li>С геймпадом — показывать LB/RB и LT/RT: без них по вкладкам не пройти.</li>
+        <li>Один раз назвать клавиши в обучении и в настройках управления.</li>
+        <li>В Rive: bool <code>showKeys</code> в VM, игра ставит его по последнему устройству ввода.</li></ul></div>
+    </div>
+  </article>
+</main>
+
+<script>
+(() => {
+  const IC = {
+    sample: `<path d="M42 12h36M50 12v80a10 10 0 0 0 20 0v-80M50 58h20"/>`,
+    tools: `<path d="M20 100l44 -44M78 22a20 20 0 0 0 -16 30l-8 8l12 12l8 -8a20 20 0 0 0 30 -16l-12 12l-14 -2l-2 -14z"/>`,
+    base: `<ellipse cx="60" cy="26" rx="38" ry="12"/><path d="M22 26v66a38 12 0 0 0 76 0v-66M22 60a38 12 0 0 0 76 0"/>`,
+    journal: `<rect x="26" y="12" width="70" height="96" rx="3"/><path d="M38 12v96M52 38h32M52 56h32M52 74h20"/>`,
+    up: `<path d="M60 104v-80M28 54l32 -32l32 32M30 104h60"/>`
+  };
+  const svg = k => `<svg viewBox="0 0 120 120" aria-hidden="true">${IC[k]}</svg>`;
+  const CK = `<svg class="ck" viewBox="0 0 26 26" aria-hidden="true"><path d="M5 13l6 6l10 -12"/></svg>`;
+  const TABS = [["sample", "ОБРАЗЕЦ"], ["tools", "ПРИБОРЫ"], ["base", "БАЗА ДАННЫХ"], ["journal", "ЖУРНАЛ"], ["up", "УЛУЧШЕНИЯ"]];
+  const key = (k, pad) => k ? `<span class="kc ${pad ? "pad" : ""}">${k}</span>` : "";
+  // keys: [left, right] captions, or null when they are not drawn
+  const HDR = (keys = ["Q", "E"], pad = false) => `<div class="hdr">${keys ? key(keys[0], pad) : ""}${TABS.map(([id, t]) =>
+    `<div class="ht ${id === "sample" ? "on" : ""}">${svg(id)}<span>${t}</span>${["base", "journal"].includes(id) ? '<i class="dot"></i>' : ""}${id === "up" ? '<b class="pts">3</b>' : ""}</div>`).join("")}${keys ? key(keys[1], pad) : ""}</div>`;
+  const SUB = (keys = ["A", "D"], pad = false) => `<div class="sub">${keys ? key(keys[0], pad) : ""}${["КАРТОЧКА", "УЛИКИ", "ОТЧЁТ"].map((t, i) => `<div class="st2 ${i === 0 ? "on" : ""}">${t}</div>`).join("")}${keys ? key(keys[1], pad) : ""}<div class="rt">ОБРАЗЕЦ <b>КР-01</b></div></div>`;
+  // the card is the root of «Назад», so ESC is not shown here
+  const FOOT = () => `<div class="foot">${["ЛЕВЫЙ", "ЦЕНТР", "ПРАВЫЙ", "ГОЛОГРАММА"].map((n, i) => `<span class="${i === 1 ? "on" : ""}"><span class="kc">${i + 1}</span>${n}</span>`).join("")}</div>`;
+  const KV = (k, v, cls = "") => `<div class="kv"><span>${k}</span><b class="${cls}">${v}</b></div>`;
+  const GO = t => `<span class="go2"><span class="kc">↵</span>${t}</span>`;
+
+  // deterministic 1 px barcode, whole-pixel bars so it stays crisp on the mesh
+  const BAR = (w, h) => {
+    let x = 0, s = 11, out = "";
+    const rnd = () => (s = (s * 9301 + 49297) % 233280) / 233280;
+    while (x < w - 6) {
+      const bw = 1 + Math.floor(rnd() * 4);
+      out += `<rect x="${x}" y="0" width="${bw}" height="${h}"/>`;
+      x += bw + 2 + Math.floor(rnd() * 5);
+    }
+    return `<svg class="bar" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" fill="#8a8a8a" aria-hidden="true">${out}</svg>`;
+  };
+
+  // ---------- A · the label: the sample's passport, answers written into blanks ----------
+  function A() {
+    const R = [
+      ["01", "МАССА", "44", "масс-спектрометр", "МАСС-СПЕКТРОМЕТР"],
+      ["02", "СВЯЗИ", "2 × C=O", "ИК-спектрометр", "ИК-СПЕКТРОМЕТР"],
+      ["03", "КАНДИДАТЫ", "2 из 4", "доска улик", "УЛИКИ"],
+      ["04", "СТРУКТУРА", "", "голограмма", "ГОЛОГРАММА"],
+      ["05", "ВЕЩЕСТВО", "", "отчёт", "ОТЧЁТ"]
+    ];
+    const rows = R.map((r, i) => `<div class="frow ${i === 1 ? "sel" : ""}" data-pick data-i="${i}" tabindex="0"><span class="n">${r[0]}</span><span class="f">${r[1]}</span><span class="fv ${r[2] ? "" : "blank"}">${r[2]}</span><span class="src">${r[3]}</span>${GO(r[4])}</div>`).join("");
+    return `<div class="lbl" data-group>
+        <div class="top">
+          <div class="cell"><span>ХЕМОФОРМ</span><b class="m">ПРОБА</b></div>
+          <div class="cell"><span>МЕСТО</span><b>Ледник «Северный» · лёд, 2 м</b></div>
+          <div class="cell"><span>ДОСТАВЛЕН</span><b>14:20 · дрон Д-3</b></div>
+          <div class="cell"><span>СКАН</span><b>газ в воде · 0,3 г/л</b></div></div>
+        <div class="side">
+          <div class="big" style="font-size:150px;margin-left:-6px">КР-01</div>
+          ${BAR(536, 64)}<div class="bc">КР 01 · 0118 · 2349</div>
+          <div class="ey" style="margin-top:auto">ЗАДАНИЕ</div>
+          <div class="txt" style="margin-top:10px;font-size:24px">Определить вещество в пробе. Колонисты жалуются на вкус талой воды.</div>
+          <div class="por"><span class="ey">ПОРЦИИ</span><i class="pq on"></i><i class="pq"></i><i class="pq"></i><b>1 из 3</b></div></div>
+        <div class="form"><div class="ey" style="margin-bottom:8px">ЧТО ИЗВЕСТНО</div>${rows}
+          <div class="stw"><span class="ey">СТАТУС</span><span class="stamp">НЕ ОПРЕДЕЛЁН</span><span class="txt">штамп меняется после отчёта</span></div></div>
+      </div>`;
+  }
+
+  // ---------- B · the formula: composition the player picked, the mass check, the open question ----------
+  // flat O C O with unknown bonds: atoms placed, bonds still dashed
+  const MOL2 = (w, h) => {
+    const cy = h / 2, R = 54, gap = 190, cx = 80 + gap;
+    const at = (x, t) => `<circle cx="${x}" cy="${cy}" r="${R}" fill="#121212" stroke="#8a8a8a" stroke-dasharray="5 5"/><text x="${x}" y="${cy + 17}" text-anchor="middle" font-family="Disket Mono" font-weight="700" font-size="46" fill="#8a8a8a">${t}</text>`;
+    const bd = (a, b) => [-8, 8].map(d => `<path d="M${a + R} ${cy + d + .5}H${b - R}" stroke="#4a4c4c" stroke-dasharray="6 6"/>`).join("") + `<text x="${(a + b) / 2}" y="${cy - 30}" text-anchor="middle" font-family="Disket Mono" font-size="30" fill="#5a5a5a">?</text>`;
+    return `<svg class="mol2" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" fill="none" stroke-width="1" aria-hidden="true">${bd(cx - gap, cx)}${bd(cx, cx + gap)}${at(cx - gap, "O")}${at(cx, "C")}${at(cx + gap, "O")}</svg>`;
+  };
+  function B() {
+    const S = [
+      ["C", "1", "ОСКОЛОК 12", "масс-спектрометр", "12", 0, "МАСС-СПЕКТР"],
+      ["H", "0", "НЕТ ПОЛОС C–H", "ИК-спектрометр", "+ 0", 1, "ИК-СПЕКТР"],
+      ["O", "2", "2 × C=O", "ИК · полоса 2349", "+ 32", 0, "ИК-СПЕКТР"],
+      ["N", "0", "МЕСТА НЕТ", "подбор состава", "+ 0", 1, "МАСС-СПЕКТР"]
+    ];
+    const slots = S.map((s, i) => `<div class="slot ${s[5] ? "zero" : ""} ${i === 2 ? "sel" : ""}" data-pick data-i="${i}" tabindex="0">
+        <div class="hd">${i === 0 ? '<span class="ey">СОСТАВ</span>' : ""}</div>
+        <div class="elw"><span class="el">${s[0]}</span><span class="cnt">${s[1]}</span></div>
+        <div class="why"><b>${s[2]}</b><span class="src">${s[3]}</span>${GO(s[6])}</div>
+        <div class="term">${s[4]}</div></div>`).join("");
+    return `<div class="fx" data-group>${slots}
+        <div class="stc" data-pick data-i="4" tabindex="0">
+          <div class="hd"><span class="ey">СТРУКТУРА</span></div>
+          <div class="elw" style="align-items:center;padding-bottom:0">${MOL2(640, 260)}</div>
+          <div class="why"><b>НЕ СОБРАНА</b><span class="src">голограмма · монитор 4</span>${GO("ГОЛОГРАММА")}</div>
+          <div class="term">= 44 ${CK}<span class="ey">СХОДИТСЯ С M⁺</span></div></div>
+        <div class="info"><div><span class="ey">ПРОБА</span>КР-01 · ледник «Северный» · лёд, 2 м</div><div><span class="ey">ЗАДАНИЕ</span>вкус талой воды</div><div><span class="ey">ПОРЦИИ</span><b style="font-family:var(--mono);font-weight:400">1 из 3</b></div></div>
+      </div>`;
+  }
+
+  // ---------- C · the tube in section: what is known settles at the bottom ----------
+  function C() {
+    // svg space: tube body x 70..230, rounded bottom at y 720; screen = svg + (690, 180)
+    const body = "M70 46V640A80 80 0 0 0 230 640V46";
+    const L = [ // top → bottom
+      { t: "ВЕЩЕСТВО", n: "04", v: "?", src: "отчёт", go: "ОТЧЁТ", y0: 120, y1: 270 },
+      { t: "СТРУКТУРА", n: "03", v: "—", src: "голограмма · монитор 4", go: "ГОЛОГРАММА", y0: 270, y1: 420 },
+      { t: "СВЯЗИ", n: "02", v: "2 × C=O", src: "ИК-спектрометр", go: "ИК-СПЕКТР", y0: 420, y1: 570, fill: "#222525" },
+      { t: "МАССА", n: "01", v: "44", src: "масс-спектрометр", go: "МАСС-СПЕКТР", y0: 570, y1: 730, fill: "#2a2d2d" }
+    ];
+    const mid = l => Math.min((l.y0 + l.y1) / 2, 650);
+    const lays = L.map((l, i) => `<g class="lay ${i === 2 ? "sel" : ""}" data-i="${i}">
+        ${l.fill ? `<rect class="fl" x="70" y="${l.y0}" width="160" height="${l.y1 - l.y0}" fill="${l.fill}" clip-path="url(#tb)"/>` : ""}
+        <rect class="hl" x="71" y="${l.y0 + 1}" width="158" height="${l.y1 - l.y0 - 2}" clip-path="url(#tb)"/>
+        <path class="ld" d="M236 ${mid(l) + .5}H370"/><circle class="dt" cx="236" cy="${mid(l) + .5}" r="4"/></g>`).join("");
+    const rules = `<path d="M70 420.5H230" stroke="#bdbdbd"/><path d="M70 570.5H230" stroke="#555"/>` +
+      [120, 270].map(y => `<path d="M70 ${y + .5}H230" stroke="#3a3c3c" stroke-dasharray="6 6"/>`).join("");
+    const tube = `<svg class="tube" width="380" height="780" viewBox="0 0 380 780" aria-hidden="true">
+        <defs><clipPath id="tb"><path d="${body}Z"/></clipPath></defs>
+        ${lays}${rules}<path class="o" d="${body}"/><rect class="o" x="50.5" y="20.5" width="199" height="26"/></svg>`;
+    const rows = L.map((l, i) => `<div class="trow ${i === 2 ? "sel" : ""}" data-pick data-i="${i}" tabindex="0" style="top:${180 + mid(l) - 75}px">
+        <span class="ey">${l.n} · ${l.t}</span><span class="fv ${l.fill ? "" : "q"}">${l.v}</span>
+        <span class="src">${l.src}</span>${GO(l.go)}</div>`).join("");
+    return `<div class="ab" style="left:100px;top:196px;width:520px">
+        <div class="ey">НА СТОЛЕ</div>
+        <div class="big" style="font-size:150px;margin:16px 0 20px;margin-left:-6px">КР-01</div>
+        <div class="txt" style="color:var(--text)">Ледник «Северный» · лёд, глубина 2 м</div>
+        <i class="sep" style="display:block;margin:30px 0"></i>
+        <div class="ey">ЗАДАНИЕ</div><div class="txt" style="margin-top:10px;max-width:30ch">Определить вещество в пробе. Колонисты жалуются на вкус талой воды.</div>
+        <div style="margin-top:32px">${KV("ДОСТАВЛЕН", "14:20 · дрон Д-3")}${KV("ПОРЦИИ", "1 из 3", "m")}</div></div>
+      <div data-group>${tube}${rows}</div>`;
+  }
+
+  const S = [
+    ["А · Этикетка", "Карточка — бланк пробы, как наклейка на пробирке: шапка с местом и временем, штрихкод, поля «что известно». Ответ вписывается в поле, пустое поле — пунктир. Внизу штамп статуса.",
+      A, ["Читает карточку как документ: что за проба, откуда, что уже вписано, чего не хватает.", "Поле показывает, каким прибором получен ответ; Enter открывает этот прибор. Что делать дальше, бланк не подсказывает.", "Строки — один компонент с состояниями «вписано / пусто / выбрано». Выбор — полоса 4 px слева, без свечения."]],
+    ["Б · Формула", "Главное на экране — состав, который игрок сам подобрал: C, H, O, N крупно, под каждым — улика, из-за которой стоит это число. Строка ниже складывает массу и сверяет с M⁺. Справа — что ещё не известно: структура.",
+      B, ["Видит, как улики превращаются в формулу, и сам проверяет арифметику массы.", "Число в ячейке ставит игрок на масс-спектрометре; карточка только показывает выбор. Ноль — тёмный.", "Ячейка — компонент с числом и подписью. Сумма считается в игре, в Rive — текст из VM."]],
+    ["В · Пробирка", "Слева образец и задание, справа пробирка в разрезе. Каждый ответ — слой жидкости: масса на дне, выше связи, ещё выше пустые слои структуры и вещества. Выноски ведут к значениям.",
+      C, ["С одного взгляда видно, насколько проба «заполнена» знанием.", "Слой наливается, когда прибор записал улику. Читается снизу вверх, как налив.", "Слои — прямоугольники под маской пробирки; заливка — анимация высоты. Выбор красит контур слоя и выноску."]]
+  ];
+  document.getElementById("screens").innerHTML = S.map(([t, s, fn, n]) => `<article class="v"><header><h2>${t}</h2><span>${s}</span></header>
+    <div class="comp"><div class="scr">${HDR() + SUB() + fn() + FOOT()}</div></div>
+    <div class="notes"><p><b>ИГРОК</b>${n[0]}</p><p><b>ПРАВИЛО</b>${n[1]}</p><p><b>ТЕХНИЧЕСКИ</b>${n[2]}</p></div></article>`).join("");
+  document.getElementById("h1").innerHTML = HDR() + SUB();
+  document.getElementById("h2").innerHTML = HDR(null) + SUB(null);
+  document.getElementById("h3").innerHTML = HDR(["LB", "RB"], true) + SUB(["LT", "RT"], true);
+
+  // hover or keyboard focus moves the selection; [data-i] links a row to its tube layer
+  document.querySelectorAll("[data-group]").forEach(g => g.querySelectorAll("[data-pick]").forEach(t => {
+    const pick = () => g.querySelectorAll("[data-i]").forEach(o => o.classList.toggle("sel", o.dataset.i === t.dataset.i));
+    t.addEventListener("mouseenter", pick); t.addEventListener("focus", pick);
+  }));
+  const fit = () => document.querySelectorAll(".comp, .hcmp").forEach(c => { c.firstElementChild.style.transform = `scale(${c.clientWidth / 1920})`; });
+  new ResizeObserver(fit).observe(document.body);
+  fit();
+})();
+</script>
