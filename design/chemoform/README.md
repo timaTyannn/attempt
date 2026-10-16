@@ -8,6 +8,7 @@
 
 | Файл | Что внутри | Опубликовано |
 |---|---|---|
+| `src/overview.html` | «Обзор» — три варианта в стиле нового выбора приборов (подсветка снизу, бирюзовый чертёж за краем карточки), наведение двигает выбор | [Kn2qxEfttir2tiXgDwaR2w](https://claude.ai/artifact/Kn2qxEfttir2tiXgDwaR2w) |
 | `src/sections.html` | Все разделы терминала, 17 экранов: загрузка, обзор, анализ (стол пуст, образец, улики, отчёт), приборы (масс, ИК, молекула), база данных, журнал, улучшения | [Wmqv6JyKujYqVTJ9YxQtAD](https://claude.ai/artifact/Wmqv6JyKujYqVTJ9YxQtAD) |
 | `src/tools.html` | Шапка Б и все варианты вкладки «Приборы»: простые, аккордеон, постеры, чертежи ISO и 2D | [claude.ai/artifact/GY5kVhwCugeGEPdY2idrj4](https://claude.ai/artifact/GY5kVhwCugeGEPdY2idrj4) |
 | `src/upgrades.html` | Улучшения — дерево в стиле Alters | [HxegxjbDuLsqXJoN64ZLFp](https://claude.ai/artifact/HxegxjbDuLsqXJoN64ZLFp) |
