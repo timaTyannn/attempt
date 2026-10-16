@@ -196,6 +196,18 @@ h1 { font-family: var(--mono); font-weight: 700; font-size: clamp(26px, 4vw, 40p
 
 
 /* ---------- report: same layout as the card ---------- */
+.scr { --bad: #e5534b; }
+.bad-t { color: var(--bad); }
+.big.strike.bad::after { background: var(--bad); }
+.lrow.bad::before, .lrow.off::before { opacity: 1; background: var(--bad); }
+.lrow.bad .nm2 { color: #fff; }
+.lrow.off { background: rgba(229, 83, 75, .10); }
+.lrow.off .c, .lrow.off .nm2 { color: var(--bad); }
+.lay.bad .hl { opacity: 1; stroke: var(--bad); }
+.lay.bad .ld, .lay.off .ld { stroke: var(--bad); }
+.lay.bad .dt, .lay.off .dt { fill: var(--bad); }
+.tube .offb { fill: rgba(229, 83, 75, .14); stroke: none; }
+.tube .mk.offm { stroke: var(--bad); }
 .go3 { display: inline-flex; align-items: center; gap: 14px; font-family: var(--mono); font-weight: 700; font-size: 26px; letter-spacing: .06em; color: var(--accent); }
 .big.strike { position: relative; display: inline-block; color: #4a4c4c; }
 .big.strike::after { content: ""; position: absolute; left: -10px; right: -10px; top: 48%; height: 5px; background: #8a8a8a; }
@@ -313,11 +325,11 @@ h1 { font-family: var(--mono); font-weight: 700; font-size: clamp(26px, 4vw, 40p
       const a = top, b = top - e.c; top = b;
       if (!e.c) return;
       const cy = (Y(a) + Y(b)) / 2;
-      bands.push(`<g class="lay ${i === t.st.sel ? "sel" : ""}" data-i="${i}"><rect class="hl" x="71" y="${Y(a) + 1}" width="158" height="${6 * e.c - 2}" clip-path="url(#${t.el.id}c)"/><path class="ld" d="M236 ${cy + .5}H388"/><circle class="dt" cx="236" cy="${cy + .5}" r="4"/></g>`);
-      rows.push(`<div class="lrow ${e.w ? "w" : ""} ${i === t.st.sel ? "sel" : ""}" data-pick data-i="${i}" tabindex="0" style="top:${180 + Y(a)}px;height:${6 * e.c}px"><span class="c">−${e.c} %</span><span class="nm2">${e.n}</span><span class="r">${e.r}</span></div>`);
+      bands.push(`<g class="lay ${i === t.st.sel ? "sel" : ""} ${e.x ? "bad" : ""} ${e.off ? "off" : ""}" data-i="${i}">${e.off ? `<rect class="offb" x="70" y="${Y(a)}" width="160" height="${6 * e.c}" clip-path="url(#${t.el.id}c)"/>` : ""}<rect class="hl" x="71" y="${Y(a) + 1}" width="158" height="${6 * e.c - 2}" clip-path="url(#${t.el.id}c)"/><path class="ld" d="M236 ${cy + .5}H388"/><circle class="dt" cx="236" cy="${cy + .5}" r="4"/></g>`);
+      rows.push(`<div class="lrow ${e.w ? "w" : ""} ${e.x ? "bad" : ""} ${e.off ? "off" : ""} ${i === t.st.sel ? "sel" : ""}" data-pick data-i="${i}" tabindex="0" style="top:${180 + Y(a)}px;height:${6 * e.c}px"><span class="c">−${e.c} %</span><span class="nm2">${e.n}</span><span class="r">${e.r}</span></div>`);
     });
     t.q(".bands").innerHTML = bands.join("");
-    t.q(".marks").innerHTML = (() => { let p = 100, s = ""; t.st.hist.forEach(e => { s += `<path class="mk" d="M70 ${Y(p) + .5}H230"/>`; p -= e.c; }); return s; })();
+    t.q(".marks").innerHTML = (() => { let p = 100, s = ""; t.st.hist.forEach(e => { s += `<path class="mk ${e.off ? "offm" : ""}" d="M70 ${Y(p) + .5}H230"/>`; p -= e.c; }); return s; })();
     t.group.querySelectorAll(".lrow").forEach(r => r.remove());
     t.group.insertAdjacentHTML("beforeend", rows.join(""));
     bindPicks(t.group);
@@ -326,13 +338,14 @@ h1 { font-family: var(--mono); font-weight: 700; font-size: clamp(26px, 4vw, 40p
     const L = t.level, y0 = Y(L);
     let edge = "";
     for (let x = 70; x <= 230; x += 4) edge += `${x === 70 ? "M" : "L"}${x} ${(y0 + 1.6 * Math.sin(x / 19 + ph)).toFixed(2)}`;
-    t.q(".surf").setAttribute("d", edge);
-    t.q(".liq").setAttribute("d", edge + "V730H70Z");
+    t.q(".surf").setAttribute("d", L > .5 ? edge : "");
+    t.q(".liq").setAttribute("d", L > .5 ? edge + "V730H70Z" : "");
+    t.el.dataset.level = L.toFixed(2);
     const pct = t.q(".pct");
     pct.textContent = Math.round(L) + "%";
     const lab = t.pv > 0 ? Math.max(L - t.pv, 0) : L;
     pct.setAttribute("y", lab >= 14 ? Y(lab) + 62 : y0 - 18);
-    pct.style.fill = lab >= 14 ? "" : "#8a8a8a";
+    pct.style.fill = t.st.fail ? "var(--bad)" : lab >= 14 ? "" : "#8a8a8a";
     const pv = t.q(".pv"), pl = t.q(".pvline"), pt = t.q(".pvt");
     if (t.pv != null && t.pv > 0) {
       const n = Math.max(L - t.pv, 0), yn = Y(n);
@@ -361,15 +374,14 @@ h1 { font-family: var(--mono); font-weight: 700; font-size: clamp(26px, 4vw, 40p
   // ---------- report: the card layout — the answer on the left, the same tube and ledger, reward under the level ----------
   const F = t => t.replace(/(\d+)/g, "<sub>$1</sub>");
   const ml = lv => (lv / 10).toFixed(1).replace(".", ",") + " мл";
-  function REP(leftHtml, restHtml, sel) {
-    const id = "tb" + uid++, hist = HIST0.map(e => ({ ...e })), lv = left(hist);
+  function REP(leftHtml, restHtml, sel, hist = HIST0.map(e => ({ ...e })), fail = false) {
+    const id = "tb" + uid++, lv = left(hist);
     return {
       html: `<div class="ab" style="left:100px;top:196px;width:520px">${leftHtml}</div>
         <div data-group id="${id}g">${TUBE(id)}
         <div class="lhd"><span class="ey">ПОТРАЧЕНО</span><span class="ey">${100 - lv} %</span></div>
-        <div class="lvl" data-follow="0"></div>
-        <div class="rest" data-follow="34">${restHtml(lv)}</div></div>`,
-      init: () => mountTube(document.getElementById(id + "g"), { hist, ledger: true, sel })
+        ${restHtml ? `<div class="lvl" data-follow="0"></div><div class="rest" data-follow="34">${restHtml(lv)}</div>` : ""}</div>`,
+      init: () => mountTube(document.getElementById(id + "g"), { hist, ledger: true, sel, fail })
     };
   }
   const ROK = () => REP(`<div class="ey">ВЕЩЕСТВО <span style="color:#fff">ОПРЕДЕЛЕНО</span></div>
@@ -381,23 +393,23 @@ h1 { font-family: var(--mono); font-weight: 700; font-size: clamp(26px, 4vw, 40p
       <div class="go3" style="margin-top:34px">НОВЫЙ ОБРАЗЕЦ →</div>`,
     lv => `<div><span class="ey">НАГРАДА</span><span class="big2">+2 очка</span><span class="ln"><b>+1</b>вещество определено<br><b>+1</b>экономия пробы</span></div>
       <div><span class="ey">ОСТАТОК</span><span class="big2">${ml(lv)}</span><span class="txt">Уйдёт в хранилище — пригодится для сверки.</span></div>`);
-  const RFAIL = () => REP(`<div class="ey">ВЕЩЕСТВО <span style="color:#fff">НЕ ОПРЕДЕЛЕНО</span></div>
-      <div class="big strike" style="font-size:150px;margin:16px 0 20px;margin-left:-6px">${F("C2H4O")}</div>
+  // failure: nothing is left — the rest of the sample is written off as one red share
+  const HFAIL = [...HIST0.map((e, i) => ({ ...e, x: i === 2 ? 1 : 0 })), { c: 45, n: "СПИСАНО", r: "пробу не вернуть", off: 1 }];
+  const RFAIL = () => REP(`<div class="ey">ВЕЩЕСТВО <span class="bad-t">НЕ ОПРЕДЕЛЕНО</span></div>
+      <div class="big strike bad" style="font-size:150px;margin:16px 0 20px;margin-left:-6px">${F("C2H4O")}</div>
       <div class="txt" style="color:#8a8a8a;font-size:30px">ваш ответ</div>
       <i class="sep" style="display:block;margin:30px 0"></i>
-      <div class="txt" style="max-width:30ch">Сборка спорила с ИК: в спектре нет связей C–H и есть две C=O. Дело закрыто, проба списана.</div>
-      <div style="margin-top:32px">${KV("ВЕРНЫЙ ОТВЕТ", "CO₂ · углекислый газ")}${KV("ДЕЛО", "закрыто")}</div>
-      <div class="go3" style="margin-top:34px">НОВЫЙ ОБРАЗЕЦ →</div>`,
-    lv => `<div><span class="ey">НАГРАДА</span><span class="big2">0 очков</span><span class="ln"><b>0</b>вещество не определено<br><b>0</b>экономия не засчитана</span></div>
-      <div><span class="ey">ОСТАТОК</span><span class="big2">${ml(lv)}</span><span class="txt">Списан вместе с делом.</span></div>`, 2);
+      <div class="txt" style="max-width:30ch">Сборка спорила с ИК: в спектре нет связей C–H и есть две C=O. Дело закрыто, остаток пробы списан.</div>
+      <div style="margin-top:32px">${KV("ВЕРНЫЙ ОТВЕТ", "CO₂ · углекислый газ")}${KV("НАГРАДА", "0 очков")}</div>
+      <div class="go3" style="margin-top:34px">НОВЫЙ ОБРАЗЕЦ →</div>`, null, undefined, HFAIL.map(e => ({ ...e })), true);
 
   const S = [
     ["Карточка", "Справа — на что ушла каждая доля пробы и что она дала. Строка ровно такой высоты, сколько прибор отпил, поэтому выноски встают напротив своих делений. Под уровнем — сколько осталось. «Отчёт» серый, пока молекула не подтверждена на голограмме.",
       V1, ["Видит, сколько пробы осталось, на что ушло каждое деление и был ли от него толк: повтор ИК тоже стоит в списке.", "Каждое измерение снимает свою долю, повтор стоит столько же. Отметки прежних уровней остаются на стенке пунктиром.", "Пробирка — компонент с number <code>level</code> 0–100. Строки — список из VM, высота строки = расход × 6 px."], 0, () => SUB(0, [1])]
     ,["Отчёт · определено", "Тот же шаблон, что у карточки. Слева — ответ на задание: здесь вещество, в другом задании может быть связь или реакция. Пробирка и список показывают, во что обошлось расследование, под уровнем — награда и остаток.",
       ROK, ["Получает ответ на вопрос из брифинга и видит цену: что потрачено и сколько осталось.", "+1 за ответ, +1 за экономию (осталось не меньше 40 %). Лишние измерения видны в списке, но не штрафуются. Остаток уходит в хранилище.", "Тот же компонент пробирки и та же строка расхода, что на карточке; меняются только левая колонка и блок под уровнем."], 0, () => SUB(1)]
-    ,["Отчёт · провал", "Исходов два: получилось или нет. Попытка одна — «Подтвердить» на голограмме закрывает дело. Слева зачёркнут ответ игрока и показан верный, в списке выделено измерение, которое его опровергало, под уровнем — ноль очков и списанная проба.",
-      RFAIL, ["Понимает, что дело провалено и почему: какое измерение он не учёл.", "Пересдать нельзя: награды нет, остаток пробы списан. Поэтому перед «Подтвердить» голограмма должна спросить: «Отправить отчёт? Попытка одна».", "Тот же шаблон, что и «определено»; выделенная строка — измерение, с которым спорила сборка."], 0, () => SUB(1)]
+    ,["Отчёт · провал", "Исходов два: получилось или нет. Попытка одна — «Подтвердить» на голограмме закрывает дело. При провале не остаётся ничего: остаток пробы списывается красной долей, пробирка пустая. Красным же отмечены вердикт и измерение, которое опровергало ответ.",
+      RFAIL, ["Понимает, что дело провалено и почему: какое измерение он не учёл.", "Пересдать нельзя: 0 очков, проба потрачена полностью. Поэтому перед «Подтвердить» голограмма должна спросить: «Отправить отчёт? Попытка одна».", "Красный #e5534b — только для провала. Списанная доля — обычная строка расхода с флагом <code>off</code>, опровергнувшее измерение — флаг <code>bad</code>."], 0, () => SUB(1)]
   ];
   const built = S.map(([t, s, fn, n, live, sub]) => {
     const v = fn();

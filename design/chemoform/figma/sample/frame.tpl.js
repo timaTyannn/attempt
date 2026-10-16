@@ -23,7 +23,7 @@ tube.fills = []; tube.clipsContent = false;
 const svgKids = tube.children.length;
 tube.children.forEach((c, i) => { if (S.tube.names[i]) c.name = S.tube.names[i]; });
 let dashFixed = 0;
-for (const c of tube.children) if (c.name === "отметка уровня" && "dashPattern" in c && (!c.dashPattern || !c.dashPattern.length)) { c.dashPattern = [6, 6]; dashFixed++; }
+for (const c of tube.children) if (c.name.startsWith("отметка") && "dashPattern" in c && (!c.dashPattern || !c.dashPattern.length)) { c.dashPattern = [6, 6]; dashFixed++; }
 for (const t of S.tube.texts) {
   const n = mkText({ m: true, s: t.text, wt: t.weight, size: t.size, c: t.fill, name: t.name });
   tube.appendChild(n); n.textAutoResize = "WIDTH_AND_HEIGHT";
@@ -42,12 +42,13 @@ ras.appendChild(rowsF); rowsF.x = 0; rowsF.y = S.rows[0].rect[1] - lhd.y;
 const rowIds = [];
 S.rows.forEach((r, i) => {
   const row = figma.createAutoLayout("HORIZONTAL");
-  row.name = "Расход/строка " + (i + 1) + (r.sel ? " · выбрана" : "");
+  const tag = r.off ? "списано" : r.bad ? "ошибка" : r.sel ? "выбор" : "";
+  row.name = "Расход/строка " + (i + 1) + (tag ? " · " + tag : "");
   rowsF.appendChild(row);
   row.resize(r.rect[2], r.rect[3]); row.primaryAxisSizingMode = "FIXED"; row.counterAxisSizingMode = "FIXED";
   row.counterAxisAlignItems = "CENTER"; row.itemSpacing = 24;
   row.paddingLeft = 20; row.paddingRight = 0; row.paddingTop = 1; row.paddingBottom = 0;
-  row.fills = r.sel ? [paint(r.bg[0])] : [];
+  row.fills = r.bg[1] > 0 ? [paint(r.bg[0], r.bg[1])] : [];
   row.strokes = [paint(r.border)]; row.strokeAlign = "INSIDE";
   row.strokeTopWeight = 1; row.strokeBottomWeight = 0; row.strokeLeftWeight = 0; row.strokeRightWeight = 0;
   row.clipsContent = false;
@@ -57,10 +58,10 @@ S.rows.forEach((r, i) => {
   row.appendChild(nm); nm.textAutoResize = "HEIGHT"; nm.resize(280, nm.height);
   const rs = mkText({ m: false, s: r.r.text, wt: 400, size: 22, c: r.r.color, name: "результат" });
   row.appendChild(rs); rs.textAutoResize = "WIDTH_AND_HEIGHT";
-  if (r.sel) {
-    const bar = figma.createRectangle(); bar.name = "выбор";
+  if (r.bar) {
+    const bar = figma.createRectangle(); bar.name = tag || "выбор";
     row.appendChild(bar); bar.layoutPositioning = "ABSOLUTE";
-    bar.resize(4, r.rect[3] - 1); bar.x = 0; bar.y = 1; bar.fills = [paint(ACC)];
+    bar.resize(4, r.rect[3] - 1); bar.x = 0; bar.y = 1; bar.fills = [paint(r.bar[0], r.bar[1])];
     bar.constraints = { horizontal: "MIN", vertical: "STRETCH" };
   }
   rowIds.push(row.id);
@@ -68,11 +69,11 @@ S.rows.forEach((r, i) => {
 
 // Уровень: the current level line, from the tube wall to the right edge
 const lv = S.groups.find(g => g.name === "Уровень");
-const lvl = mkRect(fr, "Уровень", lv.x, lv.y, lv.w, lv.h, "#bdbdbd");
+const lvl = lv ? mkRect(fr, "Уровень", lv.x, lv.y, lv.w, lv.h, "#bdbdbd") : null;
 
 // Остаток
 const rest = S.groups.find(g => g.name === "Остаток");
-const rf = plainFrame(fr, "Остаток", rest.x, rest.y, rest.w, rest.h); rest.items.forEach(it => put(rf, it));
+const rf = rest ? plainFrame(fr, "Остаток", rest.x, rest.y, rest.w, rest.h) : null; if (rest) rest.items.forEach(it => put(rf, it));
 
 // a strike line is measured before its letters; keep it above them
 for (const n of fr.findAll(n => n.name === "зачёркивание")) n.parent.appendChild(n);
@@ -84,4 +85,4 @@ const fi = Fc.createInstance(); fr.appendChild(fi); fi.name = "Низ"; fi.x = 0
 const R = v => Math.round(v * 10) / 10;
 const texts = fr.findAllWithCriteria({ types: ["TEXT"] }).map(t => { const b = t.absoluteBoundingBox; return [t.characters.slice(0, 24), R(b.x - fr.x), R(b.y - fr.y), R(b.width), R(b.height)]; });
 await fr.screenshot({ scale: 0.5 });
-return { frameId: fr.id, headerInst: hi.id, footerInst: fi.id, tubeId: tube.id, svgKids, dashFixed, rowIds, rasId: ras.id, levelId: lvl.id, restId: rf.id, texts };
+return { frameId: fr.id, headerInst: hi.id, footerInst: fi.id, tubeId: tube.id, svgKids, dashFixed, rowIds, rasId: ras.id, levelId: lvl && lvl.id, restId: rf && rf.id, texts };

@@ -17,7 +17,7 @@ def rgb2hex(s):
     return re.sub(r'rgb\((\d+),\s*(\d+),\s*(\d+)\)', lambda m: '#%02x%02x%02x' % tuple(int(m.group(i)) for i in (1, 2, 3)), s)
 
 ICON = {0: 'пробирка', 1: 'ключ', 2: 'база', 3: 'журнал', 4: 'стрелка'}
-RECT_NAMES = {'sub': 'линия', 'st2 on ::after': 'подчёркивание', 'sep': 'разделитель', 'kv': 'линия', 'lvl': 'Уровень', 'big strike::after': 'зачёркивание'}
+RECT_NAMES = {'sub': 'линия', 'st2 on ::after': 'подчёркивание', 'sep': 'разделитель', 'kv': 'линия', 'lvl': 'Уровень', 'big strike::after': 'зачёркивание', 'big strike bad::after': 'зачёркивание'}
 
 def item(it):
     o = dict(it)
@@ -43,14 +43,14 @@ else:
     page, hid, fid = sys.argv[2:5]
     fname = args[5] if len(args) > 5 else 'Образец · Карточка'
     fx = args[6] if len(args) > 6 else '0'
-    TN = {'tick': 'деление', 'liq': 'жидкость', 'mk': 'отметка уровня', 'ld': 'выноска', 'dt': 'точка', 'hl': 'выбор · ИК', 'surf': 'поверхность'}
+    TN = {'tick': 'деление', 'liq': 'жидкость', 'mk': 'отметка уровня', 'mk offm': 'отметка · списано', 'ld': 'выноска', 'dt': 'точка', 'hl': 'выбор · ИК', 'hl-bad': 'ошибка · ИК', 'surf': 'поверхность', 'offb': 'списано'}
     names, o_seen = [], 0
-    for n in spec['tube']['names']:
+    for n in (x.strip() for x in spec['tube']['names']):
         if n == 'o':
             names.append('стенка' if o_seen == 0 else 'горлышко'); o_seen += 1
         else:
             names.append(TN.get(n, n))
-    texts = [dict(t, name={'45%': 'остаток %'}.get(t['text'], 'шкала ' + t['text'])) for t in spec['tube']['texts']]
+    texts = [dict(t, name='остаток %' if t.get('cls') == 'pct' else 'шкала ' + t['text']) for t in spec['tube']['texts']]
     S = {'bg': spec['bg'],
          'groups': [dict(g, items=[item(i) for i in g['items']]) for g in spec['groups']],
          'tube': {'rect': spec['tube']['rect'], 'svg': spec['tube']['svg'], 'names': names, 'texts': texts},

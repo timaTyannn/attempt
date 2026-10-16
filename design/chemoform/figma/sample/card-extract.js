@@ -20,7 +20,7 @@ const path = require('path');
   const data = await p.evaluate(i => {
     const R1 = v => Math.round(v * 10) / 10;
     const toHex = n => n.toString(16).padStart(2, '0');
-    const col = c => { const m = c && c.match(/rgba?\(([^)]+)\)/); if (!m) return ['#000000', 0]; const v = m[1].split(',').map(x => parseFloat(x)); return ['#' + v.slice(0, 3).map(x => toHex(Math.round(x))).join(''), v.length > 3 ? R1(v[3]) : 1]; };
+    const col = c => { const m = c && c.match(/rgba?\(([^)]+)\)/); if (!m) return ['#000000', 0]; const v = m[1].split(',').map(x => parseFloat(x)); return ['#' + v.slice(0, 3).map(x => toHex(Math.round(x))).join(''), v.length > 3 ? Math.round(v[3] * 100) / 100 : 1]; };
     const scr = document.querySelectorAll('.comp')[i].firstElementChild;
     const R0 = scr.getBoundingClientRect();
     const rel = el => { const r = el.getBoundingClientRect(); return [R1(r.left - R0.left), R1(r.top - R0.top), R1(r.width), R1(r.height)]; };
@@ -93,7 +93,7 @@ const path = require('path');
         else if (n.nodeType === 3) { const t = textOf(n, O, cs); if (t) items.push(t); }
       }
     }
-    const grp = (name, el) => { const r = rel(el); const items = []; const br = el.getBoundingClientRect(); walk(el, [br.left, br.top], items); return { name, x: r[0], y: r[1], w: r[2], h: r[3], items }; };
+    const grp = (name, el) => { if (!el) return null; const r = rel(el); const items = []; const br = el.getBoundingClientRect(); walk(el, [br.left, br.top], items); return { name, x: r[0], y: r[1], w: r[2], h: r[3], items }; };
 
     // ---------- header ----------
     const hdr = scr.querySelector('.hdr');
@@ -132,7 +132,8 @@ const path = require('path');
       const sub = el => { const q = el.getBoundingClientRect(); return [R1(q.left - R.left), R1(q.top - R.top), R1(q.width), R1(q.height)]; };
       const tr = el => { const rg = document.createRange(); rg.selectNodeContents(el); const u = rg.getBoundingClientRect(); return [R1(u.left - R.left), R1(u.top - R.top), R1(u.width), R1(u.height)]; };
       const part = el => ({ text: el.textContent, rect: sub(el), textRect: tr(el), color: col(getComputedStyle(el).color)[0] });
-      return { rect: rel(r), sel: r.classList.contains('sel'), weak: r.classList.contains('w'), bg: col(getComputedStyle(r).backgroundColor), border: getComputedStyle(r).borderTopColor,
+      const bs = getComputedStyle(r, '::before');
+      return { rect: rel(r), sel: r.classList.contains('sel'), off: r.classList.contains('off'), bad: r.classList.contains('bad'), weak: r.classList.contains('w'), bar: +bs.opacity > 0 ? col(bs.backgroundColor) : null, bg: col(getComputedStyle(r).backgroundColor), border: getComputedStyle(r).borderTopColor,
         c: part(r.querySelector('.c')), nm: part(r.querySelector('.nm2')), r: part(r.querySelector('.r')) };
     });
 
@@ -141,7 +142,9 @@ const path = require('path');
     const parts = [];
     const f = v => +(+v).toFixed(2);
     const strokeOf = (s, k) => k.stroke && k.stroke !== 'none' ? ` stroke="${col(k.stroke)[0]}" stroke-width="${parseFloat(k.strokeWidth)}"` + (k.strokeDasharray && k.strokeDasharray !== 'none' ? ` stroke-dasharray="${k.strokeDasharray.replace(/px/g, '').replace(/,/g, ' ')}"` : '') : '';
-    const fillOf = k => k.fill && k.fill !== 'none' && col(k.fill)[1] > 0 ? ` fill="${col(k.fill)[0]}"` : ' fill="none"';
+    const fillOf = k => { if (!k.fill || k.fill === 'none') return ' fill="none"'; const [h, a] = col(k.fill); return a > 0 ? ` fill="${h}"` + (a < 1 ? ` fill-opacity="${a}"` : '') : ' fill="none"'; };
+    // the liquid level is kept on the svg by the page (data-level, percent)
+    const level = +(tube.dataset.level || 45), ly = 720 - 6 * level;
     const names = [];
     for (const s of tube.querySelectorAll('path, rect, circle')) {
       if (s.closest('clipPath')) continue;
@@ -149,14 +152,18 @@ const path = require('path');
       if (+k.opacity === 0) continue;
       if (cl === 'pv' || cl === 'pvline') continue;
       let d = s.getAttribute('d');
-      if (cl === 'liq') d = 'M70 450V640A80 80 0 0 0 230 640V450Z';
-      if (cl === 'surf') d = 'M70 450.5H230';
+      if ((cl === 'liq' || cl === 'surf') && level < .5) continue; // an empty tube has neither
+      if (cl === 'liq') d = `M70 ${ly}V640A80 80 0 0 0 230 640V${ly}Z`;
+      if (cl === 'surf') d = `M70 ${ly + .5}H230`;
+      // a written-off share is a rect clipped by the tube; give it the tube's own outline instead
+      if (cl === 'offb') { const y = +s.getAttribute('y'); parts.push(`<path d="M70 ${y}V640A80 80 0 0 0 230 640V${y}Z"${fillOf(k)}/>`); names.push('offb'); continue; }
       const isLine = s.tagName === 'path' && d && !/[ZzAaCcQq]/.test(d);
       const fill = isLine ? ' fill="none"' : fillOf(k);
       if (s.tagName === 'path') parts.push(`<path d="${d}"${fill}${strokeOf(s, k)}/>`);
       else if (s.tagName === 'rect') parts.push(`<rect x="${s.getAttribute('x')}" y="${s.getAttribute('y')}" width="${s.getAttribute('width')}" height="${s.getAttribute('height')}"${fill}${strokeOf(s, k)}/>`);
       else parts.push(`<circle cx="${s.getAttribute('cx')}" cy="${s.getAttribute('cy')}" r="${s.getAttribute('r')}"${fill}${strokeOf(s, k)}/>`);
-      names.push(cl || (s.tagName === 'path' ? 'tick' : s.tagName));
+      const lay = s.closest('.lay');
+      names.push(cl === 'hl' && lay && lay.classList.contains('bad') ? 'hl-bad' : cl || (s.tagName === 'path' ? 'tick' : s.tagName));
     }
     const tsvg = `<svg xmlns="http://www.w3.org/2000/svg" width="390" height="780" viewBox="0 0 390 780" fill="none">${parts.join('')}</svg>`;
     const texts = [...tube.querySelectorAll('text')].filter(t => t.textContent).map(t => {
@@ -170,7 +177,7 @@ const path = require('path');
       grp('Расход/шапка', scr.querySelector('.lhd')),
       grp('Уровень', scr.querySelector('.lvl')),
       grp('Остаток', scr.querySelector('.rest'))
-    ];
+    ].filter(Boolean);
     return { bg: col(getComputedStyle(scr).backgroundColor)[0], header, footer, rows, tube: { rect: rel(tube), svg: tsvg, names, texts }, groups };
   }, +idx);
   fs.writeFileSync(out, JSON.stringify(data, null, 1));
