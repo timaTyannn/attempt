@@ -1,0 +1,798 @@
+<title>Хемоформ · База данных</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500&display=swap">
+<style>
+
+@font-face { font-family: "Disket Mono"; font-weight: 400; src: url(data:font/ttf;base64,__DISKET_REG__) format("truetype"); }
+@font-face { font-family: "Disket Mono"; font-weight: 700; src: url(data:font/ttf;base64,__DISKET_BOLD__) format("truetype"); }
+/* Layout: three takes on the terminal home screen (Обзор), each a live 1920×1080 screen; hover moves the selection. Single dark look by design. */
+:root {
+  color-scheme: dark;
+  --page: #0b0b0b; --ink: #e8e8e8; --muted: #9a9a9a; --rule: #2a2a2a;
+  --bg: #121212; --card: #1b1c1c; --card-on: #222424; --card-off: #141515; --line: #2c2e2e;
+  --text: #ececec; --grey: #8a8a8a; --dim: #5a5a5a;
+  --accent: #3dd4c4; --dark: #0b201e;
+  --mono: "Disket Mono", ui-monospace, Menlo, monospace;
+  --body: "Jost", "Segoe UI", system-ui, sans-serif;
+  --ease: cubic-bezier(.2, .7, .2, 1);
+}
+html, body { background: var(--page); color: var(--ink); }
+body { font-family: var(--body); font-size: 17px; line-height: 1.55; }
+.doc { max-width: 1240px; margin: 0 auto; padding-inline: 20px; padding-block: 34px 80px; }
+h1 { font-family: var(--mono); font-weight: 700; font-size: clamp(26px, 4vw, 40px); margin: 0 0 8px; text-wrap: balance; }
+.lead { color: var(--muted); max-width: 70ch; margin: 0 0 8px; }
+.v { margin-top: 46px; }
+.v header { display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: baseline; margin-bottom: 10px; }
+.v header h2 { font-family: var(--mono); font-size: 22px; margin: 0; }
+.v header span { color: var(--muted); max-width: 72ch; }
+.notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 10px 32px; margin-top: 12px; }
+.notes p { margin: 0; color: #c6c6c6; min-width: 0; }
+.notes b { display: block; font-family: var(--mono); font-weight: 400; font-size: 12px; letter-spacing: .1em; color: var(--muted); }
+
+.comp { position: relative; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; }
+.scr { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; overflow: hidden; background: var(--bg); color: var(--text); font-family: var(--body); }
+.scr * { box-sizing: border-box; }
+.scr sub { font-size: .56em; vertical-align: baseline; position: relative; top: .22em; }
+.kc { display: inline-grid; place-items: center; min-width: 32px; height: 30px; padding: 0 7px; border-radius: 5px; background: #d8d8d8; color: #141414; font-family: var(--mono); font-weight: 700; font-size: 16px; box-shadow: 0 4px 0 #8a8a8a; }
+.ab { position: absolute; }
+.ey { font-family: var(--mono); font-size: 20px; letter-spacing: .14em; color: var(--grey); }
+.ey.ac { color: var(--accent); }
+.big { font-family: var(--mono); font-weight: 700; line-height: .92; }
+.txt { font-size: 26px; line-height: 1.45; color: #c6c6c6; }
+.sep { width: 146px; height: 1px; background: #bdbdbd; }
+.kv { display: flex; justify-content: space-between; align-items: baseline; gap: 24px; padding: 15px 0; border-top: 1px solid #333; }
+.kv > span { font-family: var(--mono); font-size: 20px; letter-spacing: .1em; color: var(--grey); white-space: nowrap; }
+.kv > b { font-family: var(--mono); font-weight: 400; font-size: 26px; text-align: right; }
+.kv > b.q { color: var(--dim); }
+.mini { display: flex; flex-direction: column; gap: 4px; }
+.mini span { font-family: var(--mono); font-size: 20px; letter-spacing: .1em; color: #9a9a9a; }
+.mini b { font-weight: 400; font-size: 24px; color: var(--text); }
+.dotn { width: 12px; height: 12px; border-radius: 50%; background: var(--accent); flex: none; }
+
+/* ---------- header Б, active tab lit from below ---------- */
+.hdr { position: absolute; left: 100px; right: 100px; top: 22px; height: 70px; display: flex; justify-content: center; align-items: stretch; border-bottom: 1px solid #2c2c2c; }
+.hdr > .kc { align-self: center; margin: 0 18px; }
+.ht { position: relative; display: flex; align-items: center; gap: 12px; padding: 0 24px; font-family: var(--mono); font-size: 18px; letter-spacing: .06em; color: var(--grey); }
+.ht svg { width: 26px; height: 26px; position: relative; }
+.ht svg * { fill: none; stroke: var(--grey); stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; }
+.ht span { position: relative; }
+.ht.on { color: #fff; }
+.ht.on svg * { stroke: #fff; }
+.ht.on::before { content: ""; position: absolute; left: 0; right: 0; top: 5px; bottom: 0; background: linear-gradient(to bottom, rgba(61, 212, 196, 0), rgba(61, 212, 196, .34)); }
+.ht.on::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 4px; background: var(--accent); }
+.ht .dot { width: 12px; height: 12px; border-radius: 50%; background: var(--accent); }
+.ht .pts { min-width: 26px; height: 26px; padding: 0 6px; border-radius: 13px; background: var(--accent); color: var(--dark); font-weight: 700; font-size: 15px; display: grid; place-items: center; }
+
+/* ---------- footer: on the home screen ESC does nothing, so it is not shown ---------- */
+.foot { position: absolute; left: 0; right: 0; top: 1000px; display: flex; justify-content: center; gap: 44px; font-family: var(--mono); font-size: 19px; color: var(--muted); }
+.foot span { display: flex; gap: 12px; align-items: center; }
+.foot .on { color: var(--text); } .foot .on .kc { background: var(--accent); box-shadow: 0 4px 0 #1f7d73; }
+
+/* ---------- selectable card: base, lit and moving toward the player ---------- */
+.tile { position: absolute; overflow: hidden; background: var(--card); cursor: pointer; outline: none;
+  transition: transform .32s var(--ease), background-color .32s var(--ease); }
+.tile::before, .tile::after { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .32s var(--ease); z-index: 3; }
+.tile::after { background: linear-gradient(to top, rgba(61, 212, 196, .30), rgba(61, 212, 196, 0) 72%); }
+.tile::before { padding: 3px; background: linear-gradient(to top, #3dd4c4, rgba(61, 212, 196, 0) 88%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
+.tile.sel { background: var(--card-on); transform: translateY(-6px) scale(1.012); z-index: 2; }
+.tile.sel::before, .tile.sel::after { opacity: 1; }
+.tile .art { position: absolute; color: #4a4d4d; transition: transform .45s var(--ease), color .32s var(--ease); z-index: 1; }
+.tile.sel .art { color: var(--accent); transform: scale(1.05) translate(-8px, -6px); }
+.tile .art svg path[fill] { fill: var(--card); transition: fill .32s var(--ease); }
+.tile.sel .art svg path[fill] { fill: var(--card-on); }
+.tile .in { position: relative; z-index: 2; }
+.tile .nm { font-family: var(--mono); font-weight: 700; color: #bdbdbd; transition: color .32s var(--ease); }
+.tile.sel .nm { color: #fff; }
+.tile .q { font-family: var(--mono); font-size: 20px; letter-spacing: .14em; color: var(--grey); transition: color .32s var(--ease); }
+.tile.sel .q { color: var(--accent); }
+.tile .ds { font-size: 24px; line-height: 1.4; color: var(--grey); transition: color .32s var(--ease); }
+.tile.sel .ds { color: #d0d0d0; }
+.tile .ic { width: 34px; height: 34px; }
+.tile .ic * { fill: none; stroke: #6a6a6a; stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; transition: stroke .32s var(--ease); }
+.tile.sel .ic * { stroke: var(--accent); }
+.tile .dotn { position: absolute; right: 24px; top: 26px; z-index: 2; }
+.pic { display: block; overflow: visible; }
+
+/* ---------- A · section strips ---------- */
+.acc { position: absolute; left: 680px; right: 100px; top: 128px; height: 832px; display: flex; gap: 10px; }
+.acc .tile { position: relative; flex: 0 0 132px; transition: flex-grow .42s var(--ease), transform .32s var(--ease), background-color .32s var(--ease); }
+.acc .tile.sel { flex: 1 0 132px; transform: none; }
+.acc .col { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; padding: 28px 0 30px; gap: 22px; transition: opacity .2s var(--ease); }
+.acc .col .vt { writing-mode: vertical-rl; transform: rotate(180deg); font-family: var(--mono); font-size: 27px; letter-spacing: .06em; color: #bdbdbd; flex: 1; }
+.acc .col .d { width: 12px; height: 12px; border-radius: 50%; background: #333; }
+.acc .col .d.on { background: var(--accent); }
+.acc .tile.sel .col { opacity: 0; }
+.acc .open { position: absolute; left: 0; top: 0; width: 580px; height: 100%; padding: 44px 44px; opacity: 0; transition: opacity .3s var(--ease) .08s; display: flex; flex-direction: column; gap: 18px; }
+.acc .tile.sel .open { opacity: 1; }
+.acc .art { right: -96px; bottom: -84px; transition: transform .45s var(--ease), color .32s var(--ease), opacity .24s var(--ease) .06s; }
+.acc .tile:not(.sel) .art { opacity: 0; }
+
+/* ---------- B · hub around the sample ---------- */
+.hub .tile .in { position: absolute; left: 34px; top: 30px; right: 34px; display: flex; flex-direction: column; gap: 12px; }
+
+/* ---------- C · bento ---------- */
+.kpi { display: flex; flex-direction: column; gap: 8px; padding-left: 26px; border-left: 1px solid var(--line); }
+.kpi span { font-family: var(--mono); font-size: 20px; letter-spacing: .12em; color: var(--grey); }
+.kpi b { font-family: var(--mono); font-weight: 700; font-size: 44px; line-height: 1; }
+.kpi b.q { color: #3e4040; }
+
+@media (prefers-reduced-motion: reduce) {
+  .tile, .tile .art, .acc .tile, .acc .art, .acc .open, .acc .col, .tile::before, .tile::after { transition: none; }
+  .tile.sel, .tile.sel .art { transform: none; }
+}
+
+/* ---------- subtabs (A / D) and breadcrumbs ---------- */
+.sub { position: absolute; left: 100px; right: 100px; top: 100px; height: 62px; display: flex; align-items: stretch; border-bottom: 1px solid #222; }
+.sub > .kc { align-self: center; }
+.sub > .kc:first-child { margin-right: 10px; }
+.st2 { position: relative; display: flex; align-items: center; gap: 10px; padding: 0 22px; font-family: var(--mono); font-size: 20px; letter-spacing: .1em; color: #7a7a7a; }
+.st2.on { color: #fff; }
+.st2.on::after { content: ""; position: absolute; left: 22px; right: 22px; bottom: -1px; height: 2px; background: var(--accent); }
+.st2.off { color: #3f4141; }
+.sub .rt { margin-left: auto; align-self: center; font-family: var(--mono); font-size: 20px; letter-spacing: .1em; color: #6a6a6a; }
+.sub .rt b { font-weight: 400; color: var(--text); }
+.crumb { display: flex; align-items: center; gap: 16px; font-family: var(--mono); font-size: 20px; letter-spacing: .1em; color: #6a6a6a; }
+.crumb b { font-weight: 400; color: #fff; }
+
+
+/* ---------- database tab: flat, 1 px lines, the accent only on what is selected ---------- */
+.sub .st2:first-child { padding-left: 0; }
+.sub .st2:first-child.on::after { left: 0; }
+.kv > b { font-family: var(--body); font-size: 24px; }
+[data-pick] { cursor: pointer; outline: none; }
+.plan { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 14px 32px; margin-top: 16px; }
+.plan div { min-width: 0; }
+.plan b { display: block; font-family: var(--mono); font-weight: 400; font-size: 12px; letter-spacing: .1em; color: var(--accent); margin-bottom: 6px; }
+.plan ul { margin: 0; padding-left: 18px; color: #c6c6c6; }
+.plan li { margin: 0 0 5px; }
+.t-mono { font-family: var(--mono); }
+.go3 { display: inline-flex; align-items: center; gap: 14px; font-family: var(--mono); font-weight: 700; font-size: 22px; letter-spacing: .06em; color: var(--accent); }
+.h1 { font-family: var(--mono); font-weight: 700; font-size: 60px; line-height: 1; color: #fff; }
+.lead2 { font-size: 26px; line-height: 1.45; color: #d0d0d0; }
+.p { font-size: 22px; line-height: 1.5; color: #c6c6c6; }
+.chips { display: flex; gap: 10px; flex-wrap: wrap; }
+.chip { display: inline-flex; gap: 10px; align-items: baseline; padding: 8px 14px; border: 1px solid #2c2e2e; font-family: var(--mono); font-size: 16px; letter-spacing: .08em; color: #8a8a8a; }
+.chip b { font-weight: 400; color: #fff; }
+.fig { border: 1px solid #2c2e2e; background: #151616; }
+.cap2 { font-size: 19px; line-height: 1.4; color: #8a8a8a; }
+.cap2 b { font-family: var(--mono); font-weight: 400; color: #bdbdbd; margin-right: 6px; }
+.steps { display: flex; flex-direction: column; }
+.step { display: grid; grid-template-columns: 48px 1fr; gap: 0 12px; padding: 10px 0; border-top: 1px solid #262828; }
+.step .n { font-family: var(--mono); font-weight: 700; font-size: 26px; color: #5a5a5a; line-height: 1.2; }
+.step .s { font-size: 21px; line-height: 1.4; color: #c6c6c6; }
+.step .s b { font-weight: 500; color: #fff; }
+.toc { display: flex; flex-direction: column; }
+.toc .it { position: relative; display: flex; gap: 14px; align-items: baseline; padding: 11px 0 11px 18px; font-family: var(--mono); font-size: 19px; letter-spacing: .06em; color: #8a8a8a; }
+.toc .it i { font-style: normal; color: #4a4c4c; width: 28px; }
+.toc .it.sel { color: #fff; background: #1c1e1e; }
+.toc .it.sel::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--accent); }
+.toc .it.lk { color: #3f4141; }
+.toc .it.lk em { margin-left: auto; padding-right: 12px; font-style: normal; font-size: 14px; color: #4a4c4c; }
+.toc .sec { padding: 7px 0 7px 18px; font-size: 19px; color: #7a7a7a; }
+.toc .sec b { font-family: var(--mono); font-weight: 400; color: #5a5a5a; margin-right: 10px; }
+.toc .sec.on { color: #fff; }
+.pnav { position: absolute; display: flex; justify-content: space-between; align-items: center; font-family: var(--mono); font-size: 18px; letter-spacing: .08em; color: #6a6a6a; border-top: 1px solid #262828; padding-top: 16px; }
+.pnav b { font-weight: 400; color: #bdbdbd; }
+
+/* periodic table */
+.pt { position: absolute; display: grid; gap: 4px; }
+.el { position: relative; border: 1px solid #262828; display: flex; flex-direction: column; justify-content: space-between; padding: 5px 7px; font-family: var(--mono); color: #4a4c4c; min-width: 0; overflow: hidden; }
+.el .z { font-size: 12px; }
+.el .sy { font-family: var(--body); font-weight: 500; font-size: 24px; line-height: 1; }
+.el .m { font-size: 11px; }
+.el.g { border-color: #3a3c3c; color: #bdbdbd; background: #171818; }
+.el.g .sy { color: #fff; }
+.el.sel { border: 2px solid var(--accent); background: #1c1e1e; }
+.el.sel .sy { color: var(--accent); }
+.el.ph { border-style: dashed; justify-content: center; align-items: center; font-size: 12px; color: #4a4c4c; }
+.el.dk { border-color: #1c1e1e; color: #2c2e2e; }
+.ecard .zz { font-family: var(--mono); font-size: 16px; letter-spacing: .08em; color: #8a8a8a; }
+.ecard .sym { font-family: var(--mono); font-weight: 700; font-size: 150px; line-height: .9; color: #fff; }
+.ecard .nm { font-family: var(--mono); font-size: 30px; letter-spacing: .08em; color: #fff; }
+.legend { display: flex; gap: 26px; align-items: center; font-family: var(--mono); font-size: 15px; letter-spacing: .08em; color: #6a6a6a; }
+.legend i { display: inline-block; width: 18px; height: 18px; border: 1px solid #262828; margin-right: 8px; vertical-align: -3px; }
+.legend i.g { border-color: #3a3c3c; background: #171818; }
+.legend i.s { border: 2px solid var(--accent); }
+
+/* B · encyclopedia */
+.search { position: absolute; left: 100px; top: 192px; width: 1720px; height: 60px; border: 1px solid #333; display: flex; align-items: center; gap: 16px; padding: 0 22px; font-size: 22px; color: #6a6a6a; }
+.search svg { width: 24px; height: 24px; fill: none; stroke: #8a8a8a; stroke-width: 2; }
+.search b { font-family: var(--mono); font-weight: 400; font-size: 16px; letter-spacing: .1em; color: #4a4c4c; margin-left: auto; }
+.idx .grp { font-family: var(--mono); font-size: 17px; letter-spacing: .14em; color: #6a6a6a; padding: 14px 0 6px; display: flex; justify-content: space-between; }
+.idx .row { position: relative; padding: 7px 0 7px 18px; font-size: 22px; color: #9a9a9a; }
+.idx .row.sel { color: #fff; background: #1c1e1e; }
+.idx .row.sel::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--accent); }
+.idx .more { padding: 6px 0 6px 18px; font-family: var(--mono); font-size: 15px; letter-spacing: .1em; color: #4a4c4c; }
+.crumb2 { font-family: var(--mono); font-size: 17px; letter-spacing: .12em; color: #6a6a6a; }
+.crumb2 b { font-weight: 400; color: #bdbdbd; }
+.ibox { border: 1px solid #2c2e2e; }
+.ibox .hd { padding: 14px 20px; font-family: var(--mono); font-size: 16px; letter-spacing: .12em; color: #8a8a8a; border-bottom: 1px solid #2c2e2e; }
+.ibox .r { display: flex; justify-content: space-between; gap: 16px; padding: 11px 20px; border-top: 1px solid #1f2121; font-size: 20px; color: #c6c6c6; }
+.ibox .r span { font-family: var(--mono); font-size: 15px; letter-spacing: .08em; color: #6a6a6a; }
+.ibox .r:first-of-type { border-top: 0; }
+.h2 { font-family: var(--mono); font-size: 20px; letter-spacing: .14em; color: #fff; padding-bottom: 10px; border-bottom: 1px solid #262828; }
+.see { display: flex; gap: 22px; align-items: baseline; font-size: 21px; color: #8a8a8a; }
+.see b { font-family: var(--mono); font-weight: 400; font-size: 16px; letter-spacing: .12em; color: #6a6a6a; }
+.see u { text-decoration: none; color: var(--accent); }
+
+/* C · schematic */
+.co { position: absolute; display: flex; align-items: center; gap: 12px; font-family: var(--mono); font-size: 18px; letter-spacing: .08em; color: #9a9a9a; white-space: nowrap; }
+.co i { font-style: normal; display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid #6a6a6a; border-radius: 50%; font-size: 16px; color: #bdbdbd; }
+.co.on { color: #fff; }
+.co.on i { border: 2px solid var(--accent); color: var(--accent); }
+.spill { position: absolute; display: flex; gap: 10px; }
+.spill > div { position: relative; flex: 1; padding: 16px 18px 14px; border-top: 2px solid #2c2e2e; font-family: var(--mono); font-size: 16px; letter-spacing: .08em; color: #6a6a6a; }
+.spill > div b { display: block; font-weight: 700; font-size: 22px; color: #8a8a8a; margin-bottom: 6px; }
+.spill > div.done { border-top-color: #6a6a6a; color: #8a8a8a; }
+.spill > div.on { border-top-color: var(--accent); color: #fff; }
+.spill > div.on b { color: var(--accent); }
+.big3 { font-family: var(--mono); font-weight: 700; font-size: 96px; line-height: .9; color: #fff; }
+</style>
+
+<main class="doc">
+  <h1>Хемоформ · база данных</h1>
+  <p class="lead">База данных — это справочник лаборатории: инструкции к каждому прибору, таблица Менделеева, статьи по химии и карточки определённых веществ. Три подхода к интерфейсу: «Учебник», «Энциклопедия» и «Схема». Каждый показан на двух экранах — статья о приборе и таблица.</p>
+  <article class="v" id="plan">
+    <header><h2>Что внутри</h2><span>Четыре подвкладки. Статьи открываются по мере игры: прибор — когда его поставили на стол, элемент — когда он встретился в пробе.</span></header>
+    <div class="plan">
+      <div><b>ПРИБОРЫ · 9 ИНСТРУКЦИЙ</b><ul>
+        <li>Что показывает и когда нужен.</li>
+        <li>Как устроен — схема с выносками.</li>
+        <li>Как пользоваться — шаги по порядку.</li>
+        <li>Как читать результат — пример с подписями.</li>
+        <li>Расход пробы, время, типичные ошибки.</li></ul></div>
+      <div><b>ТАБЛИЦА · 118 ЭЛЕМЕНТОВ</b><ul>
+        <li>Номер, масса, валентность, электроотрицательность.</li>
+        <li>Где встречается в мире игры.</li>
+        <li>Какие связи даёт и где их видно в ИК.</li>
+        <li>Элементы из проб подсвечены.</li></ul></div>
+      <div><b>СПРАВОЧНИК · СТАТЬИ</b><ul>
+        <li>Атом, молекула, моль. Как считать молярную массу.</li>
+        <li>Химические связи и валентность.</li>
+        <li>Таблица ИК-зон: какая связь где поглощает.</li>
+        <li>Масс-спектр: молекулярный пик и осколки.</li>
+        <li>Кислоты и основания, шкала pH.</li>
+        <li>Газы в воде, растворимость.</li>
+        <li>Функциональные группы и изомеры.</li>
+        <li>Безопасность в лаборатории.</li></ul></div>
+      <div><b>ВЕЩЕСТВА · ОПРЕДЕЛЁННЫЕ</b><ul>
+        <li>Карточка на каждое закрытое дело: формула, структура, спектры.</li>
+        <li>Откуда проба и чем всё кончилось.</li>
+        <li>Пригодятся для сверки: остаток пробы лежит в хранилище.</li></ul></div>
+    </div>
+  </article>
+  <div id="screens"></div>
+</main>
+
+<script>
+(() => {
+  const IC = {
+    sample: `<path d="M42 12h36M50 12v80a10 10 0 0 0 20 0v-80M50 58h20"/>`,
+    tools: `<path d="M20 100l44 -44M78 22a20 20 0 0 0 -16 30l-8 8l12 12l8 -8a20 20 0 0 0 30 -16l-12 12l-14 -2l-2 -14z"/>`,
+    base: `<ellipse cx="60" cy="26" rx="38" ry="12"/><path d="M22 26v66a38 12 0 0 0 76 0v-66M22 60a38 12 0 0 0 76 0"/>`,
+    journal: `<rect x="26" y="12" width="70" height="96" rx="3"/><path d="M38 12v96M52 38h32M52 56h32M52 74h20"/>`,
+    up: `<path d="M60 104v-80M28 54l32 -32l32 32M30 104h60"/>`
+  };
+  const svg = k => `<svg viewBox="0 0 120 120" aria-hidden="true">${IC[k]}</svg>`;
+  const TABS = [["sample", "ОБРАЗЕЦ"], ["tools", "ПРИБОРЫ"], ["base", "БАЗА ДАННЫХ"], ["journal", "ЖУРНАЛ"], ["up", "УЛУЧШЕНИЯ"]];
+  const HDR = () => `<div class="hdr">${TABS.map(([id, t]) =>
+    `<div class="ht ${id === "base" ? "on" : ""}">${svg(id)}<span>${t}</span>${id === "journal" ? '<i class="dot"></i>' : ""}${id === "up" ? '<b class="pts">3</b>' : ""}</div>`).join("")}</div>`;
+  const SUB = (active, right) => `<div class="sub">${["ПРИБОРЫ", "ТАБЛИЦА", "СПРАВОЧНИК", "ВЕЩЕСТВА"].map((t, i) => `<div class="st2 ${i === active ? "on" : ""}">${t}</div>`).join("")}<div class="rt">${right}</div></div>`;
+  const FOOT = () => `<div class="foot">${["ЛЕВЫЙ", "ЦЕНТР", "ПРАВЫЙ", "ГОЛОГРАММА"].map((n, i) => `<span class="${i === 1 ? "on" : ""}"><span class="kc">${i + 1}</span>${n}</span>`).join("")}</div>`;
+  const KV = (k, v) => `<div class="kv"><span>${k}</span><b>${v}</b></div>`;
+
+  // ---------- 1px instrument drawings (isometric) ----------
+  const ISO_C = Math.cos(Math.PI / 6), DEG = Math.PI / 180;
+  function isoCtx(K) {
+    const shapes = [], pts = [];
+    const pr = ([x, y, z]) => { const p = [(x - z) * ISO_C * K, ((x + z) * .5 - y) * K]; pts.push(p); return p; };
+    const add = (ps3, o = {}) => { const ps = ps3.map(pr); shapes.push({ d: "M" + ps.map(p => p[0].toFixed(1) + " " + p[1].toFixed(1)).join("L") + (o.close ? "Z" : ""), o }); };
+    const X = [1, 0, 0], Y = [0, 1, 0], Z = [0, 0, 1];
+    const arc = (c, U, V, r, a0, a1) => { const n = Math.max(6, Math.ceil(Math.abs(a1 - a0) / (Math.PI / 32))), out = [];
+      for (let k = 0; k <= n; k++) { const a = a0 + (a1 - a0) * k / n, co = Math.cos(a), si = Math.sin(a); out.push([0, 1, 2].map(j => c[j] + r * (co * U[j] + si * V[j]))); } return out; };
+    const api = {
+      X, Y, Z,
+      line: (ps, o) => add(ps, o),
+      poly: (ps, o = {}) => add(ps, { close: true, ...o }),
+      circ: (c, U, V, r, o = {}, a0 = 0, a1 = 2 * Math.PI) => add(arc(c, U, V, r, a0, a1), { close: a1 - a0 >= 6.28, ...o }),
+      curve(p0, p1, p2, p3, o) { const out = []; for (let k = 0; k <= 24; k++) { const t = k / 24, a = (1 - t) ** 3, b = 3 * (1 - t) ** 2 * t, cc = 3 * (1 - t) * t * t, d = t ** 3; out.push([0, 1, 2].map(j => a * p0[j] + b * p1[j] + cc * p2[j] + d * p3[j])); } add(out, o); },
+      box(x, y, z, w, h, dp, o = {}) {
+        const x1 = x + w, y1 = y + h, z1 = z + dp;
+        add([[x, y1, z], [x1, y1, z], [x1, y, z], [x1, y, z1], [x, y, z1], [x, y1, z1]], { close: true, fill: 1, ...o });
+        const e = { ...o, fill: 0 };
+        add([[x, y1, z1], [x1, y1, z1], [x1, y1, z]], e); add([[x1, y1, z1], [x1, y, z1]], e);
+        return { L: (u, v) => [x + u, y + v, z1], R: (u, v) => [x1, y + v, z1 - u], T: (u, v) => [x + u, y1, z + v] };
+      },
+      rect(F, u, v, w, h, o = {}) { add([F(u, v), F(u + w, v), F(u + w, v + h), F(u, v + h)], { close: true, ...o }); },
+      fcirc(F, cu, cv, r, o = {}, a0 = 0, a1 = 2 * Math.PI) { const ps = []; for (let k = 0; k <= 40; k++) { const a = a0 + (a1 - a0) * k / 40; ps.push(F(cu + r * Math.cos(a), cv + r * Math.sin(a))); } add(ps, { close: a1 - a0 >= 6.28, ...o }); },
+      fline(F, ps, o) { add(ps.map(([u, v]) => F(u, v)), o); },
+      cylY(cx, y, cz, r, h, o = {}) {
+        const top = arc([cx, y + h, cz], X, Z, r, 135 * DEG, 315 * DEG), bot = arc([cx, y, cz], X, Z, r, 315 * DEG, 495 * DEG);
+        add([...top, ...bot], { close: true, fill: 1, ...o });
+        add(arc([cx, y + h, cz], X, Z, r, -45 * DEG, 135 * DEG), { ...o, fill: 0 });
+        return { ring: (yy, oo = {}) => add(arc([cx, yy, cz], X, Z, r, -45 * DEG, 135 * DEG), oo) };
+      }
+    };
+    return { api, shapes, pts };
+  }
+  const DEV = {
+    mass(c) {
+      const b = c.box(0, 0, 0, 120, 44, 56);
+      c.fline(b.L, [[0, 5], [120, 5]], { dim: 1 });
+      c.rect(b.L, 10, 20, 34, 14); c.fline(b.L, [[10, 13], [44, 13]], { dim: 1 });
+      c.fcirc(b.L, 54, 27, 2.2);
+      for (let u = 66; u <= 110; u += 4) c.fline(b.L, [[u, 11], [u, 34]], { dim: 1 });
+      c.rect(b.R, 8, 11, 40, 23, { dim: 1 });
+      c.line([[18, 44, 14], [58, 44, 14]], { dash: "3 3" });
+      c.line([[80, 44, 40], [80, 44, 47]], { dash: "3 3" });
+      c.cylY(16, 44, 14, 6, 16); c.cylY(16, 60, 14, 2, 6);
+      const m = c.box(54, 44, 6, 28, 14, 34);
+      c.fcirc(m.T, 0, 34, 26, { dim: 1 }, -Math.PI / 2, 0); c.fcirc(m.T, 0, 34, 18, { dim: 1 }, -Math.PI / 2, 0);
+      c.box(74, 44, 46, 12, 9, 7);
+    },
+    gc(c) {
+      const b = c.box(0, 0, 0, 66, 74, 56);
+      c.rect(b.L, 6, 8, 40, 46);
+      c.fcirc(b.L, 26, 31, 15); [11, 7.5, 4].forEach(r => c.fcirc(b.L, 26, 31, r, { dim: 1 }));
+      c.fline(b.L, [[42, 25], [42, 37]]);
+      c.rect(b.L, 51, 44, 10, 10); c.fcirc(b.L, 56, 34, 2.4); c.fcirc(b.L, 56, 26, 2.4);
+      c.fline(b.L, [[0, 62], [66, 62]], { dim: 1 });
+      for (let v = 14; v <= 54; v += 5) c.fline(b.R, [[10, v], [46, v]], { dim: 1 });
+      c.rect(b.T, 38, 8, 20, 14, { dim: 1 }); [12, 16, 20].forEach(v => c.fline(b.T, [[41, v], [55, v]], { dim: 1 }));
+      c.cylY(46, 74, 36, 3.5, 6);
+      c.cylY(20, 74, 26, 5, 8);
+      c.cylY(20, 82, 26, 1.6, 20); c.line([[20, 102, 26], [20, 108, 26]]); c.line([[17, 108, 26], [23, 108, 26]]);
+    },
+    ir(c) {
+      const b = c.box(0, 0, 0, 124, 30, 72);
+      c.fline(b.L, [[0, 5], [124, 5]], { dim: 1 });
+      c.rect(b.L, 8, 12, 26, 11); c.fcirc(b.L, 42, 17.5, 2.2);
+      for (let u = 92; u <= 116; u += 4) c.fline(b.L, [[u, 10], [u, 24]], { dim: 1 });
+      c.rect(b.R, 10, 10, 18, 12, { dim: 1 }); c.fcirc(b.R, 50, 16, 3, { dim: 1 });
+      c.poly([[46, 30, 12], [82, 30, 12], [82, 74, -4], [46, 74, -4]], { fill: 1 });
+      c.poly([[50, 34, 10.5], [78, 34, 10.5], [78, 70, -2.6], [50, 70, -2.6]], { dim: 1 });
+      c.rect(b.T, 46, 12, 36, 46); c.rect(b.T, 49, 15, 30, 40, { dim: 1 });
+      c.line([[47, 38, 35], [64, 38, 35]], { dash: "3 3" });
+      c.poly([[64, 30, 27], [64, 46, 27], [64, 46, 43], [64, 30, 43]], { fill: 1 });
+      c.circ([64, 38, 35], c.Z, c.Y, 3);
+      c.line([[64, 38, 35], [81, 38, 35]], { dash: "3 3" });
+    },
+    uv(c) {
+      const b = c.box(0, 0, 0, 96, 36, 64);
+      c.fline(b.L, [[0, 5], [96, 5]], { dim: 1 });
+      c.rect(b.L, 8, 13, 30, 15); c.fcirc(b.L, 48, 20.5, 3); c.fcirc(b.L, 58, 20.5, 3);
+      [14, 20, 26].forEach(v => c.fline(b.L, [[68, v], [88, v]], { dim: 1 }));
+      c.rect(b.R, 10, 12, 30, 14, { dim: 1 });
+      c.rect(b.T, 8, 8, 80, 48, { dim: 1 });
+      c.cylY(22, 36, 30, 4.5, 12);
+      c.line([[26, 44, 30], [53, 44, 30]], { dash: "3 3" });
+      c.box(53, 36, 27, 6, 18, 6, { fill: 0 });
+      c.line([[53, 47, 33], [59, 47, 33], [59, 47, 27]], { dim: 1 });
+      c.line([[59, 44, 30], [74, 44, 30]], { dash: "3 3" });
+      c.box(74, 36, 25, 8, 16, 10);
+    },
+    nmr(c) {
+      [285, 165, 45].forEach(a => c.cylY(24 * Math.cos(a * DEG), 0, 24 * Math.sin(a * DEG), 2.2, 28));
+      const m = c.cylY(0, 28, 0, 30, 62);
+      m.ring(42, { dim: 1 }); m.ring(76, { dim: 1 });
+      c.cylY(0, 90, 0, 10, 18); c.cylY(0, 108, 0, 14, 4);
+      c.line([[0, 112, 0], [0, 126, 0]]); c.line([[-2, 126, 0], [2, 126, 0]]);
+      c.curve([80, 6, -16], [70, 0, -4], [44, 0, 6], [30, 3, 6], { dim: 1 });
+      const k = c.box(66, 0, -46, 34, 62, 30);
+      c.rect(k.L, 6, 38, 22, 14); [10, 16, 22, 28].forEach(v => c.fline(k.L, [[6, v], [28, v]], { dim: 1 }));
+    },
+    xray(c) {
+      const b = c.box(0, 0, 0, 104, 28, 64);
+      c.fline(b.L, [[0, 5], [104, 5]], { dim: 1 });
+      c.rect(b.L, 8, 11, 24, 11); for (let u = 74; u <= 96; u += 4) c.fline(b.L, [[u, 9], [u, 23]], { dim: 1 });
+      c.rect(b.R, 10, 9, 30, 13, { dim: 1 });
+      c.box(44, 28, 24, 16, 8, 16);
+      const O = [52, 72, 32];
+      c.circ(O, c.X, c.Y, 36, { fill: 1 }); c.circ(O, c.X, c.Y, 31, { dim: 1 });
+      for (let a = 0; a < 360; a += 10) { const r2 = a % 30 ? 33.5 : 36, co = Math.cos(a * DEG), si = Math.sin(a * DEG); c.line([[O[0] + 31 * co, O[1] + 31 * si, 32], [O[0] + r2 * co, O[1] + r2 * si, 32]], { dim: 1 }); }
+      const P2 = (r, a, off = 0) => { const co = Math.cos(a * DEG), si = Math.sin(a * DEG); return [O[0] + r * co - off * si, O[1] + r * si + off * co, 33]; };
+      const arm = (a, r0, r1, w) => { c.poly([P2(r0, a, -w), P2(r1, a, -w), P2(r1, a, w), P2(r0, a, w)], { fill: 1 }); c.line([P2(r0 + 3, a, -w + 2.5), P2(r0 + 3, a, w - 2.5)], { dim: 1 }); };
+      c.line([P2(38, 155), O, P2(38, 25)], { dash: "3 3" });
+      arm(155, 38, 66, 6); arm(25, 38, 54, 5);
+      c.circ(O, c.X, c.Y, 3);
+    },
+    ph(c) {
+      c.box(18, 0, -12, 22, 3, 22);
+      c.cylY(29, 3, -1, 1.8, 66);
+      const bk = c.cylY(0, 0, 0, 17, 32);
+      bk.ring(20, { dim: 1 });
+      c.cylY(0, 10, 0, 2.2, 52);
+      c.box(-1, 60, -1.5, 31, 3, 3);
+      c.curve([0, 62, 0], [-4, 80, 0], [-30, 50, 26], [-24, 12, 28], { dim: 1 });
+      const m = c.box(-38, 0, 18, 28, 12, 26);
+      c.rect(m.T, 4, 4, 20, 10); [7, 14, 21].forEach(u => c.fcirc(m.T, u, 20, 2, { dim: 1 }));
+      c.fline(m.L, [[0, 3], [28, 3]], { dim: 1 });
+    },
+    cent(c) {
+      const b = c.box(0, 0, 0, 84, 32, 84);
+      c.fline(b.L, [[0, 5], [84, 5]], { dim: 1 }); c.fline(b.R, [[0, 5], [84, 5]], { dim: 1 });
+      c.rect(b.L, 10, 12, 24, 11); c.fcirc(b.L, 48, 17.5, 5.5); c.fcirc(b.L, 48, 17.5, 2, { dim: 1 });
+      [13, 22].forEach(v => c.fline(b.L, [[60, v], [76, v]], { dim: 1 }));
+      const O = [42, 32, 42];
+      c.circ(O, c.X, c.Z, 34); c.circ(O, c.X, c.Z, 26, { dim: 1 });
+      for (let k = 0; k < 8; k++) { const a = k * 45 * DEG; c.circ([O[0] + 18 * Math.cos(a), 32, O[2] + 18 * Math.sin(a)], c.X, c.Z, 3.2, { dim: 1 }); }
+      c.circ(O, c.X, c.Z, 4);
+      c.rect(b.L, 36, 27, 12, 3);
+    }
+  };
+  // ---------- 1px instrument drawings (flat front view) ----------
+  let PIC_FLAT = false;
+  function flatCtx(K) {
+    const shapes = [], pts = [];
+    const add = (ps, o = {}, snap = true) => {
+      const q = ps.map(([x, y]) => { const p = snap ? [Math.round(x * K) + .5, Math.round(-y * K) + .5] : [x * K, -y * K]; pts.push(p); return p; });
+      shapes.push({ d: "M" + q.map(p => p[0].toFixed(1) + " " + p[1].toFixed(1)).join("L") + (o.close ? "Z" : ""), o });
+    };
+    const arcPts = (cx, cy, r, a0, a1) => { const n = Math.max(6, Math.ceil(Math.abs(a1 - a0) / 6)), out = []; for (let k = 0; k <= n; k++) { const a = (a0 + (a1 - a0) * k / n) * DEG; out.push([cx + r * Math.cos(a), cy + r * Math.sin(a)]); } return out; };
+    const bez = (p0, p1, p2, p3) => { const out = []; for (let k = 0; k <= 24; k++) { const t = k / 24, a = (1 - t) ** 3, b = 3 * (1 - t) ** 2 * t, c = 3 * (1 - t) * t * t, d = t ** 3; out.push([0, 1].map(j => a * p0[j] + b * p1[j] + c * p2[j] + d * p3[j])); } return out; };
+    const api = {
+      line: (ps, o) => add(ps, o),
+      poly: (ps, o = {}) => add(ps, { close: true, ...o }),
+      rect: (x, y, w, h, o = {}) => add([[x, y], [x + w, y], [x + w, y + h], [x, y + h]], { close: true, ...o }),
+      rrect(x, y, w, h, r, o = {}) { add([...arcPts(x + w - r, y + r, r, -90, 0), ...arcPts(x + w - r, y + h - r, r, 0, 90), ...arcPts(x + r, y + h - r, r, 90, 180), ...arcPts(x + r, y + r, r, 180, 270)], { close: true, ...o }, false); },
+      circ: (cx, cy, r, o = {}) => add(arcPts(cx, cy, r, 0, 360), { close: true, ...o }, false),
+      arc: (cx, cy, r, a0, a1, o) => add(arcPts(cx, cy, r, a0, a1), o, false),
+      sector: (cx, cy, r, a0, a1, o = {}) => add([[cx, cy], ...arcPts(cx, cy, r, a0, a1)], { close: true, ...o }, false),
+      curve: (p0, p1, p2, p3, o) => add(bez(p0, p1, p2, p3), o, false),
+      rot(cx, cy, a, r0, r1, w, o = {}) { const co = Math.cos(a * DEG), si = Math.sin(a * DEG), P = (r, off) => [cx + r * co - off * si, cy + r * si + off * co]; add([P(r0, -w), P(r1, -w), P(r1, w), P(r0, w)], { close: true, ...o }, false); },
+      ground: (x0, x1) => add([[x0, 0], [x1, 0]], { dim: 1 })
+    };
+    return { api, shapes, pts };
+  }
+  const DEV2 = {
+    mass(c) {
+      c.ground(-10, 134);
+      c.rect(0, 0, 124, 44, { fill: 1 }); c.line([[0, 5], [124, 5]], { dim: 1 });
+      c.rect(10, 20, 34, 14); c.line([[10, 13], [44, 13]], { dim: 1 }); c.circ(54, 27, 2.2);
+      for (let x = 66; x <= 112; x += 4) c.line([[x, 11], [x, 34]], { dim: 1 });
+      c.rect(6, 44, 40, 12, { fill: 1 });
+      c.sector(40, 56, 30, 90, 180, { fill: 1 });
+      c.arc(40, 56, 14, 90, 180, { dim: 1 }); c.arc(40, 56, 20, 90, 180, { dim: 1 }); c.arc(40, 56, 17, 90, 180, { dash: "3 3" });
+      c.rect(70, 44, 4, 26, { fill: 1 });
+      c.line([[40, 70], [96, 70]]); c.line([[40, 76], [96, 76]]); c.line([[40, 73], [96, 73]], { dash: "3 3" });
+      c.rect(96, 62, 16, 22, { fill: 1 }); c.line([[100, 66], [108, 66]], { dim: 1 });
+    },
+    gc(c) {
+      c.ground(-10, 76);
+      c.rect(15, 74, 10, 8, { fill: 1 }); c.rect(18.5, 82, 3, 20, { fill: 1 }); c.line([[20, 102], [20, 108]]); c.line([[17, 108], [23, 108]]);
+      c.rect(42, 74, 10, 5, { fill: 1 });
+      c.rect(0, 0, 66, 74, { fill: 1 }); c.line([[0, 62], [66, 62]], { dim: 1 });
+      c.rect(6, 8, 40, 46); c.circ(26, 31, 15); [11, 7.5, 4].forEach(r => c.circ(26, 31, r, { dim: 1 }));
+      c.line([[42, 25], [42, 37]]);
+      c.rect(51, 44, 10, 10); c.circ(56, 34, 2.4); c.circ(56, 26, 2.4);
+      [10, 13, 16].forEach(y => c.line([[51, y], [61, y]], { dim: 1 }));
+    },
+    ir(c) {
+      c.ground(-10, 134);
+      c.poly([[46, 30], [82, 30], [90, 72], [54, 72]], { fill: 1 }); c.poly([[50.8, 34], [78.8, 34], [85.2, 68], [57.2, 68]], { dim: 1 });
+      c.circ(48, 30, 1.6, { dim: 1 }); c.circ(80, 30, 1.6, { dim: 1 });
+      c.rect(0, 0, 124, 30, { fill: 1 }); c.line([[0, 5], [124, 5]], { dim: 1 });
+      c.rect(8, 12, 26, 11); c.circ(42, 17.5, 2.2);
+      c.rect(48, 10, 32, 14, { dim: 1 });
+      for (let x = 92; x <= 116; x += 4) c.line([[x, 10], [x, 24]], { dim: 1 });
+      c.line([[46, 38], [61, 38]], { dash: "3 3" });
+      c.rect(61, 30, 6, 16, { fill: 1 }); c.circ(64, 38, 1.8);
+      c.line([[67, 38], [82, 38]], { dash: "3 3" });
+    },
+    uv(c) {
+      c.ground(-10, 106);
+      c.rect(0, 0, 96, 36, { fill: 1 }); c.line([[0, 5], [96, 5]], { dim: 1 });
+      c.rect(8, 13, 30, 15); c.circ(48, 20.5, 3); c.circ(58, 20.5, 3);
+      [14, 20, 26].forEach(y => c.line([[68, y], [88, y]], { dim: 1 }));
+      c.rect(18, 36, 9, 5, { fill: 1 }); c.circ(22.5, 46, 5, { fill: 1 });
+      c.line([[27.5, 46], [53, 46]], { dash: "3 3" });
+      c.rect(53, 36, 6, 18); c.line([[53, 50], [59, 50]], { dim: 1 });
+      c.line([[59, 46], [74, 46]], { dash: "3 3" });
+      c.rect(74, 36, 8, 16, { fill: 1 }); c.line([[76, 40], [80, 40]], { dim: 1 });
+    },
+    nmr(c) {
+      c.ground(-40, 104);
+      c.rect(-1.5, 0, 3, 28, { dim: 1 });
+      c.curve([60, 8], [48, 0], [34, 2], [26, 28], { dim: 1 });
+      c.rect(-24, 0, 3, 28, { fill: 1 }); c.rect(21, 0, 3, 28, { fill: 1 });
+      c.rrect(-30, 28, 60, 62, 6, { fill: 1 });
+      c.line([[-30, 42], [30, 42]], { dim: 1 }); c.line([[-30, 76], [30, 76]], { dim: 1 });
+      c.rect(-10, 90, 20, 18, { fill: 1 }); c.rect(-14, 108, 28, 4, { fill: 1 });
+      c.line([[0, 112], [0, 126]]); c.line([[-2, 126], [2, 126]]);
+      c.rect(60, 0, 34, 62, { fill: 1 }); c.rect(66, 38, 22, 14);
+      [10, 16, 22, 28].forEach(y => c.line([[66, y], [88, y]], { dim: 1 }));
+    },
+    xray(c) {
+      c.ground(-10, 114);
+      c.rect(0, 0, 104, 28, { fill: 1 }); c.line([[0, 5], [104, 5]], { dim: 1 });
+      c.rect(8, 11, 24, 11); for (let x = 74; x <= 96; x += 4) c.line([[x, 9], [x, 23]], { dim: 1 });
+      c.rect(44, 28, 16, 8, { fill: 1 });
+      c.circ(52, 72, 36, { fill: 1 }); c.circ(52, 72, 31, { dim: 1 });
+      for (let a = 0; a < 360; a += 10) { const r2 = a % 30 ? 33.5 : 36, co = Math.cos(a * DEG), si = Math.sin(a * DEG); c.line([[52 + 31 * co, 72 + 31 * si], [52 + r2 * co, 72 + r2 * si]], { dim: 1 }); }
+      const P = (r, a) => [52 + r * Math.cos(a * DEG), 72 + r * Math.sin(a * DEG)];
+      c.line([P(38, 155), [52, 72], P(38, 25)], { dash: "3 3" });
+      c.rot(52, 72, 155, 38, 66, 6, { fill: 1 }); c.rot(52, 72, 155, 41, 42, 3.5, { dim: 1 });
+      c.rot(52, 72, 25, 38, 54, 5, { fill: 1 }); c.rot(52, 72, 25, 41, 42, 2.5, { dim: 1 });
+      c.circ(52, 72, 3);
+    },
+    ph(c) {
+      c.ground(-66, 52);
+      c.rect(18, 0, 24, 3, { fill: 1 }); c.rect(28, 3, 3, 66, { fill: 1 });
+      c.line([[-17, 32], [-17, 0], [17, 0], [17, 32]]); c.line([[-17, 32], [17, 32]], { dim: 1 });
+      c.line([[-17, 20], [17, 20]], { dim: 1 });
+      [8, 14, 20, 26].forEach(y => c.line([[-17, y], [-13, y]], { dim: 1 }));
+      c.rect(-2.2, 10, 4.4, 52, { fill: 1 });
+      c.rect(-1, 60, 32, 3, { fill: 1 });
+      c.curve([0, 63], [-4, 80], [-40, 50], [-41, 14], { dim: 1 });
+      c.rect(-56, 0, 30, 14, { fill: 1 }); c.rect(-52, 5, 14, 6); c.circ(-34, 8, 1.6, { dim: 1 }); c.circ(-30, 8, 1.6, { dim: 1 });
+    },
+    cent(c) {
+      c.ground(-10, 94);
+      c.curve([6, 30], [20, 46], [64, 46], [78, 30]);
+      c.poly([[26, 31], [58, 31], [52, 40], [32, 40]], { dash: "3 3", dim: 1 });
+      c.rot(42, 31, 145, 6, 16, 2, { dash: "3 3", dim: 1 }); c.rot(42, 31, 35, 6, 16, 2, { dash: "3 3", dim: 1 });
+      c.rect(0, 0, 84, 30, { fill: 1 }); c.line([[0, 5], [84, 5]], { dim: 1 });
+      c.rect(10, 12, 24, 10); c.circ(48, 17, 5.5); c.circ(48, 17, 2, { dim: 1 });
+      [13, 21].forEach(y => c.line([[60, y], [76, y]], { dim: 1 }));
+    }
+  };
+  function pic(id, maxW, maxH, ink = "#555858", bg = "#121212", op = 1) {
+    const bb = ps => [Math.min(...ps.map(p => p[0])), Math.min(...ps.map(p => p[1])), Math.max(...ps.map(p => p[0])), Math.max(...ps.map(p => p[1]))];
+    const mk = PIC_FLAT ? flatCtx : isoCtx, D = PIC_FLAT ? DEV2 : DEV;
+    let c = mk(1); D[id](c.api); let b = bb(c.pts);
+    c = mk(Math.min(maxW / (b[2] - b[0]), maxH / (b[3] - b[1]))); D[id](c.api); b = bb(c.pts);
+    const W = b[2] - b[0] + 2, H = b[3] - b[1] + 2;
+    return `<svg class="pic" data-pic="${[id, maxW, maxH, ink, bg, op, PIC_FLAT ? 1 : 0].join("|")}" width="${W.toFixed(1)}" height="${H.toFixed(1)}" viewBox="${(b[0] - 1).toFixed(1)} ${(b[1] - 1).toFixed(1)} ${W.toFixed(1)} ${H.toFixed(1)}" fill="none" stroke="${ink}" stroke-width="1" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">` +
+      c.shapes.map(s => `<path d="${s.d}"${s.o.fill ? ` fill="${bg}"` : ""} stroke-opacity="${(s.o.dim ? op * .55 : op).toFixed(2)}"${s.o.dash ? ` stroke-dasharray="${s.o.dash}"` : ""}/>`).join("") + `</svg>`;
+  }
+
+  // ---------- extra isometric drawings for the sections ----------
+  Object.assign(DEV, {
+    sample(c) {
+      const b = c.box(0, 0, 0, 96, 26, 44);
+      c.fline(b.L, [[0, 5], [96, 5]], { dim: 1 });
+      c.rect(b.L, 8, 10, 30, 10, { dim: 1 });
+      [20, 48, 76].forEach(x => c.circ([x, 26, 22], c.X, c.Z, 8.5, { dim: x !== 48 ? 1 : 0 }));
+      const t = c.cylY(48, 26, 22, 7.5, 86);
+      t.ring(70, { dim: 1 });
+      [[46, 40], [50, 52], [47, 61]].forEach(([x, y]) => c.circ([x, y, 29.6], c.X, c.Y, 1.4, { dim: 1 }));
+      c.cylY(48, 112, 22, 9, 6);
+      const u = c.cylY(76, 26, 22, 7.5, 48, {});
+      u.ring(52, { dim: 1 });
+      c.cylY(76, 74, 22, 9, 5);
+    },
+    base(c) {
+      const b = c.box(0, 0, 0, 60, 96, 52);
+      c.fline(b.L, [[0, 4], [60, 4]], { dim: 1 });
+      c.rect(b.L, 6, 8, 48, 24); c.fline(b.L, [[24, 20], [36, 20]]);
+      c.rect(b.L, 6, 38, 48, 24); c.fline(b.L, [[24, 50], [36, 50]]);
+      c.rect(b.L, 6, 68, 48, 22, { dim: 1 });
+      const d = c.box(6, 68, 52, 48, 20, 34);
+      c.fline(d.L, [[18, 10], [30, 10]]);
+      for (let z = 58; z <= 82; z += 6) c.poly([[10, 86, z], [50, 86, z], [50, 98, z], [10, 98, z]], { fill: 1 });
+      c.poly([[38, 98, 70], [48, 98, 70], [48, 102, 70], [38, 102, 70]], { fill: 1 });
+    },
+    journal(c) {
+      c.box(-4, 0, -4, 92, 3, 66);
+      const L = (u, z) => [u, 7 - 3 * (u / 42), z], R = (u, z) => [u, 4 + 3 * ((u - 42) / 42), z];
+      c.poly([L(0, 0), L(42, 0), L(42, 58), L(0, 58)], { fill: 1 });
+      c.poly([R(42, 0), R(84, 0), R(84, 58), R(42, 58)], { fill: 1 });
+      for (let z = 8; z <= 50; z += 7) c.line([L(6, z), L(36, z)], { dim: 1 });
+      for (let z = 8; z <= 29; z += 7) c.line([R(48, z), R(78, z)], { dim: 1 });
+      c.line([R(48, 40), R(66, 40)], { dim: 1 });
+      c.line([[30, 4.1, 58], [30, 4.1, 70], [33, 4.1, 67], [36, 4.1, 70], [36, 4.1, 58]]);
+      c.cylY(96, 0, 20, 1.6, 2);
+      c.line([[60, 9, 44], [96, 9, 18]]); c.line([[60, 7, 46], [96, 7, 20]]);
+    },
+    up(c) {
+      c.box(0, 0, 0, 30, 22, 44);
+      c.box(30, 0, 0, 30, 44, 44);
+      const s = c.box(60, 0, 0, 30, 66, 44);
+      c.rect(s.L, 6, 54, 18, 6, { dim: 1 });
+      c.line([[75, 66, 22], [75, 80, 22]], { dash: "3 3" });
+      c.box(66, 82, 10, 18, 18, 24, { dash: "4 3", fill: 0 });
+    }
+  });
+
+
+  // ---------- content ----------
+  const TOOLS = [["01", "МАСС-СПЕКТРОМЕТР"], ["02", "ХРОМАТОГРАФ"], ["03", "ИК-СПЕКТРОМЕТР"], ["04", "УФ-СПЕКТРОМЕТР"], ["05", "pH-МЕТР"], ["06", "ГОЛОГРАММА"], ["07", "ЯМР", "2 очка"], ["08", "ЦЕНТРИФУГА", "1 очко"], ["09", "РЕАКТОР", "1 очко"]];
+  const LEAD = "Показывает, какие связи есть в молекуле. Каждая связь поглощает инфракрасный свет на своей частоте — на спектре это провал.";
+  const STEPS = [
+    ["Капните пробу", "в кювету: уйдёт <b>10 %</b> пробы."],
+    ["Вставьте кювету", "в гнездо и закройте крышку — свет снаружи портит спектр."],
+    ["Снимите спектр", "кнопкой на приборе: луч пройдёт через пробу за 2 минуты."],
+    ["Найдите провалы", "— каждый значит связь, которая поглотила свет."],
+    ["Сверьте частоты", "с таблицей ИК-зон и запишите вывод в улики."]
+  ];
+  const STEP_HTML = STEPS.map(([a, b], i) => `<div class="step"><span class="n">${i + 1}</span><span class="s"><b>${a}</b> ${b}</span></div>`).join("");
+
+  // principle diagram: source → sample cell → monochromator → detector → screen, 1 px
+  const SCHEME = (w, h) => {
+    const n = (x, y, k) => `<circle cx="${x}" cy="${y}" r="13" fill="#151616" stroke="#8a8a8a"/><text x="${x}" y="${y + 5}" text-anchor="middle" font-family="Disket Mono" font-size="14" fill="#bdbdbd" stroke="none">${k}</text>`;
+    return `<svg width="${w}" height="${h}" viewBox="0 0 600 280" fill="none" stroke="#8a8a8a" stroke-width="1" aria-hidden="true">
+      <circle cx="56" cy="150" r="22"/><path d="M48 150h16M56 142v16" stroke="#5a5a5a"/>
+      <path d="M30 124l-10 -10M30 176l-10 10M56 118v-14" stroke="#5a5a5a"/>
+      <path d="M78 150H168" stroke="#bdbdbd" stroke-dasharray="6 5"/>
+      <rect x="168.5" y="112.5" width="64" height="76"/><path d="M176 140h48M176 162h48" stroke="#4a4c4c"/>
+      <path d="M233 150H318" stroke="#bdbdbd" stroke-dasharray="6 5"/>
+      <path d="M318 196L362 104L406 196Z"/>
+      <path d="M380 150L486 118M384 156L486 142M388 162L486 166M392 168L486 190" stroke="#6a6a6a" stroke-dasharray="4 4"/>
+      <rect x="486.5" y="104.5" width="24" height="96"/>
+      <path d="M511 152H530V60H560" stroke="#5a5a5a"/>
+      <rect x="520.5" y="20.5" width="72" height="56"/><path d="M528 34h56M528 34c10 0 12 6 18 30c4 -26 8 -26 12 -6c4 -8 8 -10 26 -10" stroke="#bdbdbd"/>
+      ${n(56, 210, 1)}${n(200, 226, 2)}${n(362, 226, 3)}${n(498, 230, 4)}${n(556, 100, 5)}</svg>`;
+  };
+  const SCHEME_CAP = `<b>1</b>источник ИК · <b>2</b>кювета с пробой · <b>3</b>монохроматор · <b>4</b>детектор · <b>5</b>экран спектра`;
+
+  // IR spectrum of the sample: transmittance from 4000 to 400 cm⁻¹, dips at 2349 and 667
+  const SPEC = (w, h) => {
+    const X = v => 50 + (4000 - v) / 3600 * 520, top = 34, bot = 190;
+    let d = "";
+    for (let v = 4000; v >= 400; v -= 10) {
+      const dip = 120 * Math.exp(-(((v - 2349) / 28) ** 2)) + 70 * Math.exp(-(((v - 667) / 18) ** 2));
+      d += `${v === 4000 ? "M" : "L"}${X(v).toFixed(1)} ${(top + 6 + dip).toFixed(1)}`;
+    }
+    const tick = v => `<path d="M${X(v).toFixed(1)} ${bot}v6" stroke="#5a5a5a"/><text x="${X(v).toFixed(1)}" y="${bot + 24}" text-anchor="middle" font-family="Disket Mono" font-size="13" fill="#6a6a6a" stroke="none">${v}</text>`;
+    return `<svg width="${w}" height="${h}" viewBox="0 0 600 230" fill="none" stroke-width="1" aria-hidden="true">
+      <path d="M50 ${top}V${bot}H570" stroke="#3a3c3c"/>
+      ${[3000, 2000, 1500, 1000].map(v => `<path d="M${X(v).toFixed(1)} ${top}V${bot}" stroke="#1f2121"/>`).join("")}
+      ${[4000, 3000, 2000, 1000, 400].map(tick).join("")}
+      <path d="${d}" stroke="#bdbdbd"/>
+      <path d="M${(X(2349) + 6).toFixed(1)} ${top + 120}h14" stroke="#3dd4c4"/><text x="${(X(2349) + 26).toFixed(1)}" y="${top + 125}" text-anchor="start" font-family="Disket Mono" font-size="14" fill="#3dd4c4" stroke="none">2349 · C=O</text>
+      <text x="${X(667).toFixed(1)}" y="${top + 100}" text-anchor="middle" font-family="Disket Mono" font-size="14" fill="#bdbdbd" stroke="none">667</text>
+      <text x="50" y="22" font-family="Disket Mono" font-size="13" fill="#6a6a6a" stroke="none">ПРОПУСКАНИЕ</text>
+      <text x="570" y="22" text-anchor="end" font-family="Disket Mono" font-size="13" fill="#6a6a6a" stroke="none">СМ⁻¹</text></svg>`;
+  };
+
+  // ---------- periodic table ----------
+  const SYM = "H He Li Be B C N O F Ne Na Mg Al Si P S Cl Ar K Ca Sc Ti V Cr Mn Fe Co Ni Cu Zn Ga Ge As Se Br Kr Rb Sr Y Zr Nb Mo Tc Ru Rh Pd Ag Cd In Sn Sb Te I Xe Cs Ba La Ce Pr Nd Pm Sm Eu Gd Tb Dy Ho Er Tm Yb Lu Hf Ta W Re Os Ir Pt Au Hg Tl Pb Bi Po At Rn Fr Ra Ac Th Pa U Np Pu Am Cm Bk Cf Es Fm Md No Lr Rf Db Sg Bh Hs Mt Ds Rg Cn Nh Fl Mc Lv Ts Og".split(" ");
+  const MASS = { H: "1,008", C: "12,011", N: "14,007", O: "15,999", Na: "22,990", Mg: "24,305", Si: "28,085", P: "30,974", S: "32,06", Cl: "35,45", K: "39,098", Ca: "40,078", Fe: "55,845" };
+  const GAME = Object.keys(MASS);
+  const pos = z => {
+    if (z === 1) return [1, 1]; if (z === 2) return [1, 18];
+    if (z <= 4) return [2, z - 2]; if (z <= 10) return [2, z + 8];
+    if (z <= 12) return [3, z - 10]; if (z <= 18) return [3, z];
+    if (z <= 36) return [4, z - 18]; if (z <= 54) return [5, z - 36];
+    if (z <= 56) return [6, z - 54]; if (z <= 71) return [9, z - 54]; if (z <= 86) return [6, z - 68];
+    if (z <= 88) return [7, z - 86]; if (z <= 103) return [10, z - 86]; return [7, z - 100];
+  };
+  // opts: x, y, cw (cell w), ch (cell h), sel, known (set of symbols shown bright; others dim), mass
+  const TABLE = o => {
+    const cells = SYM.map((s, i) => {
+      const z = i + 1, [r, c] = pos(z), row = r >= 9 ? r - 0.6 : r;
+      const g = GAME.includes(s), k = !o.known || o.known.includes(s);
+      return `<div class="el ${g && k ? "g" : ""} ${s === o.sel ? "sel" : ""} ${o.known && !k ? "dk" : ""}" style="grid-row:${Math.round(row * 10)} / span 10;grid-column:${c};margin-bottom:4px" data-pick data-i="${s}"><span class="z">${z}</span><span class="sy">${s}</span>${o.mass ? `<span class="m">${MASS[s] || ""}</span>` : ""}</div>`;
+    }).join("");
+    const ph = [[6, "57–71"], [7, "89–103"]].map(([r, t]) => `<div class="el ph" style="grid-row:${r * 10} / span 10;grid-column:3;margin-bottom:4px">${t}</div>`).join("");
+    return `<div class="pt" data-group style="left:${o.x}px;top:${o.y}px;grid-template-columns:repeat(18, ${o.cw}px);grid-auto-rows:${o.ch / 10}px;row-gap:0;column-gap:4px">${cells}${ph}</div>`;
+  };
+  const CARD_C = `<div class="zz">6 · ГРУППА 14 · ПЕРИОД 2</div>
+      <div class="sym" style="margin:14px 0 10px -6px">C</div><div class="nm">УГЛЕРОД</div>`;
+  const CARD_C_KV = `${KV("АТОМНАЯ МАССА", "12,011")}${KV("ВАЛЕНТНОСТЬ", "IV")}${KV("ЭЛЕКТРООТРИЦ.", "2,55")}${KV("СВЯЗИ В ИК", "C–H 2850–3000 · C=O 1700")}`;
+  const CARD_C_TXT = "Основа органики: всё живое построено на цепочках углерода. В пробах выдаёт себя осколком 12 на масс-спектре.";
+
+  // ---------- A · textbook: contents on the left, a page with a figure and numbered steps ----------
+  function A1() {
+    return `<div class="ab" style="left:100px;top:196px;width:330px">
+        <div class="ey" style="margin-bottom:12px">ПРИБОРЫ · 9</div>
+        <div class="toc" data-group>${TOOLS.map(([n, t, lk]) => `<div class="it ${n === "03" ? "sel" : ""} ${lk ? "lk" : ""}" data-pick data-i="${n}"><i>${n}</i>${t}${lk ? `<em>${lk}</em>` : ""}</div>`).join("")}</div>
+        <div class="ey" style="margin:30px 0 8px">В СТАТЬЕ</div>
+        <div class="toc">${["Что показывает", "Как устроен", "Как пользоваться", "Как читать спектр", "Ошибки"].map((t, i) => `<div class="sec ${i === 1 ? "on" : ""}"><b>§${i + 1}</b>${t}</div>`).join("")}</div></div>
+      <div class="ab" style="left:470px;top:196px;width:1px;height:764px;background:#262828"></div>
+      <div class="ab" style="left:510px;top:196px;width:1310px">
+        <div class="ey">ГЛАВА 3 · ПРИБОРЫ</div>
+        <div class="h1" style="margin:16px 0 18px">ИК-СПЕКТРОМЕТР</div>
+        <div class="lead2" style="max-width:52ch">${LEAD}</div>
+        <div class="chips" style="margin-top:22px"><span class="chip">РАСХОД <b>10 %</b></span><span class="chip">ВРЕМЯ <b>2 мин</b></span><span class="chip">МОНИТОР <b>левый</b></span><span class="chip">ОТКРЫТ <b>с начала</b></span></div></div>
+      <div class="ab" style="left:510px;top:478px;width:620px">
+        <div class="fig" style="padding:14px 10px 6px">${SCHEME(600, 280)}</div>
+        <div class="cap2" style="margin-top:12px"><b>Рис. 3.1</b> ${SCHEME_CAP}</div></div>
+      <div class="ab" style="left:1180px;top:478px;width:640px">
+        <div class="ey" style="margin-bottom:6px">§3 · КАК ПОЛЬЗОВАТЬСЯ</div><div class="steps">${STEP_HTML}</div></div>
+      <div class="pnav" style="left:510px;top:920px;width:1310px"><span>← <b>02 ХРОМАТОГРАФ</b></span><span>СТР. 3 / 9</span><span><b>04 УФ-СПЕКТРОМЕТР</b> →</span></div>`;
+  }
+  function A2() {
+    return `<div class="ab" style="left:100px;top:196px;width:1240px">
+        <div class="ey">ТАБЛ. 1 · ПЕРИОДИЧЕСКАЯ СИСТЕМА</div></div>
+      ${TABLE({ x: 100, y: 240, cw: 64, ch: 66, sel: "C", mass: false })}
+      <div class="ab legend" style="left:100px;top:925px"><span><i class="g"></i>ВСТРЕЧАЛИСЬ В ПРОБАХ</span><span><i></i>ОСТАЛЬНЫЕ</span><span><i class="s"></i>ВЫБРАН</span></div>
+      <div class="ab" style="left:1370px;top:196px;width:1px;height:764px;background:#262828"></div>
+      <div class="ab ecard" style="left:1410px;top:196px;width:410px">${CARD_C}
+        <div class="p" style="margin:18px 0 20px">${CARD_C_TXT}</div>${CARD_C_KV}
+        <div class="go3" style="margin-top:26px">СТАТЬЯ «СВЯЗИ» →</div></div>`;
+  }
+
+  // ---------- B · encyclopedia: search, an index of everything, an article with an info box ----------
+  const SEARCH = q => `<div class="search"><svg viewBox="0 0 24 24"><circle cx="10" cy="10" r="7"/><path d="M15 15l7 7"/></svg>${q}<b>ПОИСК ПО ВСЕЙ БАЗЕ</b></div>`;
+  function IDX(sel) {
+    const G = [["ПРИБОРЫ", "9", ["Масс-спектрометр", "ИК-спектрометр", "УФ-спектрометр"], "ещё 6"], ["СПРАВОЧНИК", "14", ["Таблица ИК-зон", "Химические связи"], "ещё 12"], ["ЭЛЕМЕНТЫ", "118", ["Углерод"], "вся таблица"], ["ВЕЩЕСТВА", "1", ["Углекислый газ"], ""]];
+    return `<div class="ab idx" data-group style="left:100px;top:276px;width:400px">${G.map(([g, n, rows, more]) => `<div class="grp"><span>${g}</span><span>${n}</span></div>${rows.map(r => `<div class="row ${r === sel ? "sel" : ""}" data-pick data-i="${r}">${r}</div>`).join("")}${more ? `<div class="more">${more.toUpperCase()}</div>` : ""}`).join("")}</div>
+      <div class="ab" style="left:540px;top:276px;width:1px;height:684px;background:#262828"></div>`;
+  }
+  function B1() {
+    return SEARCH("ик") + IDX("ИК-спектрометр") + `
+      <div class="ab" style="left:580px;top:290px;width:820px">
+        <div class="crumb2">ПРИБОРЫ › <b>ИК-СПЕКТРОМЕТР</b></div>
+        <div class="h1" style="font-size:52px;margin:14px 0 16px">ИК-СПЕКТРОМЕТР</div>
+        <div class="p" style="font-size:24px;color:#d0d0d0">${LEAD}</div>
+        <div class="h2" style="margin-top:26px">КАК ЧИТАТЬ СПЕКТР</div>
+        <div style="margin-top:8px">${SPEC(600, 230)}</div>
+        <div class="p" style="margin-top:6px">Глубокий провал у <b style="color:#fff;font-weight:500">2349</b> — две двойные связи C=O на одном углероде. Провала в зоне 2850–3000 нет — значит, нет и связей C–H.</div>
+        <div class="see" style="margin-top:22px"><b>СМ. ТАКЖЕ</b><u>Таблица ИК-зон</u><u>Химические связи</u><u>Углекислый газ</u></div></div>
+      <div class="ab ibox" style="left:1460px;top:290px;width:360px">
+        <div class="hd">ИК-СПЕКТРОМЕТР</div>
+        <div class="fig" style="border:0;border-bottom:1px solid #2c2e2e;padding:10px 0;display:grid;place-items:center">${pic("ir", 300, 170, "#8a8a8a", "#151616")}</div>
+        ${[["ПОКАЗЫВАЕТ", "связи"], ["ДИАПАЗОН", "4000–400 см⁻¹"], ["РАСХОД", "10 % пробы"]].map(([k, v]) => `<div class="r"><span>${k}</span>${v}</div>`).join("")}
+        <div class="hd" style="border-top:1px solid #2c2e2e">КАК ПОЛЬЗОВАТЬСЯ</div>
+        ${STEPS.map(([a], i) => `<div class="r" style="justify-content:flex-start"><span>${i + 1}</span>${a}</div>`).join("")}</div>`;
+  }
+  function B2() {
+    return SEARCH("углерод") + `
+      ${TABLE({ x: 100, y: 282, cw: 91, ch: 56, sel: "C", mass: false })}
+      <div class="ab" style="left:100px;top:880px;width:1720px;height:80px;border-top:1px solid #333;display:flex;align-items:center;gap:40px">
+        <span class="t-mono" style="font-weight:700;font-size:44px;color:var(--accent)">C</span>
+        <span class="t-mono" style="font-size:22px;letter-spacing:.1em;color:#fff">6 · УГЛЕРОД</span>
+        <span class="p">масса 12,011 · валентность IV · электроотрицательность 2,55</span>
+        <span class="go3" style="margin-left:auto">ОТКРЫТЬ СТАТЬЮ →</span></div>`;
+  }
+
+  // ---------- C · schematic: the instrument itself is the page, steps run along the bottom ----------
+  function C1() {
+    // [n, label, label x, label y, point x, point y, side, current]
+    const CO = [["1", "КРЫШКА", 1010, 330, 680, 362, "r"], ["2", "ГНЕЗДО КЮВЕТЫ", 100, 440, 585, 495, "l", 1], ["3", "ДИСПЛЕЙ", 100, 560, 378, 535, "l"], ["4", "ВЕНТИЛЯЦИЯ", 1010, 680, 590, 648, "r"], ["5", "РЕГУЛЯТОР", 1010, 600, 770, 622, "r"]];
+    const W = { "ГНЕЗДО КЮВЕТЫ": 262, "ДИСПЛЕЙ": 160 };
+    const lines = CO.map(([n, t, lx, ly, px, py, side, on]) => {
+      const sx = side === "l" ? lx + W[t] + 14 : lx - 14, sy = ly + 17, c = on ? "#3dd4c4" : "#5a5a5a";
+      return `<path d="M${sx} ${sy}H${(sx + px) / 2}L${px} ${py}" stroke="${c}"/><circle cx="${px}" cy="${py}" r="4" fill="${c}"/>`;
+    }).join("");
+    return `<div class="ab" style="left:100px;top:196px;width:1200px">
+        <div class="ey">ПРИБОР 03 · КАК УСТРОЕН</div>
+        <div class="big3" style="margin-top:14px;font-size:64px">ИК-СПЕКТРОМЕТР</div></div>
+      <div class="ab" style="left:330px;top:300px">${pic("ir", 640, 440, "#7a7a7a", "#121212")}</div>
+      <svg class="ab" style="left:0;top:0;overflow:visible" width="1920" height="1080" fill="none" stroke-width="1" aria-hidden="true">${lines}</svg>
+      ${CO.map(([n, t, x, y, , , , on]) => `<div class="co ${on ? "on" : ""}" style="left:${x}px;top:${y}px"><i>${n}</i>${t}</div>`).join("")}
+      <div class="ab" style="left:1330px;top:196px;width:1px;height:600px;background:#262828"></div>
+      <div class="ab" style="left:1370px;top:196px;width:450px">
+        <div class="ey">ШАГ 2 ИЗ 5</div>
+        <div class="t-mono" style="font-weight:700;font-size:40px;color:#fff;margin:14px 0 18px;line-height:1.1">ВСТАВЬТЕ КЮВЕТУ</div>
+        <div class="p">Кювета встаёт в гнездо <b style="color:var(--accent);font-weight:500">2</b> окошками поперёк луча. Закройте крышку <b style="color:#fff;font-weight:500">1</b>: свет снаружи даёт ложные провалы.</div>
+        <div style="margin-top:26px">${KV("РАСХОД", "10 % пробы")}${KV("ВРЕМЯ", "2 мин")}</div>
+        <div class="go3" style="margin-top:26px">ДАЛЕЕ: СНЯТЬ СПЕКТР →</div></div>
+      <div class="spill" style="left:100px;top:826px;width:1720px">${STEPS.map(([a], i) => `<div class="${i === 1 ? "on" : i < 1 ? "done" : ""}"><b>0${i + 1}</b>${a.toUpperCase()}</div>`).join("")}</div>`;
+  }
+  function C2() {
+    const known = ["H", "C", "N", "O", "S", "Cl", "Na", "Ca"];
+    return `<div class="ab" style="left:100px;top:196px;width:900px"><div class="ey">ЭЛЕМЕНТЫ ОТКРЫВАЮТСЯ, КОГДА ВСТРЕЧАЮТСЯ В ПРОБАХ</div></div>
+      ${TABLE({ x: 100, y: 246, cw: 64, ch: 66, sel: "C", mass: false, known })}
+      <div class="ab ecard" style="left:1380px;top:246px;width:440px;padding:28px;border:1px solid #333;background:#151616">${CARD_C}
+        <div class="p" style="margin:16px 0 6px">${CARD_C_TXT}</div>${CARD_C_KV.split("</div>").slice(0, 3).join("</div>")}</div>`
+      + `<div class="ab" style="left:1380px;top:900px;width:440px;display:flex;justify-content:space-between;align-items:baseline"><span class="ey">ОТКРЫТО</span><span class="t-mono" style="font-weight:700;font-size:34px;color:#fff">8 / 118</span></div>`;
+  }
+
+  const S = [
+    ["А · Учебник", "Слева оглавление раздела и параграфы статьи, справа страница: заголовок, вводный абзац, схема прибора с подписью «Рис.», шаги по порядку. Внизу листание как в книге.",
+      [["Прибор · ИК-спектрометр", A1, 0, "СТАТЬЯ <b>3 / 9</b>"], ["Таблица", A2, 1, "ОТКРЫТО <b>13 / 118</b>"]],
+      ["Читает спокойно, по порядку — как учебник, который лежит у стола.", "Каждая статья одинаково разбита на параграфы §1–§5; закрытые приборы видны с ценой в очках.", "Страница — набор блоков: заголовок, абзац, рисунок, шаги. Рисунки — те же 1 px чертежи, что у «Приборов»."]],
+    ["Б · Энциклопедия", "Сверху поиск по всей базе, слева общий указатель — приборы, справочник, элементы, вещества. Справа статья с карточкой-справкой, примером спектра и ссылками «См. также».",
+      [["Прибор · ИК-спектрометр", B1, 0, "НАЙДЕНО <b>4</b>"], ["Таблица", B2, 1, "НАЙДЕНО <b>1</b>"]],
+      ["Ищет конкретное: «2349», «масса 44», «pH» — и сразу получает ответ.", "Всё связано ссылками: прибор → зона ИК → элемент → вещество.", "Карточка справа — одинаковый компонент для приборов и элементов; поиск — поле ввода в игре."]],
+    ["В · Схема", "Страница — сам прибор крупно, части подписаны номерами. Внизу шаги работы, справа текущий шаг. Таблица — карта, на которой открываются элементы из проб.",
+      [["Прибор · ИК-спектрометр", C1, 0, "ПРИБОР <b>3 / 9</b>"], ["Таблица", C2, 1, "ОТКРЫТО <b>8 / 118</b>"]],
+      ["Учится руками: видит, куда вставить кювету, прежде чем подойти к столу.", "Шаги совпадают с действиями у прибора; подсвечена часть прибора текущего шага.", "Самый тяжёлый в контенте: на каждый прибор — чертёж с точками выносок."]]
+  ];
+  document.getElementById("screens").innerHTML = S.map(([t, s, screens, n]) => `<article class="v"><header><h2>${t}</h2><span>${s}</span></header>
+    ${screens.map(([cap, fn, sub, right]) => `<div class="cap" style="font-family:var(--mono);font-size:12px;letter-spacing:.12em;color:var(--muted);margin:16px 0 6px">${cap.toUpperCase()}</div><div class="comp"><div class="scr">${HDR() + SUB(sub, right) + fn() + FOOT()}</div></div>`).join("")}
+    <div class="notes"><p><b>ИГРОК</b>${n[0]}</p><p><b>ПРАВИЛО</b>${n[1]}</p><p><b>ТЕХНИЧЕСКИ</b>${n[2]}</p></div></article>`).join("");
+
+  document.querySelectorAll("[data-group]").forEach(g => g.querySelectorAll("[data-pick]").forEach(t => {
+    const pick = () => g.querySelectorAll("[data-pick]").forEach(o => o.classList.toggle("sel", o === t));
+    t.addEventListener("mouseenter", pick); t.addEventListener("focus", pick);
+  }));
+  const fit = () => document.querySelectorAll(".comp").forEach(c => { c.firstElementChild.style.transform = `scale(${c.clientWidth / 1920})`; });
+  new ResizeObserver(fit).observe(document.body);
+  fit();
+})();
+</script>
