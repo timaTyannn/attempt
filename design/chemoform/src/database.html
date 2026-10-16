@@ -164,13 +164,13 @@ h1 { font-family: var(--mono); font-weight: 700; font-size: clamp(26px, 4vw, 40p
 .step .s { font-size: 21px; line-height: 1.4; color: #c6c6c6; }
 .step .s b { font-weight: 500; color: #fff; }
 .toc { display: flex; flex-direction: column; }
-.toc .it { position: relative; display: flex; gap: 14px; align-items: baseline; padding: 11px 0 11px 18px; font-family: var(--mono); font-size: 19px; letter-spacing: .06em; color: #8a8a8a; }
+.toc .it { position: relative; display: flex; gap: 14px; align-items: baseline; padding: 8px 0 8px 18px; font-family: var(--mono); font-size: 19px; letter-spacing: .06em; color: #8a8a8a; }
 .toc .it i { font-style: normal; color: #4a4c4c; width: 28px; }
 .toc .it.sel { color: #fff; background: #1c1e1e; }
 .toc .it.sel::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--accent); }
 .toc .it.lk { color: #3f4141; }
 .toc .it.lk em { margin-left: auto; padding-right: 12px; font-style: normal; font-size: 14px; color: #4a4c4c; }
-.toc .sec { padding: 7px 0 7px 18px; font-size: 19px; color: #7a7a7a; }
+.toc .sec { padding: 5px 0 5px 18px; font-size: 19px; color: #7a7a7a; }
 .toc .sec b { font-family: var(--mono); font-weight: 400; color: #5a5a5a; margin-right: 10px; }
 .toc .sec.on { color: #fff; }
 .pnav { position: absolute; display: flex; justify-content: space-between; align-items: center; font-family: var(--mono); font-size: 18px; letter-spacing: .08em; color: #6a6a6a; border-top: 1px solid #262828; padding-top: 16px; }
@@ -229,11 +229,27 @@ h1 { font-family: var(--mono); font-weight: 700; font-size: clamp(26px, 4vw, 40p
 .spill > div.on { border-top-color: var(--accent); color: #fff; }
 .spill > div.on b { color: var(--accent); }
 .big3 { font-family: var(--mono); font-weight: 700; font-size: 96px; line-height: .9; color: #fff; }
+
+/* textbook with search */
+.srch { height: 54px; border: 1px solid #333; display: flex; align-items: center; gap: 12px; padding: 0 16px; font-size: 21px; color: #5a5a5a; }
+.srch svg { width: 22px; height: 22px; flex: none; fill: none; stroke: #8a8a8a; stroke-width: 2; }
+.srch .q { color: #fff; }
+.srch .caret { display: inline-block; width: 2px; height: 26px; background: var(--accent); margin-left: -8px; }
+.idx .row .hit { font-family: var(--mono); font-size: 15px; letter-spacing: .06em; color: #6a6a6a; margin-top: 4px; }
+.idx .row.sel .hit { color: var(--accent); }
+.ztab { display: flex; flex-direction: column; }
+.ztab .zh, .ztab .zr { position: relative; display: grid; grid-template-columns: 170px 220px 230px 1fr; align-items: center; padding: 0 20px; }
+.ztab .zh { height: 40px; font-family: var(--mono); font-size: 15px; letter-spacing: .12em; color: #6a6a6a; }
+.ztab .zr { height: 46px; border-top: 1px solid #262828; font-size: 21px; color: #c6c6c6; }
+.ztab .zr .b, .ztab .zr .zz2 { font-family: var(--mono); font-size: 20px; color: #fff; }
+.ztab .zr.hit { background: #1c1e1e; }
+.ztab .zr.hit::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--accent); }
+.ztab .zr.hit .zz2 { color: var(--accent); }
 </style>
 
 <main class="doc">
   <h1>Хемоформ · база данных</h1>
-  <p class="lead">База данных — это справочник лаборатории: инструкции к каждому прибору, таблица Менделеева, статьи по химии и карточки определённых веществ. Три подхода к интерфейсу: «Учебник», «Энциклопедия» и «Схема». Каждый показан на двух экранах — статья о приборе и таблица.</p>
+  <p class="lead">База данных — справочник лаборатории: инструкции к каждому прибору, таблица Менделеева, статьи по химии и карточки определённых веществ. Выбран «Учебник» с поиском из «Энциклопедии» и схемой прибора из «Схемы».</p>
   <article class="v" id="plan">
     <header><h2>Что внутри</h2><span>Четыре подвкладки. Статьи открываются по мере игры: прибор — когда его поставили на стол, элемент — когда он встретился в пробе.</span></header>
     <div class="plan">
@@ -674,15 +690,20 @@ h1 { font-family: var(--mono); font-weight: 700; font-size: clamp(26px, 4vw, 40p
   const CARD_C_KV = `${KV("АТОМНАЯ МАССА", "12,011")}${KV("ВАЛЕНТНОСТЬ", "IV")}${KV("ЭЛЕКТРООТРИЦ.", "2,55")}${KV("СВЯЗИ В ИК", "C–H 2850–3000 · C=O 1700")}`;
   const CARD_C_TXT = "Основа органики: всё живое построено на цепочках углерода. В пробах выдаёт себя осколком 12 на масс-спектре.";
 
-  // ---------- A · textbook: contents on the left, a page with a figure and numbered steps ----------
-  function A1() {
-    return `<div class="ab" style="left:100px;top:196px;width:330px">
-        <div class="ey" style="margin-bottom:12px">ПРИБОРЫ · 9</div>
-        <div class="toc" data-group>${TOOLS.map(([n, t, lk]) => `<div class="it ${n === "03" ? "sel" : ""} ${lk ? "lk" : ""}" data-pick data-i="${n}"><i>${n}</i>${t}${lk ? `<em>${lk}</em>` : ""}</div>`).join("")}</div>
-        <div class="ey" style="margin:30px 0 8px">В СТАТЬЕ</div>
-        <div class="toc">${["Что показывает", "Как устроен", "Как пользоваться", "Как читать спектр", "Ошибки"].map((t, i) => `<div class="sec ${i === 1 ? "on" : ""}"><b>§${i + 1}</b>${t}</div>`).join("")}</div></div>
-      <div class="ab" style="left:470px;top:196px;width:1px;height:764px;background:#262828"></div>
-      <div class="ab" style="left:510px;top:196px;width:1310px">
+  // ---------- the textbook with search: one layout for every subtab ----------
+  const SRCH = (q, w = 330) => `<div class="srch" style="width:${w}px"><svg viewBox="0 0 24 24"><circle cx="10" cy="10" r="7"/><path d="M15 15l7 7"/></svg>${q ? `<span class="q">${q}</span><i class="caret"></i>` : `<span>Поиск по базе</span>`}</div>`;
+  const SECS = ["Что показывает", "Как устроен", "Как пользоваться", "Как читать спектр", "Ошибки"];
+  // left column: search, the section's contents, the paragraphs of the open article
+  const LEFTC = sec => `<div class="ab" style="left:100px;top:196px;width:330px">${SRCH("")}
+      <div class="ey" style="margin:26px 0 10px">ПРИБОРЫ · 9</div>
+      <div class="toc" data-group>${TOOLS.map(([n, t, lk]) => `<div class="it ${n === "03" ? "sel" : ""} ${lk ? "lk" : ""}" data-pick data-i="${n}"><i>${n}</i>${t}${lk ? `<em>${lk}</em>` : ""}</div>`).join("")}</div>
+      <div class="ey" style="margin:24px 0 8px">В СТАТЬЕ</div>
+      <div class="toc">${SECS.map((t, i) => `<div class="sec ${i === sec ? "on" : ""}"><b>§${i + 1}</b>${t}</div>`).join("")}</div></div>
+    <div class="ab" style="left:470px;top:196px;width:1px;height:764px;background:#262828"></div>`;
+  const PNAV = (l, m, r) => `<div class="pnav" style="left:510px;top:920px;width:1310px"><span>← <b>${l}</b></span><span>${m}</span><span><b>${r}</b> →</span></div>`;
+
+  function T1() {
+    return LEFTC(2) + `<div class="ab" style="left:510px;top:196px;width:1310px">
         <div class="ey">ГЛАВА 3 · ПРИБОРЫ</div>
         <div class="h1" style="margin:16px 0 18px">ИК-СПЕКТРОМЕТР</div>
         <div class="lead2" style="max-width:52ch">${LEAD}</div>
@@ -692,96 +713,61 @@ h1 { font-family: var(--mono); font-weight: 700; font-size: clamp(26px, 4vw, 40p
         <div class="cap2" style="margin-top:12px"><b>Рис. 3.1</b> ${SCHEME_CAP}</div></div>
       <div class="ab" style="left:1180px;top:478px;width:640px">
         <div class="ey" style="margin-bottom:6px">§3 · КАК ПОЛЬЗОВАТЬСЯ</div><div class="steps">${STEP_HTML}</div></div>
-      <div class="pnav" style="left:510px;top:920px;width:1310px"><span>← <b>02 ХРОМАТОГРАФ</b></span><span>СТР. 3 / 9</span><span><b>04 УФ-СПЕКТРОМЕТР</b> →</span></div>`;
+      ${PNAV("02 ХРОМАТОГРАФ", "СТР. 3 / 9", "04 УФ-СПЕКТРОМЕТР")}`;
   }
-  function A2() {
-    return `<div class="ab" style="left:100px;top:196px;width:1240px">
-        <div class="ey">ТАБЛ. 1 · ПЕРИОДИЧЕСКАЯ СИСТЕМА</div></div>
-      ${TABLE({ x: 100, y: 240, cw: 64, ch: 66, sel: "C", mass: false })}
-      <div class="ab legend" style="left:100px;top:925px"><span><i class="g"></i>ВСТРЕЧАЛИСЬ В ПРОБАХ</span><span><i></i>ОСТАЛЬНЫЕ</span><span><i class="s"></i>ВЫБРАН</span></div>
+
+  // §2 «how it is built»: the instrument drawing with numbered parts (the schematic idea)
+  function T2() {
+    const dx = 490, dy = 40;
+    const CO = [["1", "КРЫШКА", 1450, 340, 680, 362, "r"], ["2", "ГНЕЗДО КЮВЕТЫ", 520, 450, 585, 495, "l", 1], ["3", "ДИСПЛЕЙ", 520, 570, 378, 535, "l"], ["4", "ВЕНТИЛЯЦИЯ", 1450, 690, 590, 648, "r"], ["5", "РЕГУЛЯТОР", 1450, 610, 770, 622, "r"]];
+    const W = { "ГНЕЗДО КЮВЕТЫ": 262, "ДИСПЛЕЙ": 160 };
+    const lines = CO.map(([n, t, lx, ly, px, py, side, on]) => {
+      const X = px + dx, Yp = py + dy, sx = side === "l" ? lx + W[t] + 14 : lx - 14, sy = ly + 17, c = on ? "#3dd4c4" : "#5a5a5a";
+      return `<path d="M${sx} ${sy}H${(sx + X) / 2}L${X} ${Yp}" stroke="${c}"/><circle cx="${X}" cy="${Yp}" r="4" fill="${c}"/>`;
+    }).join("");
+    return LEFTC(1) + `<div class="ab" style="left:510px;top:196px;width:1310px">
+        <div class="ey">ГЛАВА 3 · §2 КАК УСТРОЕН</div>
+        <div class="h1" style="margin:16px 0 0;font-size:48px">ИК-СПЕКТРОМЕТР</div></div>
+      <div class="ab" style="left:${330 + dx}px;top:${300 + dy}px">${pic("ir", 640, 440, "#7a7a7a", "#121212")}</div>
+      <svg class="ab" style="left:0;top:0;overflow:visible" width="1920" height="1080" fill="none" stroke-width="1" aria-hidden="true">${lines}</svg>
+      ${CO.map(([n, t, x, y, , , , on]) => `<div class="co ${on ? "on" : ""}" style="left:${x}px;top:${y}px"><i>${n}</i>${t}</div>`).join("")}
+      <div class="ab" style="left:510px;top:790px;width:1310px;display:grid;grid-template-columns:auto 1fr;gap:0 24px;align-items:baseline;border-top:1px solid #262828;padding-top:18px">
+        <span class="t-mono" style="font-weight:700;font-size:24px;color:var(--accent)">2 · ГНЕЗДО КЮВЕТЫ</span>
+        <span class="p">Сюда встаёт кювета с пробой — окошками поперёк луча. Перед съёмкой закройте крышку <b style="color:#fff;font-weight:500">1</b>: свет снаружи даёт ложные провалы.</span></div>
+      ${PNAV("§1 ЧТО ПОКАЗЫВАЕТ", "РИС. 3.2 · НАВЕДИТЕ НА ЧАСТЬ ПРИБОРА", "§3 КАК ПОЛЬЗОВАТЬСЯ")}`;
+  }
+
+  // search: results from every subtab on the left, the opened result on the right
+  function T3() {
+    const R = [["СПРАВОЧНИК", [["Таблица ИК-зон", "O=C=O · 2349 см⁻¹", 1], ["Химические связи", "двойная связь C=O"]]], ["ПРИБОРЫ", [["ИК-спектрометр", "§4 · провал у 2349"]]], ["ВЕЩЕСТВА", [["Углекислый газ", "ИК: 2349 и 667"]]]];
+    const Z = [["O–H", "3200–3600", "широкий", "спирты, вода"], ["N–H", "3300–3500", "средний", "амины"], ["C–H", "2850–3000", "средний", "почти вся органика"], ["C≡N", "2210–2260", "узкий", "нитрилы"], ["O=C=O", "2349", "сильный, узкий", "углекислый газ", 1], ["C=O", "1680–1750", "сильный", "кетоны, кислоты"], ["C=C", "1620–1680", "средний", "алкены"], ["C–O", "1000–1300", "сильный", "спирты, эфиры"]];
+    return `<div class="ab" style="left:100px;top:196px;width:330px">${SRCH("2349")}
+        <div class="ey" style="margin:26px 0 4px;display:flex;justify-content:space-between"><span>НАЙДЕНО</span><span>4</span></div>
+        <div class="idx" data-group>${R.map(([g, rows]) => `<div class="grp"><span>${g}</span></div>${rows.map(([t, m, on]) => `<div class="row ${on ? "sel" : ""}" data-pick data-i="${t}">${t}<div class="hit">${m}</div></div>`).join("")}`).join("")}</div></div>
+      <div class="ab" style="left:470px;top:196px;width:1px;height:764px;background:#262828"></div>
+      <div class="ab" style="left:510px;top:196px;width:1310px">
+        <div class="ey">СПРАВОЧНИК · СТАТЬЯ 6</div>
+        <div class="h1" style="margin:16px 0 18px">ТАБЛИЦА ИК-ЗОН</div>
+        <div class="lead2" style="max-width:60ch">Каждая связь поглощает ИК-свет в своей зоне. Нашли провал на спектре — найдите его частоту в таблице и узнаете, какая это связь.</div>
+        <div class="ztab" style="margin-top:26px"><div class="zh"><span>СВЯЗЬ</span><span>ЗОНА, СМ⁻¹</span><span>ПРОВАЛ</span><span>ГДЕ ВСТРЕЧАЕТСЯ</span></div>
+          ${Z.map(([b, z, k, w, on]) => `<div class="zr ${on ? "hit" : ""}"><span class="b">${b}</span><span class="zz2">${z}</span><span>${k}</span><span>${w}</span></div>`).join("")}</div></div>
+      ${PNAV("5 МАСС-СПЕКТР", "СТР. 6 / 14", "7 КИСЛОТЫ И pH")}`;
+  }
+
+  function T4() {
+    return `<div class="ab" style="left:100px;top:192px">${SRCH("углерод", 1240)}</div>
+      ${TABLE({ x: 100, y: 272, cw: 64, ch: 60, sel: "C", mass: false })}
+      <div class="ab legend" style="left:100px;top:922px;width:1240px"><span><i class="g"></i>ВСТРЕЧАЛИСЬ В ПРОБАХ</span><span><i></i>ОСТАЛЬНЫЕ</span><span><i class="s"></i>ВЫБРАН</span><span style="margin-left:auto;color:#8a8a8a">ТАБЛ. 1 · ПЕРИОДИЧЕСКАЯ СИСТЕМА</span></div>
       <div class="ab" style="left:1370px;top:196px;width:1px;height:764px;background:#262828"></div>
       <div class="ab ecard" style="left:1410px;top:196px;width:410px">${CARD_C}
         <div class="p" style="margin:18px 0 20px">${CARD_C_TXT}</div>${CARD_C_KV}
         <div class="go3" style="margin-top:26px">СТАТЬЯ «СВЯЗИ» →</div></div>`;
   }
 
-  // ---------- B · encyclopedia: search, an index of everything, an article with an info box ----------
-  const SEARCH = q => `<div class="search"><svg viewBox="0 0 24 24"><circle cx="10" cy="10" r="7"/><path d="M15 15l7 7"/></svg>${q}<b>ПОИСК ПО ВСЕЙ БАЗЕ</b></div>`;
-  function IDX(sel) {
-    const G = [["ПРИБОРЫ", "9", ["Масс-спектрометр", "ИК-спектрометр", "УФ-спектрометр"], "ещё 6"], ["СПРАВОЧНИК", "14", ["Таблица ИК-зон", "Химические связи"], "ещё 12"], ["ЭЛЕМЕНТЫ", "118", ["Углерод"], "вся таблица"], ["ВЕЩЕСТВА", "1", ["Углекислый газ"], ""]];
-    return `<div class="ab idx" data-group style="left:100px;top:276px;width:400px">${G.map(([g, n, rows, more]) => `<div class="grp"><span>${g}</span><span>${n}</span></div>${rows.map(r => `<div class="row ${r === sel ? "sel" : ""}" data-pick data-i="${r}">${r}</div>`).join("")}${more ? `<div class="more">${more.toUpperCase()}</div>` : ""}`).join("")}</div>
-      <div class="ab" style="left:540px;top:276px;width:1px;height:684px;background:#262828"></div>`;
-  }
-  function B1() {
-    return SEARCH("ик") + IDX("ИК-спектрометр") + `
-      <div class="ab" style="left:580px;top:290px;width:820px">
-        <div class="crumb2">ПРИБОРЫ › <b>ИК-СПЕКТРОМЕТР</b></div>
-        <div class="h1" style="font-size:52px;margin:14px 0 16px">ИК-СПЕКТРОМЕТР</div>
-        <div class="p" style="font-size:24px;color:#d0d0d0">${LEAD}</div>
-        <div class="h2" style="margin-top:26px">КАК ЧИТАТЬ СПЕКТР</div>
-        <div style="margin-top:8px">${SPEC(600, 230)}</div>
-        <div class="p" style="margin-top:6px">Глубокий провал у <b style="color:#fff;font-weight:500">2349</b> — две двойные связи C=O на одном углероде. Провала в зоне 2850–3000 нет — значит, нет и связей C–H.</div>
-        <div class="see" style="margin-top:22px"><b>СМ. ТАКЖЕ</b><u>Таблица ИК-зон</u><u>Химические связи</u><u>Углекислый газ</u></div></div>
-      <div class="ab ibox" style="left:1460px;top:290px;width:360px">
-        <div class="hd">ИК-СПЕКТРОМЕТР</div>
-        <div class="fig" style="border:0;border-bottom:1px solid #2c2e2e;padding:10px 0;display:grid;place-items:center">${pic("ir", 300, 170, "#8a8a8a", "#151616")}</div>
-        ${[["ПОКАЗЫВАЕТ", "связи"], ["ДИАПАЗОН", "4000–400 см⁻¹"], ["РАСХОД", "10 % пробы"]].map(([k, v]) => `<div class="r"><span>${k}</span>${v}</div>`).join("")}
-        <div class="hd" style="border-top:1px solid #2c2e2e">КАК ПОЛЬЗОВАТЬСЯ</div>
-        ${STEPS.map(([a], i) => `<div class="r" style="justify-content:flex-start"><span>${i + 1}</span>${a}</div>`).join("")}</div>`;
-  }
-  function B2() {
-    return SEARCH("углерод") + `
-      ${TABLE({ x: 100, y: 282, cw: 91, ch: 56, sel: "C", mass: false })}
-      <div class="ab" style="left:100px;top:880px;width:1720px;height:80px;border-top:1px solid #333;display:flex;align-items:center;gap:40px">
-        <span class="t-mono" style="font-weight:700;font-size:44px;color:var(--accent)">C</span>
-        <span class="t-mono" style="font-size:22px;letter-spacing:.1em;color:#fff">6 · УГЛЕРОД</span>
-        <span class="p">масса 12,011 · валентность IV · электроотрицательность 2,55</span>
-        <span class="go3" style="margin-left:auto">ОТКРЫТЬ СТАТЬЮ →</span></div>`;
-  }
-
-  // ---------- C · schematic: the instrument itself is the page, steps run along the bottom ----------
-  function C1() {
-    // [n, label, label x, label y, point x, point y, side, current]
-    const CO = [["1", "КРЫШКА", 1010, 330, 680, 362, "r"], ["2", "ГНЕЗДО КЮВЕТЫ", 100, 440, 585, 495, "l", 1], ["3", "ДИСПЛЕЙ", 100, 560, 378, 535, "l"], ["4", "ВЕНТИЛЯЦИЯ", 1010, 680, 590, 648, "r"], ["5", "РЕГУЛЯТОР", 1010, 600, 770, 622, "r"]];
-    const W = { "ГНЕЗДО КЮВЕТЫ": 262, "ДИСПЛЕЙ": 160 };
-    const lines = CO.map(([n, t, lx, ly, px, py, side, on]) => {
-      const sx = side === "l" ? lx + W[t] + 14 : lx - 14, sy = ly + 17, c = on ? "#3dd4c4" : "#5a5a5a";
-      return `<path d="M${sx} ${sy}H${(sx + px) / 2}L${px} ${py}" stroke="${c}"/><circle cx="${px}" cy="${py}" r="4" fill="${c}"/>`;
-    }).join("");
-    return `<div class="ab" style="left:100px;top:196px;width:1200px">
-        <div class="ey">ПРИБОР 03 · КАК УСТРОЕН</div>
-        <div class="big3" style="margin-top:14px;font-size:64px">ИК-СПЕКТРОМЕТР</div></div>
-      <div class="ab" style="left:330px;top:300px">${pic("ir", 640, 440, "#7a7a7a", "#121212")}</div>
-      <svg class="ab" style="left:0;top:0;overflow:visible" width="1920" height="1080" fill="none" stroke-width="1" aria-hidden="true">${lines}</svg>
-      ${CO.map(([n, t, x, y, , , , on]) => `<div class="co ${on ? "on" : ""}" style="left:${x}px;top:${y}px"><i>${n}</i>${t}</div>`).join("")}
-      <div class="ab" style="left:1330px;top:196px;width:1px;height:600px;background:#262828"></div>
-      <div class="ab" style="left:1370px;top:196px;width:450px">
-        <div class="ey">ШАГ 2 ИЗ 5</div>
-        <div class="t-mono" style="font-weight:700;font-size:40px;color:#fff;margin:14px 0 18px;line-height:1.1">ВСТАВЬТЕ КЮВЕТУ</div>
-        <div class="p">Кювета встаёт в гнездо <b style="color:var(--accent);font-weight:500">2</b> окошками поперёк луча. Закройте крышку <b style="color:#fff;font-weight:500">1</b>: свет снаружи даёт ложные провалы.</div>
-        <div style="margin-top:26px">${KV("РАСХОД", "10 % пробы")}${KV("ВРЕМЯ", "2 мин")}</div>
-        <div class="go3" style="margin-top:26px">ДАЛЕЕ: СНЯТЬ СПЕКТР →</div></div>
-      <div class="spill" style="left:100px;top:826px;width:1720px">${STEPS.map(([a], i) => `<div class="${i === 1 ? "on" : i < 1 ? "done" : ""}"><b>0${i + 1}</b>${a.toUpperCase()}</div>`).join("")}</div>`;
-  }
-  function C2() {
-    const known = ["H", "C", "N", "O", "S", "Cl", "Na", "Ca"];
-    return `<div class="ab" style="left:100px;top:196px;width:900px"><div class="ey">ЭЛЕМЕНТЫ ОТКРЫВАЮТСЯ, КОГДА ВСТРЕЧАЮТСЯ В ПРОБАХ</div></div>
-      ${TABLE({ x: 100, y: 246, cw: 64, ch: 66, sel: "C", mass: false, known })}
-      <div class="ab ecard" style="left:1380px;top:246px;width:440px;padding:28px;border:1px solid #333;background:#151616">${CARD_C}
-        <div class="p" style="margin:16px 0 6px">${CARD_C_TXT}</div>${CARD_C_KV.split("</div>").slice(0, 3).join("</div>")}</div>`
-      + `<div class="ab" style="left:1380px;top:900px;width:440px;display:flex;justify-content:space-between;align-items:baseline"><span class="ey">ОТКРЫТО</span><span class="t-mono" style="font-weight:700;font-size:34px;color:#fff">8 / 118</span></div>`;
-  }
-
   const S = [
-    ["А · Учебник", "Слева оглавление раздела и параграфы статьи, справа страница: заголовок, вводный абзац, схема прибора с подписью «Рис.», шаги по порядку. Внизу листание как в книге.",
-      [["Прибор · ИК-спектрометр", A1, 0, "СТАТЬЯ <b>3 / 9</b>"], ["Таблица", A2, 1, "ОТКРЫТО <b>13 / 118</b>"]],
-      ["Читает спокойно, по порядку — как учебник, который лежит у стола.", "Каждая статья одинаково разбита на параграфы §1–§5; закрытые приборы видны с ценой в очках.", "Страница — набор блоков: заголовок, абзац, рисунок, шаги. Рисунки — те же 1 px чертежи, что у «Приборов»."]],
-    ["Б · Энциклопедия", "Сверху поиск по всей базе, слева общий указатель — приборы, справочник, элементы, вещества. Справа статья с карточкой-справкой, примером спектра и ссылками «См. также».",
-      [["Прибор · ИК-спектрометр", B1, 0, "НАЙДЕНО <b>4</b>"], ["Таблица", B2, 1, "НАЙДЕНО <b>1</b>"]],
-      ["Ищет конкретное: «2349», «масса 44», «pH» — и сразу получает ответ.", "Всё связано ссылками: прибор → зона ИК → элемент → вещество.", "Карточка справа — одинаковый компонент для приборов и элементов; поиск — поле ввода в игре."]],
-    ["В · Схема", "Страница — сам прибор крупно, части подписаны номерами. Внизу шаги работы, справа текущий шаг. Таблица — карта, на которой открываются элементы из проб.",
-      [["Прибор · ИК-спектрометр", C1, 0, "ПРИБОР <b>3 / 9</b>"], ["Таблица", C2, 1, "ОТКРЫТО <b>8 / 118</b>"]],
-      ["Учится руками: видит, куда вставить кювету, прежде чем подойти к столу.", "Шаги совпадают с действиями у прибора; подсвечена часть прибора текущего шага.", "Самый тяжёлый в контенте: на каждый прибор — чертёж с точками выносок."]]
+    ["Учебник с поиском", "Основа — «Учебник»: оглавление слева, страница справа, листание. Из «Энциклопедии» взят поиск: поле наверху левой колонки ищет по всей базе. Из «Схемы» — страница §2 «Как устроен» с выносками. Таблица — из «Учебника».",
+      [["Прибор · §3 Как пользоваться", T1, 0, "СТАТЬЯ <b>3 / 9</b>"], ["Прибор · §2 Как устроен — схема с выносками", T2, 0, "СТАТЬЯ <b>3 / 9</b>"], ["Поиск «2349» · результат в справочнике", T3, 2, "НАЙДЕНО <b>4</b>"], ["Таблица", T4, 1, "ОТКРЫТО <b>13 / 118</b>"]],
+      ["Читает по порядку, как учебник у стола; когда нужен конкретный ответ — вбивает «2349» или «масса 44».", "Поиск идёт по всем подвкладкам сразу; совпадение подсвечено в найденной статье. Статья прибора всегда из пяти параграфов.", "Один шаблон страницы на все подвкладки: левая колонка (поиск + оглавление) и страница из блоков — заголовок, абзац, рисунок, шаги, таблица."]]
   ];
   document.getElementById("screens").innerHTML = S.map(([t, s, screens, n]) => `<article class="v"><header><h2>${t}</h2><span>${s}</span></header>
     ${screens.map(([cap, fn, sub, right]) => `<div class="cap" style="font-family:var(--mono);font-size:12px;letter-spacing:.12em;color:var(--muted);margin:16px 0 6px">${cap.toUpperCase()}</div><div class="comp"><div class="scr">${HDR() + SUB(sub, right) + fn() + FOOT()}</div></div>`).join("")}
