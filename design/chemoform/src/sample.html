@@ -429,8 +429,7 @@ h1 { font-family: var(--mono); font-weight: 700; font-size: clamp(26px, 4vw, 40p
         <div class="cmp" style="margin-top:14px"><span class="hd2"></span><span class="hd2">СВОЙСТВО</span><span class="hd2">В СБОРКЕ</span><span class="hd2">ИЗМЕРЕНО</span>
           ${R.map(r => `<span>${r[3] ? CX2 : CK2}</span><span class="p ${r[3] ? "bad" : ""}">${r[0]}</span><span class="a ${r[3] ? "bad" : ""}">${r[1]}</span><span class="m ${r[3] ? "bad" : ""}">${r[2]}</span>`).join("")}</div>
         <div class="rh" style="margin-top:48px"><span class="ey">ПРОБА</span><span class="ey">ОСТАЛОСЬ НА ДОСЪЁМКУ</span></div>
-        ${PBAR(HB)}
-        <div class="txt" style="margin-top:70px;font-size:22px;color:#8a8a8a;max-width:44ch">Игра не говорит ответ — только какие измерения сборка не объясняет.</div></div>` };
+        ${PBAR(HB)}</div>` };
   }
 
   const S = [

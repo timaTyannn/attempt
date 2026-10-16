@@ -23,7 +23,8 @@
 
 Figma: файл ED.MIET-4course.
 - Страница [«Хемоформ · Образец»](https://www.figma.com/design/hU6l0OOkps8tAgoZQbZfVO/ED.MIET-4course?node-id=328-2283) —
-  кадр «Образец · Карточка» и компоненты «CF/Header · 5 вкладок», «CF/Footer · корень».
+  кадры «Образец · Карточка», «Отчёт · определено», «Отчёт · не сошлось» и компоненты
+  «CF/Header · 5 вкладок», «CF/Footer · корень».
 - Ранние экраны приборов (4 избранных и 15 с чертежами) переносились на страницу «Хемоформ · Приборы».
 
 ## Сборка
@@ -55,6 +56,10 @@ python3 figma/gen-code.py PAGE_ID HEADER_ID FOOTER_ID 4                         
 node figma/sample/card-extract.js build/sample.html figma/sample/card-spec.json
 python3 figma/sample/gen.py comps                        # -> out-comps.js: страница и компоненты
 python3 figma/sample/gen.py frame PAGE_ID HDR_ID FTR_ID  # -> out-frame.js: кадр 1920×1080
+
+# отчёт: индекс экрана на странице (1 — определено, 2 — не сошлось), имя кадра, x на холсте
+node figma/sample/report-extract.js build/sample.html 1 figma/sample/report-1.json
+python3 figma/sample/report-gen.py figma/sample/report-1.json "Образец · Отчёт · определено" 2040 PAGE_ID HDR_ID FTR_ID figma/sample/out-report-1.js
 ``` Disket Mono недоступен
 облачному Figma, поэтому моно-текст ставится шрифтом Martian Mono. В десктопном Figma
 выделите любой такой текст → Select matching layers → смените семейство на Disket Mono:
