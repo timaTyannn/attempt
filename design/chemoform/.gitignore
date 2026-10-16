@@ -4,3 +4,5 @@ fonts/*.TTF
 figma/batch-*.js
 figma/spec.json
 figma/screens.html
+figma/sample/card-spec.json
+figma/sample/out-*.js

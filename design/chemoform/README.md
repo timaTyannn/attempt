@@ -21,9 +21,10 @@
 | `src/terminal-v1.html` | Терминал в стиле Bioform | [PyU9oitadC9PZcrzbNbVkD](https://claude.ai/artifact/PyU9oitadC9PZcrzbNbVkD) |
 | `src/select.html`, `src/lab.html`, `src/hive.html` | Ранние поиски: экран выбора, лаборатория Alters, улей | [select](https://claude.ai/artifact/LftuWan8ADeA8bVboP7v3m) · [lab](https://claude.ai/artifact/16aNmwFVFEphN11Zs3YsVG) · [hive](https://claude.ai/artifact/YJP8XnnF8PMsy8aVV262ze) |
 
-Figma: файл ED.MIET-4course, страница
-[«Хемоформ · Приборы»](https://www.figma.com/design/hU6l0OOkps8tAgoZQbZfVO/ED.MIET-4course?node-id=303-2) —
-компоненты CF/Header и CF/Footer, 4 избранных экрана и 15 экранов с чертежами.
+Figma: файл ED.MIET-4course.
+- Страница [«Хемоформ · Образец»](https://www.figma.com/design/hU6l0OOkps8tAgoZQbZfVO/ED.MIET-4course?node-id=328-2283) —
+  кадр «Образец · Карточка» и компоненты «CF/Header · 5 вкладок», «CF/Footer · корень».
+- Ранние экраны приборов (4 избранных и 15 с чертежами) переносились на страницу «Хемоформ · Приборы».
 
 ## Сборка
 
@@ -45,7 +46,16 @@ node figma/extract-spec.js figma/screens.html figma/spec.json
 python3 figma/gen-code.py PAGE_ID HEADER_ID FOOTER_ID 4                                        # -> figma/batch-N.js
 ```
 
-Каждый `batch-N.js` выполняется через `use_figma` (Figma MCP). Disket Mono недоступен
+Каждый `batch-N.js` выполняется через `use_figma` (Figma MCP).
+
+Карточка «Образец» переносится своими скриптами из `figma/sample/` — с шапкой и низом
+в виде компонентов и статичной пробиркой:
+
+```
+node figma/sample/card-extract.js build/sample.html figma/sample/card-spec.json
+python3 figma/sample/gen.py comps                        # -> out-comps.js: страница и компоненты
+python3 figma/sample/gen.py frame PAGE_ID HDR_ID FTR_ID  # -> out-frame.js: кадр 1920×1080
+``` Disket Mono недоступен
 облачному Figma, поэтому моно-текст ставится шрифтом Martian Mono. В десктопном Figma
 выделите любой такой текст → Select matching layers → смените семейство на Disket Mono:
 размеры и начертания сохранятся.
