@@ -194,42 +194,48 @@ h1 { font-family: var(--mono); font-weight: 700; font-size: clamp(26px, 4vw, 40p
 .rest .big2 { font-family: var(--mono); font-weight: 700; font-size: 44px; line-height: 1; }
 .rest .txt { font-size: 22px; max-width: 26ch; }
 
-/* price list */
-.plist { position: absolute; left: 1080px; top: 236px; width: 740px; }
-.prow { position: relative; display: grid; grid-template-columns: 270px 1fr 150px 96px; align-items: center; height: 64px; padding: 0 20px; border-top: 1px solid #262828; transition: background-color .2s var(--ease); }
-.prow::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--accent); opacity: 0; transition: opacity .2s var(--ease); }
-.prow .pn { font-family: var(--mono); font-size: 20px; letter-spacing: .06em; color: #bdbdbd; white-space: nowrap; }
-.prow .pd { font-size: 20px; color: #7a7a7a; white-space: nowrap; }
-.prow .ps { font-family: var(--mono); font-size: 16px; letter-spacing: .04em; color: #8a8a8a; white-space: nowrap; }
-.prow .pc { font-family: var(--mono); font-weight: 700; font-size: 28px; color: #fff; text-align: right; white-space: nowrap; }
-.prow.lk .pn, .prow.lk .pc { color: #3e4040; }
-.prow.lk .pd, .prow.lk .ps { color: #4a4c4c; }
-.prow.no .pc, .prow.no .pn { color: #4a4c4c; }
-.prow.sel { background: #1c1e1e; }
-.prow.sel::before { opacity: 1; }
-.prow.sel .pn { color: #fff; }
-.prow.sel:not(.lk):not(.no) .pc { color: var(--accent); }
-.phint { position: absolute; left: 1100px; top: 880px; font-size: 21px; color: #6a6a6a; }
 
-/* what is still affordable, under the level */
-.fut { position: absolute; left: 1080px; width: 740px; }
-.chips { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 16px; }
-.chip2 { position: relative; height: 84px; padding: 0 18px; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 6px; border: 1px solid #2c2e2e; transition: border-color .2s var(--ease), opacity .2s var(--ease); }
-.chip2 .pn { font-family: var(--mono); font-size: 17px; letter-spacing: .06em; color: #bdbdbd; white-space: nowrap; }
-.chip2 .pc { font-family: var(--mono); font-weight: 700; font-size: 26px; color: #fff; white-space: nowrap; }
-.chip2.no { opacity: .3; }
-/* little sample left: the chips collapse into one line so the block still fits above the footer */
-.fut.tight .chips { display: flex; flex-wrap: wrap; gap: 8px 30px; margin-top: 12px; }
-.fut.tight .chip2 { height: auto; padding: 0; border: 0; flex-direction: row; align-items: baseline; gap: 10px; }
-.fut.tight .chip2 .pc { font-size: 22px; }
-.chip2.sel { border-color: var(--accent); }
-.chip2.sel .pn { color: #fff; }
-.chip2.sel .pc { color: var(--accent); }
+/* ---------- report ---------- */
+.rl { position: absolute; left: 100px; top: 196px; width: 780px; }
+.fbig { font-family: var(--mono); font-weight: 700; font-size: 280px; line-height: .9; margin: 22px 0 18px -10px; }
+.fbig.strike { position: relative; display: inline-block; color: #4a4c4c; }
+.fbig.strike::after { content: ""; position: absolute; left: -12px; right: -12px; top: 50%; height: 6px; background: #8a8a8a; }
+.rname { font-size: 40px; color: var(--text); }
+.go3 { display: inline-flex; align-items: center; gap: 14px; font-family: var(--mono); font-weight: 700; font-size: 26px; letter-spacing: .06em; color: var(--accent); }
+.rr { position: absolute; left: 1000px; top: 196px; width: 820px; }
+.rh { display: flex; justify-content: space-between; align-items: baseline; }
+.rh b { font-family: var(--mono); font-weight: 700; font-size: 30px; color: #fff; }
+.chain { margin-top: 14px; }
+.crow { display: grid; grid-template-columns: 40px 34px 1fr auto; align-items: center; height: 64px; border-top: 1px solid #262828; }
+.crow .n { font-family: var(--mono); font-size: 18px; color: #5a5a5a; }
+.crow .t { font-size: 24px; color: var(--text); }
+.crow .s { font-family: var(--mono); font-size: 17px; letter-spacing: .08em; color: #8a8a8a; }
+.crow .ck, .crow .cx { width: 24px; height: 24px; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; stroke: var(--text); }
+.pbar { position: relative; display: flex; height: 56px; margin-top: 16px; border: 1px solid #8a8a8a; }
+.pseg { position: relative; display: grid; place-items: center; border-left: 1px dashed #3a3c3c; font-family: var(--mono); font-size: 20px; color: #8a8a8a; }
+.pseg:first-child { border-left: 0; }
+.pseg.w { color: #4a4c4c; }
+.pseg.rem { place-items: center start; padding-left: 20px; background: #232626; border-left: 1px solid #bdbdbd; color: #fff; font-weight: 700; font-size: 26px; }
+.pseg i { position: absolute; left: 0; right: 0; top: 66px; text-align: center; font-style: normal; font-weight: 400; font-size: 15px; letter-spacing: .06em; color: #6a6a6a; white-space: nowrap; }
+.pseg.rem i { text-align: left; left: 20px; }
+.rw { display: flex; justify-content: space-between; align-items: baseline; padding: 14px 0; border-top: 1px solid #262828; }
+.rw span { font-size: 23px; color: #c6c6c6; }
+.rw b { font-family: var(--mono); font-weight: 400; font-size: 24px; color: #fff; }
+.rw.q span, .rw.q b { color: #6a6a6a; }
+.cmp { display: grid; grid-template-columns: 34px 220px 150px 1fr; align-items: center; column-gap: 0; }
+.cmp > * { height: 64px; display: flex; align-items: center; border-top: 1px solid #262828; }
+.cmp .hd2 { height: 40px; border-top: 0; font-family: var(--mono); font-size: 16px; letter-spacing: .12em; color: #6a6a6a; }
+.cmp .p { font-family: var(--mono); font-size: 20px; letter-spacing: .08em; color: #8a8a8a; }
+.cmp .a { font-family: var(--mono); font-weight: 700; font-size: 28px; color: #8a8a8a; }
+.cmp .m { font-size: 22px; color: #8a8a8a; }
+.cmp .bad { color: #fff; }
+.cmp .ck, .cmp .cx { width: 22px; height: 22px; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; stroke: #6a6a6a; }
+.cmp .cx { stroke: #fff; }
 </style>
 
 <main class="doc">
   <h1>Хемоформ · вкладка «Образец»</h1>
-  <p class="lead">Пробирка показывает, сколько пробы осталось. Каждый прибор тратит свою долю, поэтому игрок выбирает, чем мерить. Слева пробирка везде одна и та же, справа три подхода: что потрачено, сколько стоит прибор, и то и другое по разные стороны уровня. Клавиш Q/E и A/D больше нет.</p>
+  <p class="lead">Две подвкладки: карточка и отчёт, «Улики» убраны. Пробирка показывает, сколько пробы осталось: каждый прибор тратит свою долю, поэтому игрок выбирает, чем мерить. Клавиши Q/E и A/D не рисуются.</p>
   <div id="screens"></div>
   <article class="v" id="qe">
     <header><h2>Q и E — пока без клавиш</h2><span>Решили пока не рисовать клавиши. Варианты и доводы оставлены на подумать.</span></header>
@@ -268,7 +274,7 @@ h1 { font-family: var(--mono); font-weight: 700; font-size: clamp(26px, 4vw, 40p
   // keys: [left, right] captions, or null when they are not drawn (the default now)
   const HDR = (keys = null, pad = false) => `<div class="hdr">${keys ? key(keys[0], pad) : ""}${TABS.map(([id, t]) =>
     `<div class="ht ${id === "sample" ? "on" : ""}">${svg(id)}<span>${t}</span>${["base", "journal"].includes(id) ? '<i class="dot"></i>' : ""}${id === "up" ? '<b class="pts">3</b>' : ""}</div>`).join("")}${keys ? key(keys[1], pad) : ""}</div>`;
-  const SUB = (keys = null, pad = false) => `<div class="sub">${keys ? key(keys[0], pad) : ""}${["КАРТОЧКА", "УЛИКИ", "ОТЧЁТ"].map((t, i) => `<div class="st2 ${i === 0 ? "on" : ""}">${t}</div>`).join("")}${keys ? key(keys[1], pad) : ""}<div class="rt">ОБРАЗЕЦ <b>КР-01</b></div></div>`;
+  const SUB = (active = 0, off = [], keys = null, pad = false) => `<div class="sub">${keys ? key(keys[0], pad) : ""}${["КАРТОЧКА", "ОТЧЁТ"].map((t, i) => `<div class="st2 ${i === active ? "on" : ""} ${off.includes(i) ? "off" : ""}">${t}</div>`).join("")}${keys ? key(keys[1], pad) : ""}<div class="rt">ОБРАЗЕЦ <b>КР-01</b></div></div>`;
   // the card is the root of «Назад», so ESC is not shown here
   const FOOT = () => `<div class="foot">${["ЛЕВЫЙ", "ЦЕНТР", "ПРАВЫЙ", "ГОЛОГРАММА"].map((n, i) => `<span class="${i === 1 ? "on" : ""}"><span class="kc">${i + 1}</span>${n}</span>`).join("")}</div>`;
   const KV = (k, v) => `<div class="kv"><span>${k}</span><b>${v}</b></div>`;
@@ -382,52 +388,70 @@ h1 { font-family: var(--mono); font-weight: 700; font-size: clamp(26px, 4vw, 40p
     };
   }
 
-  // ---------- В2 · price list: what each instrument would take, previewed in the tube ----------
-  function V2() {
-    const id = "tb" + uid++, hist = HIST0.map(e => ({ ...e }));
-    const used = n => hist.filter(e => e.n === n).length;
-    const rows = INST.map((s, i) => `<div class="prow ${s.lock ? "lk" : ""} ${i === 3 ? "sel" : ""}" data-pick data-i="${i}" data-cost="${s.c}" data-name="${s.n}" ${s.lock ? 'data-lock="1"' : ""} tabindex="0">
-        <span class="pn">${s.n}</span><span class="pd">${s.d}</span><span class="ps">${s.lock ? "за " + s.lock : used(s.n) ? "снят" + (used(s.n) > 1 ? " ×" + used(s.n) : "") : ""}</span><span class="pc">${s.c ? "−" + s.c + " %" : "0"}</span></div>`).join("");
-    return {
-      html: LEFT() + `<div data-group id="${id}g">${TUBE(id)}
-        <div class="plist"><div style="display:flex;justify-content:space-between;padding:0 20px 14px"><span class="ey">ЦЕНА ИЗМЕРЕНИЯ</span><span class="ey">% ОТ ПРОБЫ</span></div>${rows}</div>
-        <div class="phint">Повтор стоит столько же. Голограмма и центрифуга пробу не тратят.</div></div>`,
-      init: () => { const t = mountTube(document.getElementById(id + "g"), { hist, ledger: false }); t.pv = 10; t.kind = "price"; return t; }
-    };
+  // ---------- report: verdict on the left, how it was found and what the sample cost on the right ----------
+  const F = t => t.replace(/(\d+)/g, "<sub>$1</sub>");
+  const CK2 = `<svg class="ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l5 5l9 -11"/></svg>`;
+  const CX2 = `<svg class="cx" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6l-12 12"/></svg>`;
+  // the sample as a bar: spent shares in order, what is left at the end
+  const PBAR = h => `<div class="pbar">${h.map(e => `<div class="pseg ${e.w ? "w" : ""}" style="width:${e.c * 8.2}px">−${e.c}<i>${e.s}</i></div>`).join("")}<div class="pseg rem" style="flex:1">${left(h)} %<i>ОСТАЛОСЬ · В ХРАНИЛИЩЕ</i></div></div>`;
+  const HB = HIST0.map((e, i) => ({ ...e, s: ["ХРОМАТОГРАФ", "МАСС", "ИК", "ПОВТОР"][i] }));
+  function ROK() {
+    const steps = [["одно вещество, не смесь", "ХРОМАТОГРАФ"], ["масса 44, есть углерод", "МАСС-СПЕКТРОМЕТР"], ["две C=O, нет C–H", "ИК-СПЕКТРОМЕТР"], ["O=C=O собрана и сошлась", "ГОЛОГРАММА"]];
+    return { html: `<div class="rl"><div class="ey">ОТЧЁТ · КР-01 · <span style="color:#fff">ВЕЩЕСТВО ОПРЕДЕЛЕНО</span></div>
+        <div class="fbig">${F("CO2")}</div><div class="rname">углекислый газ</div>
+        <i class="sep" style="display:block;margin:34px 0 30px"></i>
+        <div class="ey">ПОЧЕМУ ВОДА КИСЛИТ</div>
+        <div class="txt" style="margin-top:12px;max-width:36ch">Подо льдом скопился углекислый газ. В холодной воде он растворяется и даёт слабую угольную кислоту — отсюда кислый вкус.</div>
+        <div class="go3" style="margin-top:44px">НОВЫЙ ОБРАЗЕЦ →</div></div>
+      <div class="rr"><div class="rh"><span class="ey">КАК ОПРЕДЕЛЕНО</span></div>
+        <div class="chain">${steps.map((r, i) => `<div class="crow"><span class="n">0${i + 1}</span>${CK2}<span class="t">${r[0]}</span><span class="s">${r[1]}</span></div>`).join("")}</div>
+        <div class="rh" style="margin-top:48px"><span class="ey">ПРОБА</span><span class="ey">ПОТРАЧЕНО 55 % · 4 ИЗМЕРЕНИЯ</span></div>
+        ${PBAR(HB)}
+        <div class="rh" style="margin-top:62px"><span class="ey">НАГРАДА</span><b>+2 ОЧКА</b></div>
+        <div style="margin-top:10px"><div class="rw"><span>Вещество определено</span><b>+1</b></div>
+          <div class="rw"><span>Экономия: осталось 45 %, порог 40 %</span><b>+1</b></div>
+          <div class="rw q"><span>Повтор ИК ничего не дал — 10 % ушло зря</span><b>0</b></div></div></div>` };
   }
-
-  // ---------- В3 · the level splits the screen: spent above, still possible below ----------
-  function V3() {
-    const id = "tb" + uid++, hist = HIST0.map(e => ({ ...e }));
-    const chips = INST.filter(s => !s.lock).map((s, i) => `<div class="chip2 ${i === 2 ? "sel" : ""}" data-pick data-i="c${i}" data-cost="${s.c}" data-name="${s.n}" tabindex="0"><span class="pn">${s.s}</span><span class="pc">${s.c ? "−" + s.c + "%" : "0"}</span></div>`).join("");
-    return {
-      html: LEFT() + `<div data-group id="${id}g">${TUBE(id)}
-        <div class="lhd"><span class="ey">ПОТРАЧЕНО</span><span class="ey">${100 - left(hist)} %</span></div>
-        <div class="lvl" data-follow="0"></div>
-        <div class="fut" data-follow="26"><span class="ey">ЕЩЁ ХВАТИТ</span><div class="chips">${chips}</div></div></div>`,
-      init: () => { const t = mountTube(document.getElementById(id + "g"), { hist, ledger: true }); t.pv = 10; t.kind = "chips"; return t; }
-    };
+  function RFAIL() {
+    const R = [
+      ["МАССА", "44", "44 · масс-спектр", 0],
+      ["УГЛЕРОД", "2", "есть · осколок 12", 0],
+      ["СВЯЗИ C–H", "4", "нет · ИК", 1],
+      ["C=O", "1", "две · ИК 2349", 1]
+    ];
+    return { html: `<div class="rl"><div class="ey">ОТЧЁТ · КР-01 · <span style="color:#fff">НЕ СОШЛОСЬ</span></div>
+        <div class="fbig strike" style="font-size:220px;margin-top:40px">${F("C2H4O")}</div>
+        <div class="rname" style="color:#8a8a8a">ваша сборка на голограмме</div>
+        <i class="sep" style="display:block;margin:34px 0 30px"></i>
+        <div class="txt" style="max-width:36ch">Сборка не совпала с измерениями. Отчёт можно подать снова — это бесплатно. Платить пробой придётся только за новые измерения.</div>
+        <div class="go3" style="margin-top:44px">К КАРТОЧКЕ →</div></div>
+      <div class="rr"><div class="rh"><span class="ey">ЧТО НЕ СОШЛОСЬ</span><span class="ey">2 ИЗ 4</span></div>
+        <div class="cmp" style="margin-top:14px"><span class="hd2"></span><span class="hd2">СВОЙСТВО</span><span class="hd2">В СБОРКЕ</span><span class="hd2">ИЗМЕРЕНО</span>
+          ${R.map(r => `<span>${r[3] ? CX2 : CK2}</span><span class="p ${r[3] ? "bad" : ""}">${r[0]}</span><span class="a ${r[3] ? "bad" : ""}">${r[1]}</span><span class="m ${r[3] ? "bad" : ""}">${r[2]}</span>`).join("")}</div>
+        <div class="rh" style="margin-top:48px"><span class="ey">ПРОБА</span><span class="ey">ОСТАЛОСЬ НА ДОСЪЁМКУ</span></div>
+        ${PBAR(HB)}
+        <div class="txt" style="margin-top:70px;font-size:22px;color:#8a8a8a;max-width:44ch">Игра не говорит ответ — только какие измерения сборка не объясняет.</div></div>` };
   }
 
   const S = [
-    ["В1 · Расход", "Справа — на что ушла каждая доля пробы и что она дала. Строка ровно такой высоты, сколько прибор отпил, поэтому выноски сами встают напротив своих делений. Под уровнем — сколько осталось.",
-      V1, ["Видит, сколько пробы осталось, на что ушло каждое деление и был ли от него толк: повтор ИК тоже стоит в списке.", "Каждое измерение снимает свою долю, повтор стоит столько же. Отметки прежних уровней остаются на стенке пунктиром.", "Пробирка — компонент с number <code>level</code> 0–100. Строки — список из VM, высота строки = расход × 6 px."]],
-    ["В2 · Цена", "Справа — прайс приборов. Наведение показывает в пробирке, сколько уйдёт и что останется. Закрытые приборы видны с ценой — повод копить очки.",
-      V2, ["Перед походом к прибору прикидывает: хватит ли и стоит ли оно того.", "Цена известна заранее. Не хватает — строка тёмная, в пробирке «не хватит». В игре доля списывается при измерении, на карточке — только предпросмотр.", "<code>preview</code> в VM — расход выбранного прибора или −1. Полоса предпросмотра под той же маской пробирки."], 1],
-    ["В3 · Уровень делит экран", "Линия уровня тянется через весь экран. Выше — прошлое: что потрачено и что дало. Ниже — что ещё по карману. Чем меньше пробы, тем меньше места снизу.",
-      V3, ["Прошлое и будущее разделены самой жидкостью: уровень падает — список возможного сжимается.", "Внизу только открытые приборы; не по карману — тусклые.", "Самый сложный в сборке: линия и блок под ней привязаны к <code>level</code>. В Rive — Layout с отступом сверху из VM."], 1]
+    ["Карточка", "Справа — на что ушла каждая доля пробы и что она дала. Строка ровно такой высоты, сколько прибор отпил, поэтому выноски встают напротив своих делений. Под уровнем — сколько осталось. «Отчёт» серый, пока молекула не подтверждена на голограмме.",
+      V1, ["Видит, сколько пробы осталось, на что ушло каждое деление и был ли от него толк: повтор ИК тоже стоит в списке.", "Каждое измерение снимает свою долю, повтор стоит столько же. Отметки прежних уровней остаются на стенке пунктиром.", "Пробирка — компонент с number <code>level</code> 0–100. Строки — список из VM, высота строки = расход × 6 px."], 0, () => SUB(0, [1])]
+    ,["Отчёт · определено", "Открывается сам после «Подтвердить» на голограмме. Слева — ответ и зачем он был нужен, справа — цепочка измерений, расход пробы и награда.",
+      ROK, ["Получает ответ на вопрос из брифинга и видит, во что обошлось расследование.", "За экономию — очко сверху: осталось не меньше 40 %. Лишние измерения видны, но не штрафуются. Остаток уходит в хранилище.", "Полоса пробы — тот же список расхода, что на карточке, только горизонтально: ширина = расход × 8,2 px."], 0, () => SUB(1)]
+    ,["Отчёт · не сошлось", "Сборка не совпала с измерениями. Ответа нет — только сравнение: что в сборке, что измерено, где расхождение.",
+      RFAIL, ["Понимает, в чём ошибся, и решает: пересобрать по тем же данным или доснять — за пробу.", "Подать отчёт снова бесплатно. Совпавшие строки серые, расхождения белые с крестиком.", "Строки сравнения считает игра по собранной молекуле; в Rive — список из VM с bool <code>match</code>."], 0, () => SUB(1)]
   ];
-  const built = S.map(([t, s, fn, n, live]) => {
+  const built = S.map(([t, s, fn, n, live, sub]) => {
     const v = fn();
     return { v, live, html: `<article class="v"><header><h2>${t}</h2><span>${s}</span></header>
-      <div class="comp"><div class="scr">${HDR() + SUB() + v.html + FOOT()}</div></div>
+      <div class="comp"><div class="scr">${HDR() + (sub ? sub() : SUB()) + v.html + FOOT()}</div></div>
       ${live ? '<div class="bar2"><button class="rst" type="button">ВЕРНУТЬ ПРОБУ</button><span>Наведите на прибор — пробирка покажет расход. Клик — потратить, чтобы увидеть движение уровня.</span></div>' : ""}
       <div class="notes"><p><b>ИГРОК</b>${n[0]}</p><p><b>ПРАВИЛО</b>${n[1]}</p><p><b>ТЕХНИЧЕСКИ</b>${n[2]}</p></div></article>` };
   });
   document.getElementById("screens").innerHTML = built.map(b => b.html).join("");
-  document.getElementById("h1").innerHTML = HDR(["Q", "E"]) + SUB(["A", "D"]);
+  document.getElementById("h1").innerHTML = HDR(["Q", "E"]) + SUB(0, [], ["A", "D"]);
   document.getElementById("h2").innerHTML = HDR() + SUB();
-  document.getElementById("h3").innerHTML = HDR(["LB", "RB"], true) + SUB(["LT", "RT"], true);
+  document.getElementById("h3").innerHTML = HDR(["LB", "RB"], true) + SUB(0, [], ["LT", "RT"], true);
 
   // ---------- selection, preview and spending ----------
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -470,7 +494,8 @@ h1 { font-family: var(--mono); font-weight: 700; font-size: clamp(26px, 4vw, 40p
     });
   }
   built.forEach((b, i) => {
-    const t = b.v.init();
+    const t = b.v.init && b.v.init();
+    if (!t) return;
     t.group.querySelectorAll("[data-follow]").forEach(n => t.follow.push([n, +n.dataset.follow]));
     bindPicks(t.group); refresh(t);
     const btn = document.querySelectorAll("#screens article")[i].querySelector(".rst");
