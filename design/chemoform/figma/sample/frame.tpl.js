@@ -33,39 +33,45 @@ for (const t of S.tube.texts) {
 }
 
 // Расход: header line + 4 rows as tall as the share each instrument took
+// screens without a ledger (the new-sample screen) skip it
 const lhd = S.groups.find(g => g.name === "Расход/шапка");
-const ras = plainFrame(fr, "Расход", lhd.x, lhd.y, 740, S.rows[S.rows.length - 1].rect[1] + S.rows[S.rows.length - 1].rect[3] - lhd.y);
-const hd = plainFrame(ras, "Расход/шапка", 0, 0, lhd.w, lhd.h); lhd.items.forEach(it => put(hd, it));
-const rowsF = figma.createAutoLayout("VERTICAL");
-rowsF.name = "Расход/строки"; rowsF.fills = []; rowsF.itemSpacing = 0; rowsF.clipsContent = false;
-ras.appendChild(rowsF); rowsF.x = 0; rowsF.y = S.rows[0].rect[1] - lhd.y;
-const rowIds = [];
-S.rows.forEach((r, i) => {
-  const row = figma.createAutoLayout("HORIZONTAL");
-  const tag = r.off ? "списано" : r.bad ? "ошибка" : r.sel ? "выбор" : "";
-  row.name = "Расход/строка " + (i + 1) + (tag ? " · " + tag : "");
-  rowsF.appendChild(row);
-  row.resize(r.rect[2], r.rect[3]); row.primaryAxisSizingMode = "FIXED"; row.counterAxisSizingMode = "FIXED";
-  row.counterAxisAlignItems = "CENTER"; row.itemSpacing = 24;
-  row.paddingLeft = 20; row.paddingRight = 0; row.paddingTop = 1; row.paddingBottom = 0;
-  row.fills = r.bg[1] > 0 ? [paint(r.bg[0], r.bg[1])] : [];
-  row.strokes = [paint(r.border)]; row.strokeAlign = "INSIDE";
-  row.strokeTopWeight = 1; row.strokeBottomWeight = 0; row.strokeLeftWeight = 0; row.strokeRightWeight = 0;
-  row.clipsContent = false;
-  const c = mkText({ m: true, s: r.c.text, wt: 700, size: 28, c: r.c.color, name: "расход" });
-  row.appendChild(c); c.textAutoResize = "HEIGHT"; c.resize(104, c.height);
-  const nm = mkText({ m: true, s: r.nm.text, wt: 400, size: 20, ls: 1.6, c: r.nm.color, name: "прибор" });
-  row.appendChild(nm); nm.textAutoResize = "HEIGHT"; nm.resize(280, nm.height);
-  const rs = mkText({ m: false, s: r.r.text, wt: 400, size: 22, c: r.r.color, name: "результат" });
-  row.appendChild(rs); rs.textAutoResize = "WIDTH_AND_HEIGHT";
-  if (r.bar) {
-    const bar = figma.createRectangle(); bar.name = tag || "выбор";
-    row.appendChild(bar); bar.layoutPositioning = "ABSOLUTE";
-    bar.resize(4, r.rect[3] - 1); bar.x = 0; bar.y = 1; bar.fills = [paint(r.bar[0], r.bar[1])];
-    bar.constraints = { horizontal: "MIN", vertical: "STRETCH" };
-  }
-  rowIds.push(row.id);
-});
+let ras = null; const rowIds = [];
+if (lhd && S.rows.length) {
+  ras = plainFrame(fr, "Расход", lhd.x, lhd.y, 740, S.rows[S.rows.length - 1].rect[1] + S.rows[S.rows.length - 1].rect[3] - lhd.y);
+  const hd = plainFrame(ras, "Расход/шапка", 0, 0, lhd.w, lhd.h); lhd.items.forEach(it => put(hd, it));
+  const rowsF = figma.createAutoLayout("VERTICAL");
+  rowsF.name = "Расход/строки"; rowsF.fills = []; rowsF.itemSpacing = 0; rowsF.clipsContent = false;
+  ras.appendChild(rowsF); rowsF.x = 0; rowsF.y = S.rows[0].rect[1] - lhd.y;
+  S.rows.forEach((r, i) => {
+    const row = figma.createAutoLayout("HORIZONTAL");
+    const tag = r.off ? "списано" : r.bad ? "ошибка" : r.sel ? "выбор" : "";
+    row.name = "Расход/строка " + (i + 1) + (tag ? " · " + tag : "");
+    rowsF.appendChild(row);
+    row.resize(r.rect[2], r.rect[3]); row.primaryAxisSizingMode = "FIXED"; row.counterAxisSizingMode = "FIXED";
+    row.counterAxisAlignItems = "CENTER"; row.itemSpacing = 24;
+    row.paddingLeft = 20; row.paddingRight = 0; row.paddingTop = 1; row.paddingBottom = 0;
+    row.fills = r.bg[1] > 0 ? [paint(r.bg[0], r.bg[1])] : [];
+    row.strokes = [paint(r.border)]; row.strokeAlign = "INSIDE";
+    row.strokeTopWeight = 1; row.strokeBottomWeight = 0; row.strokeLeftWeight = 0; row.strokeRightWeight = 0;
+    row.clipsContent = false;
+    const c = mkText({ m: true, s: r.c.text, wt: 700, size: 28, c: r.c.color, name: "расход" });
+    row.appendChild(c); c.textAutoResize = "HEIGHT"; c.resize(104, c.height);
+    const nm = mkText({ m: true, s: r.nm.text, wt: 400, size: 20, ls: 1.6, c: r.nm.color, name: "прибор" });
+    row.appendChild(nm); nm.textAutoResize = "HEIGHT"; nm.resize(280, nm.height);
+    const rs = mkText({ m: false, s: r.r.text, wt: 400, size: 22, c: r.r.color, name: "результат" });
+    row.appendChild(rs); rs.textAutoResize = "WIDTH_AND_HEIGHT";
+    if (r.bar) {
+      const bar = figma.createRectangle(); bar.name = tag || "выбор";
+      row.appendChild(bar); bar.layoutPositioning = "ABSOLUTE";
+      bar.resize(4, r.rect[3] - 1); bar.x = 0; bar.y = 1; bar.fills = [paint(r.bar[0], r.bar[1])];
+      bar.constraints = { horizontal: "MIN", vertical: "STRETCH" };
+    }
+    rowIds.push(row.id);
+  });
+}
+
+// any other measured group (the storage list) is rebuilt as plain layers
+for (const g of S.groups.filter(g => !["Подвкладки", "Образец", "Расход/шапка", "Уровень", "Остаток"].includes(g.name))) { const f = plainFrame(fr, g.name, g.x, g.y, g.w, g.h); g.items.forEach(it => put(f, it)); }
 
 // Уровень: the current level line, from the tube wall to the right edge
 const lv = S.groups.find(g => g.name === "Уровень");
@@ -85,4 +91,4 @@ const fi = Fc.createInstance(); fr.appendChild(fi); fi.name = "Низ"; fi.x = 0
 const R = v => Math.round(v * 10) / 10;
 const texts = fr.findAllWithCriteria({ types: ["TEXT"] }).map(t => { const b = t.absoluteBoundingBox; return [t.characters.slice(0, 24), R(b.x - fr.x), R(b.y - fr.y), R(b.width), R(b.height)]; });
 await fr.screenshot({ scale: 0.5 });
-return { frameId: fr.id, headerInst: hi.id, footerInst: fi.id, tubeId: tube.id, svgKids, dashFixed, rowIds, rasId: ras.id, levelId: lvl && lvl.id, restId: rf && rf.id, texts };
+return { frameId: fr.id, headerInst: hi.id, footerInst: fi.id, tubeId: tube.id, svgKids, dashFixed, rowIds, rasId: ras && ras.id, levelId: lvl && lvl.id, restId: rf && rf.id, texts };

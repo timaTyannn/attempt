@@ -8,7 +8,7 @@
 
 | Файл | Что внутри | Опубликовано |
 |---|---|---|
-| `src/sample.html` | Вкладка «Образец» (заменила Обзор и Анализ, «Улики» убраны): карточка с мерной пробиркой и списком расхода пробы; отчёт «определено» и «провал» по тому же шаблону — слева ответ, под уровнем награда и остаток. Внизу шапка с Q/E, без них и с геймпадом | [LyhvNksiBRhM7LYidGo5z9](https://claude.ai/artifact/LyhvNksiBRhM7LYidGo5z9) |
+| `src/sample.html` | Вкладка «Образец» (заменила Обзор и Анализ, «Улики» убраны): подвкладки «обзор · отчёт · + новый образец»; обзор с мерной пробиркой и списком расхода пробы, отчёт «определено» и «провал», выбор новой пробы — всё по одному шаблону. Внизу шапка с Q/E, без них и с геймпадом | [LyhvNksiBRhM7LYidGo5z9](https://claude.ai/artifact/LyhvNksiBRhM7LYidGo5z9) |
 | `src/overview.html` | «Обзор» — три варианта в стиле нового выбора приборов (подсветка снизу, бирюзовый чертёж за краем карточки). Вкладка убрана, страница — эталон моушна полос | [Kn2qxEfttir2tiXgDwaR2w](https://claude.ai/artifact/Kn2qxEfttir2tiXgDwaR2w) |
 | `rive-motion-strips.md` | ТЗ на моушн полос-аккордеона для Rive: промпт, геометрия, тайминги, устройство машины состояний | — |
 | `src/sections.html` | Все разделы терминала, 17 экранов: загрузка, обзор, анализ (стол пуст, образец, улики, отчёт), приборы (масс, ИК, молекула), база данных, журнал, улучшения | [Wmqv6JyKujYqVTJ9YxQtAD](https://claude.ai/artifact/Wmqv6JyKujYqVTJ9YxQtAD) |
@@ -23,7 +23,7 @@
 
 Figma: файл ED.MIET-4course.
 - Страница [«Хемоформ · Образец»](https://www.figma.com/design/hU6l0OOkps8tAgoZQbZfVO/ED.MIET-4course?node-id=328-2283) —
-  кадры «Образец · Карточка», «Отчёт · определено», «Отчёт · провал» и компоненты
+  кадры «Образец · Обзор», «Отчёт · определено», «Отчёт · провал», «Новый образец» и компоненты
   «CF/Header · 5 вкладок», «CF/Footer · корень».
 - Ранние экраны приборов (4 избранных и 15 с чертежами) переносились на страницу «Хемоформ · Приборы».
 
@@ -54,9 +54,9 @@ python3 figma/gen-code.py PAGE_ID HEADER_ID FOOTER_ID 4                         
 собирается теми же скриптами, меняется только номер экрана на странице, имя кадра и x:
 
 ```
-node figma/sample/card-extract.js build/sample.html figma/sample/card-spec.json        # экран 0 — карточка
+node figma/sample/card-extract.js build/sample.html figma/sample/card-spec.json        # экран 0 — обзор
 python3 figma/sample/gen.py comps                                                       # -> out-comps.js: страница и компоненты
-python3 figma/sample/gen.py frame PAGE_ID HDR_ID FTR_ID                                 # -> out-frame.js: кадр карточки
+python3 figma/sample/gen.py frame PAGE_ID HDR_ID FTR_ID                                 # -> out-frame.js: кадр обзора
 
 node figma/sample/card-extract.js build/sample.html figma/sample/ok-spec.json 1         # экран 1 — отчёт «определено»
 python3 figma/sample/gen.py frame PAGE_ID HDR_ID FTR_ID figma/sample/ok-spec.json "Образец · Отчёт · определено" 2040 figma/sample/out-ok.js

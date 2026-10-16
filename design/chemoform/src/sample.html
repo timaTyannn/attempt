@@ -195,6 +195,27 @@ h1 { font-family: var(--mono); font-weight: 700; font-size: clamp(26px, 4vw, 40p
 .rest .txt { font-size: 22px; max-width: 26ch; }
 
 
+/* ---------- subtabs: «+ новый образец» is an action, set apart by a divider ---------- */
+.st2.new { margin-left: 22px; }
+.st2.new::before { content: ""; position: absolute; left: 0; top: 18px; bottom: 18px; width: 1px; background: #2c2e2e; }
+/* ---------- new sample: what is in storage ---------- */
+.slist { position: absolute; left: 1080px; top: 252px; width: 740px; }
+.srow { position: relative; display: grid; grid-template-columns: 170px 1fr auto; align-items: center; column-gap: 24px; height: 108px; padding: 0 20px; border-top: 1px solid #262828; transition: background-color .2s var(--ease); }
+.srow::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--accent); opacity: 0; transition: opacity .2s var(--ease); }
+.srow.sel { background: #1c1e1e; }
+.srow.sel::before { opacity: 1; }
+.srow .cd { font-family: var(--mono); font-weight: 700; font-size: 34px; color: #bdbdbd; }
+.srow.sel .cd { color: #fff; }
+.srow .pl { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.srow .pl b { font-weight: 400; font-size: 23px; color: #ececec; white-space: nowrap; }
+.srow .pl span { font-size: 20px; color: #7a7a7a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.srow .vl { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.srow .vl b { font-family: var(--mono); font-weight: 400; font-size: 24px; color: #fff; }
+.srow .vl span { font-family: var(--mono); font-size: 16px; letter-spacing: .1em; color: var(--accent); }
+.srow.off .cd, .srow.off .pl b, .srow.off .vl b { color: #4a4c4c; }
+.srow.off .vl span { color: #6a6a6a; }
+.slist .shd { display: flex; justify-content: space-between; padding-bottom: 18px; }
+.slist .hint { margin-top: 26px; padding-left: 20px; font-size: 21px; color: #6a6a6a; }
 /* ---------- report: same layout as the card ---------- */
 .scr { --bad: #e5534b; }
 .bad-t { color: var(--bad); }
@@ -217,7 +238,7 @@ h1 { font-family: var(--mono); font-weight: 700; font-size: clamp(26px, 4vw, 40p
 
 <main class="doc">
   <h1>Хемоформ · вкладка «Образец»</h1>
-  <p class="lead">Две подвкладки: карточка и отчёт, «Улики» убраны. Пробирка показывает, сколько пробы осталось: каждый прибор тратит свою долю, поэтому игрок выбирает, чем мерить. Клавиши Q/E и A/D не рисуются.</p>
+  <p class="lead">Подвкладки: обзор, отчёт и «+ новый образец», «Улики» убраны. Пробирка показывает, сколько пробы осталось: каждый прибор тратит свою долю, поэтому игрок выбирает, чем мерить. Клавиши Q/E и A/D не рисуются.</p>
   <div id="screens"></div>
   <article class="v" id="qe">
     <header><h2>Q и E — пока без клавиш</h2><span>Решили пока не рисовать клавиши. Варианты и доводы оставлены на подумать.</span></header>
@@ -256,7 +277,7 @@ h1 { font-family: var(--mono); font-weight: 700; font-size: clamp(26px, 4vw, 40p
   // keys: [left, right] captions, or null when they are not drawn (the default now)
   const HDR = (keys = null, pad = false) => `<div class="hdr">${keys ? key(keys[0], pad) : ""}${TABS.map(([id, t]) =>
     `<div class="ht ${id === "sample" ? "on" : ""}">${svg(id)}<span>${t}</span>${["base", "journal"].includes(id) ? '<i class="dot"></i>' : ""}${id === "up" ? '<b class="pts">3</b>' : ""}</div>`).join("")}${keys ? key(keys[1], pad) : ""}</div>`;
-  const SUB = (active = 0, off = [], keys = null, pad = false) => `<div class="sub">${keys ? key(keys[0], pad) : ""}${["КАРТОЧКА", "ОТЧЁТ"].map((t, i) => `<div class="st2 ${i === active ? "on" : ""} ${off.includes(i) ? "off" : ""}">${t}</div>`).join("")}${keys ? key(keys[1], pad) : ""}<div class="rt">ОБРАЗЕЦ <b>КР-01</b></div></div>`;
+  const SUB = (active = 0, off = [], keys = null, pad = false, right = "ОБРАЗЕЦ <b>КР-01</b>") => `<div class="sub">${keys ? key(keys[0], pad) : ""}${["ОБЗОР", "ОТЧЁТ", "+ НОВЫЙ ОБРАЗЕЦ"].map((t, i) => `<div class="st2 ${i === 2 ? "new" : ""} ${i === active ? "on" : ""} ${off.includes(i) ? "off" : ""}">${t}</div>`).join("")}${keys ? key(keys[1], pad) : ""}<div class="rt">${right}</div></div>`;
   // the card is the root of «Назад», so ESC is not shown here
   const FOOT = () => `<div class="foot">${["ЛЕВЫЙ", "ЦЕНТР", "ПРАВЫЙ", "ГОЛОГРАММА"].map((n, i) => `<span class="${i === 1 ? "on" : ""}"><span class="kc">${i + 1}</span>${n}</span>`).join("")}</div>`;
   const KV = (k, v) => `<div class="kv"><span>${k}</span><b>${v}</b></div>`;
@@ -403,13 +424,40 @@ h1 { font-family: var(--mono); font-weight: 700; font-size: clamp(26px, 4vw, 40p
       <div style="margin-top:32px">${KV("ВЕРНЫЙ ОТВЕТ", "CO₂ · углекислый газ")}${KV("НАГРАДА", "0 очков")}</div>
       <div class="go3" style="margin-top:34px">НОВЫЙ ОБРАЗЕЦ →</div>`, null, undefined, HFAIL.map(e => ({ ...e })), true);
 
+  // ---------- new sample: the next case is picked from storage ----------
+  function NEWS() {
+    const id = "tb" + uid++;
+    const L = [
+      { cd: "КР-02", pl: "Озеро «Тихое» · вода", t: "Вода пахнет тухлыми яйцами", v: "10 мл", s: "НОВАЯ" },
+      { cd: "КР-03", pl: "Теплица № 2 · почва", t: "Рассада желтеет и вянет", v: "6 мл", s: "НОВАЯ" },
+      { cd: "КР-04", pl: "Скважина 7 · газ", t: "Датчик фиксирует запах", v: "—", s: "В ПУТИ · 02:40", off: 1 }
+    ];
+    return {
+      html: `<div class="ab" style="left:100px;top:196px;width:520px">
+          <div class="ey">ВЫБРАН</div>
+          <div class="big" style="font-size:150px;margin:16px 0 20px;margin-left:-6px">КР-02</div>
+          <div class="txt" style="color:var(--text)">Озеро «Тихое» · вода, глубина 1 м</div>
+          <i class="sep" style="display:block;margin:30px 0"></i>
+          <div class="ey">ЗАДАНИЕ</div><div class="txt" style="margin-top:10px;max-width:30ch">Вода пахнет тухлыми яйцами. Узнать, что в ней растворено.</div>
+          <div style="margin-top:32px">${KV("ДОСТАВЛЕН", "09:10 · дрон Д-3")}${KV("ПРОБА", "10 мл · жидкость")}</div>
+          <div class="go3" style="margin-top:34px">ПОСТАВИТЬ НА СТОЛ →</div></div>
+        <div data-group id="${id}g">${TUBE(id)}
+          <div class="slist"><div class="shd"><span class="ey">В ХРАНИЛИЩЕ</span><span class="ey">3 ПРОБЫ</span></div>
+          ${L.map((r, i) => `<div class="srow ${i === 0 ? "sel" : ""} ${r.off ? "off" : ""}" data-pick data-i="${i}" tabindex="0"><span class="cd">${r.cd}</span><span class="pl"><b>${r.pl}</b><span>${r.t}</span></span><span class="vl"><b>${r.v}</b><span>${r.s}</span></span></div>`).join("")}
+          <div class="hint">Закрытые дела — в журнале.</div></div></div>`,
+      init: () => mountTube(document.getElementById(id + "g"), { hist: [], ledger: false })
+    };
+  }
+
   const S = [
-    ["Карточка", "Справа — на что ушла каждая доля пробы и что она дала. Строка ровно такой высоты, сколько прибор отпил, поэтому выноски встают напротив своих делений. Под уровнем — сколько осталось. «Отчёт» серый, пока молекула не подтверждена на голограмме.",
-      V1, ["Видит, сколько пробы осталось, на что ушло каждое деление и был ли от него толк: повтор ИК тоже стоит в списке.", "Каждое измерение снимает свою долю, повтор стоит столько же. Отметки прежних уровней остаются на стенке пунктиром.", "Пробирка — компонент с number <code>level</code> 0–100. Строки — список из VM, высота строки = расход × 6 px."], 0, () => SUB(0, [1])]
+    ["Обзор", "Подвкладки: обзор · отчёт · + новый образец. Справа — на что ушла каждая доля пробы и что она дала; строка ровно такой высоты, сколько прибор отпил. Под уровнем — сколько осталось. «Отчёт» и «Новый образец» серые, пока дело открыто.",
+      V1, ["Видит, сколько пробы осталось, на что ушло каждое деление и был ли от него толк: повтор ИК тоже стоит в списке.", "Каждое измерение снимает свою долю, повтор стоит столько же. Отметки прежних уровней остаются на стенке пунктиром.", "Пробирка — компонент с number <code>level</code> 0–100. Строки — список из VM, высота строки = расход × 6 px."], 0, () => SUB(0, [1, 2])]
     ,["Отчёт · определено", "Тот же шаблон, что у карточки. Слева — ответ на задание: здесь вещество, в другом задании может быть связь или реакция. Пробирка и список показывают, во что обошлось расследование, под уровнем — награда и остаток.",
       ROK, ["Получает ответ на вопрос из брифинга и видит цену: что потрачено и сколько осталось.", "+1 за ответ, +1 за экономию (осталось не меньше 40 %). Лишние измерения видны в списке, но не штрафуются. Остаток уходит в хранилище.", "Тот же компонент пробирки и та же строка расхода, что на карточке; меняются только левая колонка и блок под уровнем."], 0, () => SUB(1)]
     ,["Отчёт · провал", "Исходов два: получилось или нет. Попытка одна — «Подтвердить» на голограмме закрывает дело. При провале не остаётся ничего: остаток пробы списывается красной долей, пробирка пустая. Красным же отмечены вердикт и измерение, которое опровергало ответ.",
       RFAIL, ["Понимает, что дело провалено и почему: какое измерение он не учёл.", "Пересдать нельзя: 0 очков, проба потрачена полностью. Поэтому перед «Подтвердить» голограмма должна спросить: «Отправить отчёт? Попытка одна».", "Красный #e5534b — только для провала. Списанная доля — обычная строка расхода с флагом <code>off</code>, опровергнувшее измерение — флаг <code>bad</code>."], 0, () => SUB(1)]
+    ,["Новый образец", "Третья подвкладка — действие, а не раздел: выбрать следующую пробу. Слева выбранная проба и её задание, в центре полная пробирка, справа то, что лежит в хранилище и что ещё в пути.",
+      NEWS, ["Сам выбирает, за какое дело взяться: по месту, заданию и объёму пробы.", "Пока дело открыто, «+ Новый образец» серый — сначала отчёт. После отчёта кнопка «Новый образец →» ведёт сюда же.", "Пробирка та же, <code>level</code> = 100. Список — строки из VM: код, место, задание, объём, статус; «в пути» не выбирается."], 0, () => SUB(2, [], null, false, "НА СТОЛЕ <b>ПУСТО</b>")]
   ];
   const built = S.map(([t, s, fn, n, live, sub]) => {
     const v = fn();

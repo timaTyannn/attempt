@@ -19,13 +19,23 @@ def rgb2hex(s):
 ICON = {0: 'пробирка', 1: 'ключ', 2: 'база', 3: 'журнал', 4: 'стрелка'}
 RECT_NAMES = {'sub': 'линия', 'st2 on ::after': 'подчёркивание', 'sep': 'разделитель', 'kv': 'линия', 'lvl': 'Уровень', 'big strike::after': 'зачёркивание', 'big strike bad::after': 'зачёркивание'}
 
+def rect_name(cls):
+    cls = ' '.join(cls.split())
+    if cls in RECT_NAMES:
+        return RECT_NAMES[cls]
+    if cls.startswith('st2'):  # subtabs: ::after is the underline, ::before the divider before «+ новый образец»
+        return 'подчёркивание' if cls.endswith('::after') else 'разделитель'
+    if cls.endswith('::before'):
+        return 'выбор'
+    return {'srow': 'строка', 'kv': 'линия', 'sub': 'линия'}.get(cls.split(' ')[0] if cls else '', 'фон')
+
 def item(it):
     o = dict(it)
     if o['k'] == 't':
         o['m'] = o.pop('mono') == 0
         o.pop('lines', None)
     else:
-        o['name'] = RECT_NAMES.get(o.pop('cls', ''), 'фон')
+        o['name'] = rect_name(o.pop('cls', ''))
     return o
 
 mode = sys.argv[1]

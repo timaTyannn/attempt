@@ -176,7 +176,8 @@ const path = require('path');
       grp('Образец', scr.querySelector('.ab')),
       grp('Расход/шапка', scr.querySelector('.lhd')),
       grp('Уровень', scr.querySelector('.lvl')),
-      grp('Остаток', scr.querySelector('.rest'))
+      grp('Остаток', scr.querySelector('.rest')),
+      grp('Хранилище', scr.querySelector('.slist'))
     ].filter(Boolean);
     return { bg: col(getComputedStyle(scr).backgroundColor)[0], header, footer, rows, tube: { rect: rel(tube), svg: tsvg, names, texts }, groups };
   }, +idx);
