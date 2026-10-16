@@ -4,10 +4,10 @@ await figma.setCurrentPageAsync(page);
 const Hc = await figma.getNodeByIdAsync("__HDR__"), Fc = await figma.getNodeByIdAsync("__FTR__");
 const ACC = "#3dd4c4";
 // idempotent: drop an earlier copy of this frame on this page only
-for (const n of page.children.filter(n => n.type === "FRAME" && n.name === "Образец · Карточка")) n.remove();
+for (const n of page.children.filter(n => n.type === "FRAME" && n.name === "__NAME__")) n.remove();
 const fr = figma.createFrame();
-fr.name = "Образец · Карточка"; page.appendChild(fr);
-fr.resize(1920, 1080); fr.x = 0; fr.y = 0;
+fr.name = "__NAME__"; page.appendChild(fr);
+fr.resize(1920, 1080); fr.x = __X__; fr.y = 0;
 fr.fills = [paint(S.bg)]; fr.clipsContent = true;
 
 // Шапка
@@ -73,6 +73,9 @@ const lvl = mkRect(fr, "Уровень", lv.x, lv.y, lv.w, lv.h, "#bdbdbd");
 // Остаток
 const rest = S.groups.find(g => g.name === "Остаток");
 const rf = plainFrame(fr, "Остаток", rest.x, rest.y, rest.w, rest.h); rest.items.forEach(it => put(rf, it));
+
+// a strike line is measured before its letters; keep it above them
+for (const n of fr.findAll(n => n.name === "зачёркивание")) n.parent.appendChild(n);
 
 // Низ
 const fi = Fc.createInstance(); fr.appendChild(fi); fi.name = "Низ"; fi.x = 0; fi.y = 1000;

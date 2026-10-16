@@ -4,24 +4,24 @@ const { chromium } = require('playwright');
 const fs = require('fs');
 const path = require('path');
 (async () => {
-  const [file, out] = process.argv.slice(2);
+  const [file, out, idx = '0'] = process.argv.slice(2);
   const b = await chromium.launch();
   const p = await b.newPage({ viewport: { width: 1920, height: 1080 } });
   await p.goto('file://' + path.resolve(file));
   await p.evaluate(() => document.fonts.ready);
   await p.waitForTimeout(600);
-  await p.evaluate(() => {
+  await p.evaluate(i => {
     const d = document.querySelector('.doc'); d.style.maxWidth = 'none'; d.style.padding = '0';
-    const c = document.querySelector('.comp'); c.style.width = '1920px'; c.style.height = '1080px'; c.style.aspectRatio = 'auto';
+    const c = document.querySelectorAll('.comp')[i]; c.style.width = '1920px'; c.style.height = '1080px'; c.style.aspectRatio = 'auto';
     c.firstElementChild.style.transform = 'none';
     window.requestAnimationFrame = () => 0; // freeze the surface animation
-  });
+  }, +idx);
   await p.waitForTimeout(300);
-  const data = await p.evaluate(() => {
+  const data = await p.evaluate(i => {
     const R1 = v => Math.round(v * 10) / 10;
     const toHex = n => n.toString(16).padStart(2, '0');
     const col = c => { const m = c && c.match(/rgba?\(([^)]+)\)/); if (!m) return ['#000000', 0]; const v = m[1].split(',').map(x => parseFloat(x)); return ['#' + v.slice(0, 3).map(x => toHex(Math.round(x))).join(''), v.length > 3 ? R1(v[3]) : 1]; };
-    const scr = document.querySelector('.comp > .scr');
+    const scr = document.querySelectorAll('.comp')[i].firstElementChild;
     const R0 = scr.getBoundingClientRect();
     const rel = el => { const r = el.getBoundingClientRect(); return [R1(r.left - R0.left), R1(r.top - R0.top), R1(r.width), R1(r.height)]; };
     const radii = cs => { const r = ['borderTopLeftRadius', 'borderTopRightRadius', 'borderBottomRightRadius', 'borderBottomLeftRadius'].map(k => parseFloat(cs[k]) || 0); return r.every(v => v === r[0]) ? r[0] : r; };
@@ -172,7 +172,7 @@ const path = require('path');
       grp('Остаток', scr.querySelector('.rest'))
     ];
     return { bg: col(getComputedStyle(scr).backgroundColor)[0], header, footer, rows, tube: { rect: rel(tube), svg: tsvg, names, texts }, groups };
-  });
+  }, +idx);
   fs.writeFileSync(out, JSON.stringify(data, null, 1));
   console.log('wrote', out, JSON.stringify(data).length);
   await b.close();

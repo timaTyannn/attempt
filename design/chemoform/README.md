@@ -8,7 +8,7 @@
 
 | Файл | Что внутри | Опубликовано |
 |---|---|---|
-| `src/sample.html` | Вкладка «Образец» (заменила Обзор и Анализ, «Улики» убраны): карточка с мерной пробиркой и списком расхода пробы, отчёт «определено» и «не сошлось». Внизу шапка с Q/E, без них и с геймпадом | [LyhvNksiBRhM7LYidGo5z9](https://claude.ai/artifact/LyhvNksiBRhM7LYidGo5z9) |
+| `src/sample.html` | Вкладка «Образец» (заменила Обзор и Анализ, «Улики» убраны): карточка с мерной пробиркой и списком расхода пробы; отчёт «определено» и «не сошлось» по тому же шаблону — слева ответ, под уровнем награда или расхождение. Внизу шапка с Q/E, без них и с геймпадом | [LyhvNksiBRhM7LYidGo5z9](https://claude.ai/artifact/LyhvNksiBRhM7LYidGo5z9) |
 | `src/overview.html` | «Обзор» — три варианта в стиле нового выбора приборов (подсветка снизу, бирюзовый чертёж за краем карточки). Вкладка убрана, страница — эталон моушна полос | [Kn2qxEfttir2tiXgDwaR2w](https://claude.ai/artifact/Kn2qxEfttir2tiXgDwaR2w) |
 | `rive-motion-strips.md` | ТЗ на моушн полос-аккордеона для Rive: промпт, геометрия, тайминги, устройство машины состояний | — |
 | `src/sections.html` | Все разделы терминала, 17 экранов: загрузка, обзор, анализ (стол пуст, образец, улики, отчёт), приборы (масс, ИК, молекула), база данных, журнал, улучшения | [Wmqv6JyKujYqVTJ9YxQtAD](https://claude.ai/artifact/Wmqv6JyKujYqVTJ9YxQtAD) |
@@ -49,17 +49,17 @@ python3 figma/gen-code.py PAGE_ID HEADER_ID FOOTER_ID 4                         
 
 Каждый `batch-N.js` выполняется через `use_figma` (Figma MCP).
 
-Карточка «Образец» переносится своими скриптами из `figma/sample/` — с шапкой и низом
-в виде компонентов и статичной пробиркой:
+Вкладка «Образец» переносится своими скриптами из `figma/sample/` — с шапкой и низом
+в виде компонентов и статичной пробиркой. Отчёт построен по шаблону карточки, поэтому
+собирается теми же скриптами, меняется только номер экрана на странице, имя кадра и x:
 
 ```
-node figma/sample/card-extract.js build/sample.html figma/sample/card-spec.json
-python3 figma/sample/gen.py comps                        # -> out-comps.js: страница и компоненты
-python3 figma/sample/gen.py frame PAGE_ID HDR_ID FTR_ID  # -> out-frame.js: кадр 1920×1080
+node figma/sample/card-extract.js build/sample.html figma/sample/card-spec.json        # экран 0 — карточка
+python3 figma/sample/gen.py comps                                                       # -> out-comps.js: страница и компоненты
+python3 figma/sample/gen.py frame PAGE_ID HDR_ID FTR_ID                                 # -> out-frame.js: кадр карточки
 
-# отчёт: индекс экрана на странице (1 — определено, 2 — не сошлось), имя кадра, x на холсте
-node figma/sample/report-extract.js build/sample.html 1 figma/sample/report-1.json
-python3 figma/sample/report-gen.py figma/sample/report-1.json "Образец · Отчёт · определено" 2040 PAGE_ID HDR_ID FTR_ID figma/sample/out-report-1.js
+node figma/sample/card-extract.js build/sample.html figma/sample/ok-spec.json 1         # экран 1 — отчёт «определено»
+python3 figma/sample/gen.py frame PAGE_ID HDR_ID FTR_ID figma/sample/ok-spec.json "Образец · Отчёт · определено" 2040 figma/sample/out-ok.js
 ``` Disket Mono недоступен
 облачному Figma, поэтому моно-текст ставится шрифтом Martian Mono. В десктопном Figma
 выделите любой такой текст → Select matching layers → смените семейство на Disket Mono:

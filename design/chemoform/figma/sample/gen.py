@@ -2,11 +2,14 @@
 """Turn card-spec.json into use_figma scripts.
   python3 gen.py comps                 -> out-comps.js  (page + header/footer components)
   python3 gen.py frame PAGE HDR FTR    -> out-frame.js  (the 1920x1080 frame)
+  python3 gen.py frame PAGE HDR FTR SPEC NAME X OUT   -> any screen built on the card layout (the reports)
 """
 import json, pathlib, re, sys
 
 root = pathlib.Path(__file__).resolve().parent
-spec = json.loads((root / 'card-spec.json').read_text(encoding='utf-8'))
+args = sys.argv[1:]
+spec_path = pathlib.Path(args[4]) if args[0] == 'frame' and len(args) > 4 else root / 'card-spec.json'
+spec = json.loads(spec_path.read_text(encoding='utf-8'))
 lib = (root / 'lib.js').read_text(encoding='utf-8')
 dumps = lambda o: json.dumps(o, ensure_ascii=False, separators=(',', ':'))
 
@@ -14,7 +17,7 @@ def rgb2hex(s):
     return re.sub(r'rgb\((\d+),\s*(\d+),\s*(\d+)\)', lambda m: '#%02x%02x%02x' % tuple(int(m.group(i)) for i in (1, 2, 3)), s)
 
 ICON = {0: 'пробирка', 1: 'ключ', 2: 'база', 3: 'журнал', 4: 'стрелка'}
-RECT_NAMES = {'sub': 'линия', 'st2 on ::after': 'подчёркивание', 'sep': 'разделитель', 'kv': 'линия', 'lvl': 'Уровень'}
+RECT_NAMES = {'sub': 'линия', 'st2 on ::after': 'подчёркивание', 'sep': 'разделитель', 'kv': 'линия', 'lvl': 'Уровень', 'big strike::after': 'зачёркивание'}
 
 def item(it):
     o = dict(it)
@@ -38,6 +41,8 @@ if mode == 'comps':
     out = root / 'out-comps.js'
 else:
     page, hid, fid = sys.argv[2:5]
+    fname = args[5] if len(args) > 5 else 'Образец · Карточка'
+    fx = args[6] if len(args) > 6 else '0'
     TN = {'tick': 'деление', 'liq': 'жидкость', 'mk': 'отметка уровня', 'ld': 'выноска', 'dt': 'точка', 'hl': 'выбор · ИК', 'surf': 'поверхность'}
     names, o_seen = [], 0
     for n in spec['tube']['names']:
@@ -50,7 +55,7 @@ else:
          'groups': [dict(g, items=[item(i) for i in g['items']]) for g in spec['groups']],
          'tube': {'rect': spec['tube']['rect'], 'svg': spec['tube']['svg'], 'names': names, 'texts': texts},
          'rows': [dict(r, border=rgb2hex(r['border'])) for r in spec['rows']]}
-    code = lib + (root / 'frame.tpl.js').read_text(encoding='utf-8').replace('__SPEC__', dumps(S)).replace('__PAGE__', page).replace('__HDR__', hid).replace('__FTR__', fid)
-    out = root / 'out-frame.js'
+    code = lib + (root / 'frame.tpl.js').read_text(encoding='utf-8').replace('__SPEC__', dumps(S)).replace('__PAGE__', page).replace('__HDR__', hid).replace('__FTR__', fid).replace('__NAME__', fname).replace('__X__', fx)
+    out = pathlib.Path(args[7]) if len(args) > 7 else root / 'out-frame.js'
 out.write_text(code, encoding='utf-8')
 print(out.name, len(code), 'chars', '(OVER LIMIT)' if len(code) > 45000 else '')
