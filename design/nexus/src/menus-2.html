@@ -1,0 +1,451 @@
+<title>Нексус · меню, второй круг</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500&display=swap">
+<style>
+@font-face { font-family: "Disket Mono"; font-weight: 400; src: url(data:font/ttf;base64,__DISKET_REG__) format("truetype"); }
+@font-face { font-family: "Disket Mono"; font-weight: 700; src: url(data:font/ttf;base64,__DISKET_BOLD__) format("truetype"); }
+/* Layout: review page of 1920×1080 game overlays built on the user's own Figma frames (sizes, glass panels, emblem, keycaps, lab icons). Single dark look by design. */
+:root {
+  color-scheme: dark;
+  --page: #0b0b0b; --ink: #e8e8e8; --muted: #9a9a9a; --rule: #262626;
+  --mono: "Disket Mono", ui-monospace, Menlo, monospace;
+  --body: "Jost", "Segoe UI", system-ui, sans-serif;
+}
+html, body { background: var(--page); color: var(--ink); }
+body { font-family: var(--body); font-size: 17px; line-height: 1.55; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--page); }
+.doc { max-width: 1240px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 34px 90px; }
+h1 { font-family: var(--mono); font-weight: 700; font-size: clamp(26px, 4vw, 40px); margin: 0 0 8px; text-wrap: balance; }
+.lead { color: var(--muted); max-width: 74ch; margin: 0; }
+.kept { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 16px 32px; margin-top: 24px; }
+.kept div { min-width: 0; border-top: 1px solid var(--rule); padding-top: 12px; }
+.kept b { display: block; font-family: var(--mono); font-weight: 400; font-size: 12px; letter-spacing: .12em; color: var(--muted); margin-bottom: 6px; }
+.kept p { margin: 0; color: #c9c9c9; }
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--page); padding-block: 12px; margin-top: 28px; border-bottom: 1px solid var(--rule); display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+.bar > span { font-family: var(--mono); font-size: 12px; letter-spacing: .12em; color: var(--muted); }
+.bar button { display: inline-flex; align-items: center; gap: 9px; padding: 8px 13px; border: 1px solid #2e2f2f; background: transparent; color: #cfcfcf; font-family: var(--mono); font-size: 13px; letter-spacing: .08em; cursor: pointer; }
+.bar button i { width: 12px; height: 12px; }
+.bar button[aria-pressed="true"] { background: #e9e9e9; color: #111; border-color: #e9e9e9; }
+.bar button:focus-visible, .scr [data-pick]:focus-visible { outline: 2px solid #8fd; outline-offset: 2px; }
+@media (max-width: 600px) { .bar { position: static; } .bar > span { width: 100%; } }
+.part { margin-top: 56px; }
+.part > h2 { font-family: var(--mono); font-size: clamp(20px, 2.6vw, 28px); margin: 0; padding-bottom: 10px; border-bottom: 1px solid var(--rule); }
+.part > p { color: var(--muted); max-width: 74ch; margin: 10px 0 0; }
+.v { margin-top: 44px; }
+.v header { display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: baseline; margin-bottom: 10px; }
+.v header h3 { font-family: var(--mono); font-size: 20px; margin: 0; }
+.v header span { color: var(--muted); max-width: 74ch; }
+.cap { font-family: var(--mono); font-size: 12px; letter-spacing: .12em; color: var(--muted); margin: 14px 0 6px; }
+.row2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 20px; }
+@media (max-width: 820px) { .row2 { grid-template-columns: minmax(0, 1fr); } }
+.notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 10px 32px; margin-top: 14px; }
+.notes p { margin: 0; color: #c9c9c9; min-width: 0; }
+.notes b { display: block; font-family: var(--mono); font-weight: 400; font-size: 12px; letter-spacing: .12em; color: var(--muted); }
+
+/* ---------- 1920×1080 screen, values taken from the Figma frames ---------- */
+.comp { position: relative; width: 100%; max-width: 100%; aspect-ratio: 16 / 9; overflow: hidden; background: #0e0f0f; }
+.scr { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; overflow: hidden; background: #000; color: #fff; font-family: var(--mono); }
+.scr * { box-sizing: border-box; }
+.ab { position: absolute; }
+.bgi { position: absolute; inset: -30px; background-size: cover; background-position: center; }
+.ov { position: absolute; inset: 0; }
+.gl { position: absolute; background: rgba(217,217,217,.1); }
+.logo { font-family: var(--mono); font-weight: 700; font-size: 138px; letter-spacing: .02em; line-height: 1; color: #fff; text-align: center; }
+.emb { position: absolute; width: 222px; height: 263px; color: #fff; opacity: .2; }
+.emb svg, .key svg, .li svg { width: 100%; height: 100%; display: block; }
+.key { position: absolute; width: 40px; height: 40px; }
+.li { display: inline-block; flex: none; }
+.hd { font-family: var(--mono); font-weight: 700; font-size: 20px; letter-spacing: .04em; color: #fff; white-space: nowrap; }
+.mut { color: rgba(255,255,255,.7); }
+.t20 { font-size: 20px; letter-spacing: .02em; }
+.p { font-family: var(--body); font-size: 21px; line-height: 1.45; color: rgba(255,255,255,.85); margin: 0; }
+.back { position: absolute; left: 173px; top: 960px; font-size: 38px; letter-spacing: .02em; }
+.where { position: absolute; right: 140px; top: 966px; display: flex; align-items: center; gap: 14px; font-size: 22px; letter-spacing: .04em; color: rgba(255,255,255,.7); }
+.where b { font-weight: 400; color: var(--acc); }
+.kc { display: inline-grid; place-items: center; min-width: 40px; height: 36px; padding: 0 8px; border-radius: 6px; background: #eaeaea; color: #192223; font-weight: 700; font-size: 20px; box-shadow: 0 5px 0 #b9b9b9; }
+[data-pick] { cursor: pointer; outline: none; }
+@media (prefers-reduced-motion: no-preference) { .pl, .tt, .cell, .acc .t, .bb .it { transition: background-color .18s ease, color .18s ease, border-color .18s ease; } }
+
+/* ESC plates: text-sized, the selected one is tinted and gets the same 4 px line as the active tab */
+.pl { position: relative; display: inline-flex; align-items: center; height: 82px; padding: 0 32px; font-size: 56px; letter-spacing: .02em; line-height: 1; color: #fff; }
+.pl.big { height: 86px; font-size: 64px; }
+.pl.sel { background: var(--sel); }
+.pl.sel::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: var(--acc); }
+.e1 { position: absolute; left: 0; right: 0; top: 358px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+/* equal-width plates */
+.e2 { position: absolute; left: 620px; width: 680px; top: 340px; display: flex; flex-direction: column; gap: 8px; }
+.e2 .pl { display: flex; justify-content: space-between; width: 100%; height: 72px; font-size: 40px; background: rgba(211,211,211,.1); }
+.e2 .pl em { font-style: normal; font-size: 20px; color: rgba(255,255,255,.6); }
+.e2 .pl.sel { background: var(--sel); }
+.e2 .pl.sel em { color: #fff; }
+.e2 .gp { height: 28px; }
+.stl { position: absolute; left: 0; right: 0; display: flex; justify-content: center; align-items: center; gap: 14px; font-size: 22px; letter-spacing: .04em; color: rgba(255,255,255,.65); }
+.stl .li { color: var(--acc); }
+/* bottom bar, like the Tab bar */
+.bb { position: absolute; left: 140px; width: 1640px; top: 900px; height: 64px; background: rgba(211,211,211,.1); display: flex; justify-content: space-between; padding: 0 12px; }
+.bb .it { position: relative; display: flex; align-items: center; padding: 0 20px; font-size: 26px; white-space: nowrap; letter-spacing: .02em; color: rgba(255,255,255,.45); }
+.bb .it.sel { background: var(--sel); color: #fff; }
+.bb .it.sel::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: var(--acc); }
+.capx { position: absolute; left: 0; right: 0; top: 836px; text-align: center; font-family: var(--body); font-size: 25px; color: rgba(255,255,255,.85); }
+
+/* Tab bar: glass strip, inactive 40 % white, active plate + 4 px line */
+.tbar { position: absolute; display: flex; justify-content: space-between; align-items: stretch; }
+.tt { position: relative; display: flex; align-items: center; gap: 12px; padding: 0 22px; font-size: 36px; letter-spacing: .02em; line-height: 1; color: rgba(255,255,255,.4); white-space: nowrap; }
+.tt.on { color: #fff; background: var(--sel); }
+.tt.on::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: var(--acc); }
+.tt .dot { width: 10px; height: 10px; border-radius: 50%; background: #fff; align-self: flex-start; margin-top: 6px; margin-left: -2px; }
+.sk2 .tt { background: rgba(211,211,211,.1); }
+.sk2 .tt.on { background: var(--sel); }
+.sk3 .tt { font-size: 28px; padding: 0 18px; gap: 12px; }
+.sk3 .tt .li { width: 30px; height: 30px; color: rgba(255,255,255,.4); }
+.sk3 .tt em { font-style: normal; font-size: 18px; padding: 3px 8px; background: rgba(255,255,255,.12); color: rgba(255,255,255,.75); }
+.sk3 .tt.on { background: var(--acc); color: var(--ink); }
+.sk3 .tt.on::after { display: none; }
+.sk3 .tt.on .li { color: var(--ink); }
+.sk3 .tt.on em { background: var(--ink); color: var(--acc); }
+.cardh { position: absolute; height: 56px; background: rgba(211,211,211,.1); }
+
+/* inventory */
+.grid { position: absolute; display: grid; grid-template-columns: repeat(7, 120px); grid-auto-rows: 120px; gap: 10px; }
+.cell { position: relative; border: 2px solid rgba(154,154,154,.9); display: grid; place-items: center; overflow: hidden; }
+.cell img { max-width: 92px; max-height: 92px; }
+.cell .n { position: absolute; left: 10px; top: 8px; font-weight: 700; font-size: 18px; }
+.cell .lb { position: absolute; left: 0; right: 0; bottom: 0; height: 5px; }
+.cell.sel { border-color: var(--acc); background: rgba(var(--acc-rgb), .14); }
+.sk3 .cell.sel { border-width: 3px; }
+.scb { position: absolute; width: 10px; background: rgba(55,55,55,.3); }
+.scb i { display: block; width: 10px; background: rgba(255,255,255,.5); }
+.dv { position: absolute; width: 2px; background: rgba(255,255,255,.5); }
+.flt { position: absolute; display: flex; gap: 36px; font-size: 20px; letter-spacing: .02em; color: rgba(255,255,255,.7); white-space: nowrap; }
+.link { position: absolute; height: 52px; display: flex; align-items: center; justify-content: space-between; padding: 0 18px; background: var(--sel); font-size: 24px; letter-spacing: .02em; }
+.bul { display: flex; flex-direction: column; gap: 8px; font-size: 20px; color: rgba(255,255,255,.8); }
+
+/* tasks: accordion by lab */
+.sub { position: absolute; display: flex; }
+.sub span { position: relative; width: 320px; height: 53px; display: grid; place-items: center; font-size: 24px; letter-spacing: .02em; background: rgba(211,211,211,.1); color: rgba(255,255,255,.7); }
+.sub span.on { background: var(--sel); color: #fff; }
+.sub span.on::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: var(--acc); }
+.acc { position: absolute; display: flex; flex-direction: column; gap: 10px; }
+.acc .h { height: 52px; display: flex; align-items: center; gap: 14px; padding: 0 16px; background: rgba(211,211,211,.2); font-size: 24px; letter-spacing: .02em; }
+.acc .h .li { width: 28px; height: 28px; }
+.acc .h em { margin-left: auto; font-style: normal; font-size: 20px; color: rgba(255,255,255,.7); }
+.acc .h.x { color: rgba(255,255,255,.35); background: rgba(211,211,211,.08); }
+.acc .bd { margin-top: -10px; padding: 8px 0 10px; background: rgba(55,55,55,.4); display: flex; flex-direction: column; }
+.acc .t { position: relative; height: 54px; display: flex; align-items: center; gap: 14px; padding: 0 16px 0 46px; font-size: 22px; letter-spacing: .02em; }
+.acc .t em { margin-left: auto; font-style: normal; font-size: 20px; color: rgba(255,255,255,.7); }
+.acc .t.sel { background: var(--sel); }
+.acc .t.sel::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--acc); }
+.chk { display: flex; flex-direction: column; gap: 14px; }
+.chk div { display: flex; align-items: center; gap: 16px; font-size: 22px; letter-spacing: .01em; }
+.chk i { width: 22px; height: 22px; flex: none; border: 2.6px solid #fff; background: rgba(16,23,5,.4); display: grid; place-items: center; font-style: normal; font-size: 15px; }
+.chk .d { color: rgba(255,255,255,.45); text-decoration: line-through; }
+.chk .d i { border-color: rgba(255,255,255,.45); background: rgba(255,255,255,.45); color: #111; }
+.chk .c i { border-color: var(--acc); }
+.chk .c em { margin-left: auto; font-style: normal; font-size: 20px; color: rgba(255,255,255,.7); }
+.chk .f { color: rgba(255,255,255,.7); }
+.btn { display: inline-flex; align-items: center; justify-content: center; height: 56px; padding: 0 34px; font-size: 24px; letter-spacing: .02em; background: rgba(211,211,211,.2); }
+.btn.f { background: var(--acc); color: var(--ink); }
+
+/* base */
+.stat { position: absolute; top: 174px; height: 66px; padding: 10px 18px; background: rgba(217,217,217,.1); display: flex; flex-direction: column; justify-content: space-between; }
+.stat span { font-size: 18px; letter-spacing: .02em; color: rgba(255,255,255,.65); }
+.stat b { font-weight: 400; font-size: 26px; letter-spacing: 0; white-space: nowrap; }
+.hubsvg text { font-family: var(--mono); }
+.kvb { display: flex; justify-content: space-between; gap: 16px; padding: 10px 0; border-top: 2px solid rgba(255,255,255,.12); font-size: 20px; color: rgba(255,255,255,.7); }
+.kvb b { font-weight: 400; color: #fff; }
+.prog { height: 8px; background: rgba(255,255,255,.15); }
+.prog i { display: block; height: 8px; }
+</style>
+
+<div class="doc">
+  <h1>Нексус · меню, второй круг</h1>
+  <p class="lead">Ещё по три варианта паузы и Tab, теперь от твоих экранов. Размеры, стеклянные плашки, шрифт, эмблема, клавиши Q/E, иконки лабораторий и растения взяты прямо из Figma. Меняется немногое: как выделен выбранный пункт, как разложены пункты и панели. Наведите курсор на пункты и ячейки — выбор переезжает.</p>
+  <div class="kept">
+    <div><b>ОСТАВИЛ КАК У ТЕБЯ</b><p>Логотип 138 px по центру. Пункты паузы 64 и 56 px. Полоса вкладок с Q/E, вкладки 36 px, неактивные — 40 % белого. Стекло — серый на 10 %, «НАЗАД» внизу слева.</p></div>
+    <div><b>ЦВЕТ</b><p>Выбранное — полупрозрачная плашка и черта 4 px. На станции плашка серая, черта светло-серая. В Хемоформе обе бирюзовые, как твоя кнопка «Продолжить» в NX_Pause.</p></div>
+    <div><b>ЧЕГО НЕТ</b><p>Строки подсказок клавиш внизу, мелкого текста и тёмных «терминальных» панелей из первого круга.</p></div>
+  </div>
+  <div class="bar" id="bar"><span>ЦВЕТ БОЛЬШИХ ЭКРАНОВ</span></div>
+
+  <section class="part"><h2>ESC · пауза</h2>
+    <p>Пункты и подписи как в твоём NX_Pause: продолжить · настройки, загрузить игру, в главное меню, сохранить и выйти · выход.</p>
+    <div id="esc"></div>
+  </section>
+  <section class="part"><h2>TAB · меню станции</h2>
+    <p>Каждый вариант показан на инвентаре, а ниже — задачи и обзор базы в той же оболочке и в другом цвете.</p>
+    <div id="tab"></div>
+  </section>
+</div>
+
+<script>
+/*__NXSVG__*/
+(() => {
+  const BG = { hub: "data:image/jpeg;base64,__BG_HUB__", inv: "data:image/jpeg;base64,__BG_INV__" };
+  const IMG = { cher: "data:image/png;base64,__P_CHER__", potato: "data:image/png;base64,__P_POTATO__", scab: "data:image/png;base64,__P_SCAB__" };
+  // --acc: solid line / pressed fill, --sel: translucent plate (station = the user's grey 20 %, labs = their colour 30 %)
+  const LABS = {
+    station: { key: "station", ui: "СТАНЦИЯ", name: "ХАБ СТАНЦИИ", acc: "#d3d3d3", rgb: "211,211,211", sel: "rgba(211,211,211,.2)", ink: "#141414", icon: "emblem" },
+    chemo:   { key: "chemo", ui: "ХЕМОФОРМ", name: "ХЕМОФОРМ", acc: "#3dd4c4", rgb: "61,212,196", sel: "rgba(61,212,196,.3)", ink: "#0b201e", icon: "chemo" },
+    bio:     { key: "bio", ui: "БИОФОРМ", name: "БИОФОРМ", acc: "#8cc63f", rgb: "140,198,63", sel: "rgba(140,198,63,.3)", ink: "#16210a", icon: "bio" },
+    quant:   { key: "quant", ui: "КВАНТОФОРМ", name: "КВАНТОФОРМ", acc: "#ea7d3c", rgb: "234,125,60", sel: "rgba(234,125,60,.3)", ink: "#2a1306", icon: "quant" },
+  };
+  const LABC = { quant: "#ea7d3c", geo: "#f0c23a", bio: "#8cc63f", chemo: "#3dd4c4", terra: "#7f8a99" };
+  const li = (k, size, extra = "") => `<span class="li" style="width:${size}px;height:${size}px;${extra}">${NXSVG[k]}</span>`;
+  const bg = (k, a) => `<div class="bgi" style="background-image:url(${BG[k]})"></div><div class="ov" style="background:rgba(4,4,4,${a})"></div>`;
+  const keys = (qx, ex, y) => `<span class="key" style="left:${qx}px;top:${y}px">${NXSVG.q}</span><span class="key" style="left:${ex}px;top:${y}px">${NXSVG.e}</span>`;
+
+  /* ===================== ESC ===================== */
+  const ESC = ["ПРОДОЛЖИТЬ", "НАСТРОЙКИ", "ЗАГРУЗИТЬ ИГРУ", "В ГЛАВНОЕ МЕНЮ", "СОХРАНИТЬ И ВЫЙТИ", "ВЫХОД"];
+  const DOING = { station: "хаб станции", chemo: "Хемоформ — анализ пробы КР-01, шаг 3 из 5", bio: "Биоформ — сбор образцов", quant: "Квантоформ — подготовка" };
+  const CAPS = (L, i) => [
+    `Вернуться: ${DOING[L.key]}`,
+    "Управление, графика, аудио, геймплей и доступность",
+    "7 сохранений. Последнее — день 3, 14:12",
+    "К выбору лаборатории. Несохранённое спросим, сохранить ли",
+    "Сохранить день 3, 14:20 и закрыть игру",
+    "Закрыть игру без сохранения: пропадут последние 8 минут",
+  ][i];
+  const META = ["", "", "7 СОХРАНЕНИЙ", "", "14:20", "−8 МИН"];
+  const status = (L, y, extra = "") => `<div class="stl" style="top:${y}px">${li(L.icon, 30)}<span style="color:var(--acc)">${L.ui}</span><span>· ДЕНЬ 3 · 14:20${extra}</span></div>`;
+
+  const escE1 = (L, sel = 0) => `${bg("hub", .55)}
+    <div class="emb" style="left:850px;top:13px">${NXSVG.emblem}</div>
+    <div class="ab logo" style="left:0;right:0;top:60px">НЕКСУС</div>
+    <div class="e1" data-group="esc">
+      ${ESC.map((t, i) => `<div class="pl${i === 0 ? " big" : ""}${i === sel ? " sel" : ""}" data-pick="${i}" tabindex="0" style="${i === 1 || i === 5 ? "margin-top:70px" : ""}">${t}</div>`).join("")}
+    </div>`;
+
+  const escE2 = (L, sel = 0) => `${bg("hub", .55)}
+    <div class="ab logo" style="left:0;right:0;top:60px">НЕКСУС</div>
+    ${status(L, 236)}
+    <div class="e2" data-group="esc">
+      ${ESC.map((t, i) => `${i === 1 || i === 3 ? '<div class="gp"></div>' : ""}<div class="pl${i === sel ? " sel" : ""}" data-pick="${i}" tabindex="0"><span>${t}</span><em>${META[i] || (i === 0 ? L.ui : "")}</em></div>`).join("")}
+    </div>`;
+
+  const escE3 = (L, sel = 0) => `${bg("hub", .55)}
+    <div class="emb" style="left:849px;top:270px">${NXSVG.emblem}</div>
+    <div class="ab logo" style="left:0;right:0;top:330px">НЕКСУС</div>
+    ${status(L, 516, " · СОХРАНЕНО 14:12")}
+    <div class="capx" data-out>${CAPS(L, sel)}</div>
+    <div class="bb" data-group="esc" data-cap>${ESC.map((t, i) => `<div class="it${i === sel ? " sel" : ""}" data-pick="${i}" tabindex="0">${t}</div>`).join("")}</div>
+    <span class="kc ab" style="left:84px;top:914px">←</span><span class="kc ab" style="left:1796px;top:914px">→</span>`;
+
+  /* ===================== TAB ===================== */
+  const TABS = ["ОБЗОР БАЗЫ", "ЗАДАЧИ", "ИНВЕНТАРЬ", "ИССЛЕДОВАНИЯ", "СПРАВОЧНИК"];
+  const TICON = ["hub", "tasks", "inv", "tree", "book"];
+  const TCNT = ["", "5", "3/30", "3", "+2"];
+  const LINE = {
+    hub: `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"><circle cx="32" cy="34" r="9"/><circle cx="32" cy="9" r="5"/><circle cx="54" cy="44" r="5"/><circle cx="10" cy="44" r="5"/><path d="M32 25V14M40 38l10 4M24 38l-10 4"/></svg>`,
+    tasks: `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"><path d="M10 14h8v8h-8zM10 30h8v8h-8zM10 46h8v8h-8zM26 18h28M26 34h28M26 50h20"/></svg>`,
+    inv: `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"><path d="M14 22h36v32H14zM22 22v-5a10 10 0 0 1 20 0v5M14 34h36M28 34v6h8v-6"/></svg>`,
+    tree: `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="4"><circle cx="32" cy="10" r="5"/><circle cx="14" cy="52" r="5"/><circle cx="32" cy="52" r="5"/><circle cx="50" cy="52" r="5"/><path d="M32 15v32M32 30H14v17M32 30h18v17"/></svg>`,
+    book: `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"><path d="M32 16c-6-4-14-5-22-4v38c8-1 16 0 22 4 6-4 14-5 22-4V12c-8-1-16 0-22 4zM32 16v38"/></svg>`,
+  };
+  Object.assign(NXSVG, LINE);
+
+  const SKINS = {
+    1: { name: "one", ov: .70 }, 2: { name: "cards", ov: .70 }, 3: { name: "open", ov: .80 },
+  };
+  const tabBar = (sk, on) => {
+    if (sk === 3) return `<div class="tbar sk3" style="left:160px;top:100px;width:1600px;height:56px;background:rgba(211,211,211,.1)">${TABS.map((t, i) => `<span class="tt${i === on ? " on" : ""}"><span class="li">${NXSVG[TICON[i]]}</span>${t}${TCNT[i] ? `<em>${TCNT[i]}</em>` : ""}</span>`).join("")}</div>${keys(104, 1776, 108)}`;
+    if (sk === 2) return `<div class="tbar sk2" style="left:224px;top:103px;width:1472px;height:49px">${TABS.map((t, i) => `<span class="tt${i === on ? " on" : ""}">${t}${i === 1 ? '<i class="dot"></i>' : ""}</span>`).join("")}</div>${keys(166, 1714, 107)}`;
+    return `<div class="tbar" style="left:234px;top:103px;width:1452px;height:49px;background:rgba(211,211,211,.1)">${TABS.map((t, i) => `<span class="tt${i === on ? " on" : ""}">${t}${i === 1 ? '<i class="dot"></i>' : ""}</span>`).join("")}</div>${keys(173, 1713, 107)}`;
+  };
+  // panels: one glass sheet, separate cards with header bands, or nothing (dividers only)
+  const panels = (sk, cols) => {
+    if (sk === 1) return `<div class="gl" style="left:138px;top:174px;width:1643px;height:778px"></div>`;
+    if (sk === 2) return cols.map(([x, w]) => `<div class="gl" style="left:${x}px;top:174px;width:${w}px;height:778px"></div><div class="cardh" style="left:${x}px;top:174px;width:${w}px"></div>`).join("");
+    return "";
+  };
+  const shell = (L, sk, on, cols, body) => `${bg("inv", SKINS[sk].ov)}${tabBar(sk, on)}${panels(sk, cols)}${body}
+    <div class="back">НАЗАД</div><div class="where">${li(L.icon, 30, "color:var(--acc)")}<span>ВЫ ЗДЕСЬ:</span><b>${L.ui}</b></div>`;
+
+  const ITEMS = [
+    { img: "cher", n: 14, lab: "bio", name: "ЧЕРЕМША", type: "РАСТЕНИЕ", d: "Дикий лук с широкими листьями и белыми шариками соцветий. Растёт в тени у камней.", kv: ["ВЕС: 0,1 КГ", "ТИП: ТРАВА"], use: "БИОФОРМ · СБОР ОБРАЗЦОВ" },
+    { img: "potato", n: 11, lab: "bio", name: "КАРТОФЕЛЬ", type: "РАСТЕНИЕ", d: "Куст с мелкими белыми цветками. Клубни пригодятся для теплицы станции.", kv: ["ВЕС: 0,4 КГ", "ТИП: КЛУБНЕПЛОД"], use: "БИОФОРМ · ТЕПЛИЦА" },
+    { img: "scab", n: 10, lab: "bio", name: "СКАБИОЗА", type: "РАСТЕНИЕ", d: "Скабиоза жёлтая — лёгкое «воздушное» луговое растение с тонкими стеблями и кремово-жёлтыми цветками.", kv: ["ВЕС: 0,2 КГ", "ТИП: ТРАВА"], use: "БИОФОРМ · СБОР ОБРАЗЦОВ" },
+  ];
+  const itemPanel = (i, x0) => {
+    const it = ITEMS[i];
+    return `<div class="ab hd" style="left:${x0}px;top:196px">ВЫБРАННЫЙ ПРЕДМЕТ</div>
+      <div class="ab" style="left:${x0}px;top:240px;font-size:32px;letter-spacing:.02em">${it.name}</div>
+      <div class="ab mut t20" style="left:${x0}px;top:282px">${it.type}</div>
+      <div class="ab" style="left:${x0}px;top:316px;width:631px;height:290px;display:grid;place-items:center"><img src="${IMG[it.img]}" alt="" style="max-height:280px;max-width:420px;${it.img === "scab" ? "" : "height:230px"}"></div>
+      <p class="ab p" style="left:${x0}px;top:620px;width:631px">${it.d}</p>
+      <div class="ab hd" style="left:${x0}px;top:716px;font-weight:400;color:rgba(255,255,255,.8)">ХАРАКТЕРИСТИКИ</div>
+      <div class="ab bul" style="left:${x0 + 24}px;top:750px">${it.kv.map(k => `<span>•  ${k}</span>`).join("")}</div>
+      <div class="ab mut t20" style="left:${x0}px;top:830px">НУЖЕН ДЛЯ</div>
+      <div class="link" style="left:${x0}px;top:862px;width:631px"><span>${it.use}</span><span>›</span></div>`;
+  };
+  const inv = (L, sk, sel = 2) => shell(L, sk, 2, [[138, 962], [1120, 661]], `
+    <div class="ab hd" style="left:173px;top:196px">РЮКЗАК <span style="font-weight:400;color:rgba(255,255,255,.6);margin-left:12px">3 / 30</span></div>
+    <div class="flt" style="left:420px;top:196px;width:653px;justify-content:flex-end"><span>ЛАБОРАТОРИЯ: ВСЕ ▾</span><span>СОРТИРОВАТЬ: КОЛИЧЕСТВО ▾</span></div>
+    <div class="grid" style="left:173px;top:233px" data-group="inv" data-panel="I">${Array.from({ length: 35 }, (_, i) => {
+      const it = ITEMS[i];
+      return it ? `<div class="cell${i === sel ? " sel" : ""}" data-pick="${i}" tabindex="0"><img src="${IMG[it.img]}" alt=""><span class="n">×${it.n}</span><i class="lb" style="background:${LABC[it.lab]}"></i></div>` : `<div class="cell"></div>`;
+    }).join("")}</div>
+    <div class="scb" style="left:1083px;top:233px;height:640px"><i style="height:232px"></i></div>
+    ${sk === 2 ? "" : `<div class="dv" style="left:1110px;top:233px;height:680px"></div>`}
+    <div data-out>${itemPanel(sel, 1140)}</div>`);
+
+  const TG = [
+    ["quant", "КВАНТОФОРМ", [], "НОВОЕ"], ["geo", "ГЕОФОРМ", []], ["bio", "БИОФОРМ", []],
+    ["chemo", "ХЕМОФОРМ", [["ГАЗ В ЛЕДНИКЕ", "3 / 5"], ["СОЛЬ В ОЗЁРНОЙ ВОДЕ", "0 / 4"]]], ["terra", "ТЕРРАФОРМ", null],
+  ];
+  const tasks = (L, sk) => shell(L, sk, 1, [[138, 742], [900, 881]], `
+    <div class="ab hd" style="left:173px;top:196px">ЗАДАНИЯ</div>
+    <div class="sub" style="left:173px;top:233px"><span class="on">АКТИВНЫЕ</span><span>ВЫПОЛНЕННЫЕ</span></div>
+    <div class="acc" style="left:173px;top:306px;width:640px" data-group="task">${TG.map(([k, nm, ts, tag]) => ts === null
+      ? `<div class="h x">${li(k === "terra" ? "astro" : k, 28)}${nm}<em>ЗАКРЫТА</em></div>`
+      : `<div class="h">${li(k, 28, `color:${LABC[k]}`)}${nm}<em>${tag ? `<span style="color:#fff">● ${tag}</span>` : ts.length ? "▴" : "▾"}</em></div>${ts.length ? `<div class="bd">${ts.map(([t, s], i) => `<div class="t${i === 0 ? " sel" : ""}" data-pick="${i}" tabindex="0">${t}<em>${s}</em></div>`).join("")}</div>` : ""}`).join("")}</div>
+    <div class="scb" style="left:836px;top:233px;height:640px"><i style="height:300px"></i></div>
+    ${sk === 2 ? "" : `<div class="dv" style="left:866px;top:233px;height:680px"></div>`}
+    <div class="ab hd" style="left:930px;top:196px">ВЫБРАННАЯ ЗАДАЧА</div>
+    <div class="ab" style="left:930px;top:240px;font-size:48px;letter-spacing:.02em">ГАЗ В ЛЕДНИКЕ</div>
+    <div class="ab mut t20" style="left:930px;top:304px;display:flex;align-items:center;gap:12px">${li("chemo", 26, `color:${LABC.chemo}`)}ХЕМОФОРМ · ЭТАП 3 ИЗ 5</div>
+    <p class="ab p" style="left:930px;top:350px;width:800px">В ледяной пробе КР-01 нашли пузырьки газа: талая вода от него кислит. Определите газ на лабораторном столе Хемоформа.</p>
+    <div class="ab hd" style="left:930px;top:450px;font-weight:400;color:rgba(255,255,255,.8)">ШАГИ</div>
+    <div class="ab chk" style="left:930px;top:490px;width:800px">
+      <div class="d"><i>✓</i>ДОСТАВЬТЕ ПРОБУ ИЗ ЛЕДНИКА</div><div class="d"><i>✓</i>ПОСТАВЬТЕ ПРОБУ НА СТОЛ</div>
+      <div class="c"><i></i>ИЗМЕРЬТЕ МАССУ И СПЕКТР<em>1 ИЗ 2</em></div><div class="f"><i></i>СОБЕРИТЕ МОЛЕКУЛУ НА ГОЛОГРАММЕ</div><div class="f"><i></i>ОТПРАВЬТЕ ОТЧЁТ</div></div>
+    <div class="ab hd" style="left:930px;top:730px;font-weight:400;color:rgba(255,255,255,.8)">НАГРАДА</div>
+    <div class="ab bul" style="left:954px;top:764px"><span>•  +1 ОЧКО ИССЛЕДОВАНИЙ</span><span>•  +1 ЗА ЭКОНОМИЮ ПРОБЫ</span><span>•  ОТКРЫВАЕТ СТАТЬЮ «CO₂»</span></div>
+    <div class="ab" style="left:930px;top:878px;display:flex;gap:14px"><span class="btn f">ОТСЛЕДИТЬ</span><span class="btn">К ЛАБОРАТОРИИ</span></div>`);
+
+  // their hub: thick white ring, lab circles with a thick ring in the lab colour; their lab icons inside
+  const NODES = [["quant", "КВАНТОФОРМ", "НОВОЕ ЗАДАНИЕ", -90], ["geo", "ГЕОФОРМ", "СВОБОДНА", -22], ["bio", "БИОФОРМ", "СБОР ОБРАЗЦОВ", 32], ["chemo", "ХЕМОФОРМ", "АНАЛИЗ · 60 %", 148], ["terra", "ТЕРРАФОРМ", "ЗАКРЫТА", 202]];
+  const hub = L => {
+    const cx = 470, cy = 300, R = 200, here = L.key === "station" ? "hub" : L.key;
+    const node = ([k, nm, st, deg]) => {
+      const a = deg * Math.PI / 180, x = cx + R * Math.cos(a), y = cy + R * Math.sin(a), closed = k === "terra", right = Math.cos(a) > -0.2;
+      const tx = right ? x + 66 : x - 66, an = right ? "start" : "end", col = closed ? "#6e6e6e" : LABC[k], dy = k === "quant" ? -28 : 0;
+      return `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="rgba(255,255,255,${closed ? .35 : .85})" stroke-width="16"/>
+        ${here === k ? `<circle cx="${x}" cy="${y}" r="72" stroke="rgba(255,255,255,.55)" stroke-width="2" stroke-dasharray="6 8"/>` : ""}
+        <circle cx="${x}" cy="${y}" r="46" fill="#1f2020" stroke="${col}" stroke-width="12"/>
+        ${NXSVG[k === "terra" ? "astro" : k].replace("<svg ", `<svg x="${x - 21}" y="${y - 21}" width="42" height="42" style="color:${closed ? "#6e6e6e" : "#fff"}" `)}
+        <text x="${tx}" y="${y - 4 + dy}" text-anchor="${an}" font-size="24" fill="${col}">${nm}${k === "quant" ? "  !" : ""}</text>
+        <text x="${tx}" y="${y + 24 + dy}" text-anchor="${an}" font-size="18" fill="rgba(255,255,255,.7)">${st}</text>
+        ${here === k ? `<text x="${tx}" y="${y + 50}" text-anchor="${an}" font-size="18" fill="#fff">ВЫ ЗДЕСЬ</text>` : ""}`;
+    };
+    return `<svg class="ab hubsvg" style="left:173px;top:262px" width="940" height="690" viewBox="0 0 940 690" fill="none">
+      <circle cx="${cx}" cy="${cy}" r="${R}" stroke="rgba(255,255,255,.85)" stroke-width="16"/>
+      <line x1="${cx}" y1="${cy}" x2="${cx}" y2="${cy + R + 60}" stroke="rgba(255,255,255,.85)" stroke-width="16"/>
+      ${NODES.map(node).join("")}
+      <circle cx="${cx}" cy="${cy + R + 90}" r="62" fill="#1f2020" stroke="rgba(255,255,255,.85)" stroke-width="16"/>
+      <text x="${cx + 92}" y="${cy + R + 86}" font-size="24" fill="#fff">ПЛАНЕТА</text><text x="${cx + 92}" y="${cy + R + 114}" font-size="18" fill="rgba(255,255,255,.7)">ЭКСПЕДИЦИИ · 3 ИЗ 8 ЗОН</text>
+      ${here === "hub" ? `<circle cx="${cx}" cy="${cy}" r="108" stroke="rgba(255,255,255,.55)" stroke-width="2" stroke-dasharray="6 8"/>` : ""}
+      <circle cx="${cx}" cy="${cy}" r="86" fill="#1f2020" stroke="rgba(255,255,255,.9)" stroke-width="16"/>
+      <text x="${cx}" y="${cy + 8}" text-anchor="middle" font-size="24" fill="#fff">ХАБ</text>
+      ${here === "hub" ? `<text x="${cx}" y="${cy + 38}" text-anchor="middle" font-size="18" fill="rgba(255,255,255,.7)">ВЫ ЗДЕСЬ</text>` : ""}
+    </svg>`;
+  };
+  const base = (L, sk) => shell(L, sk, 0, [[138, 962], [1120, 661]], `
+    ${[["ДЕНЬ", "3 · 14:20"], ["ОЧКИ", "3"], ["ХРАНИЛИЩЕ", "12/30"], ["ЗАДАЧИ", "5/58"]].map(([a, b], i) => `<div class="stat" style="left:${173 + i * 228}px;width:216px;${sk === 2 ? "top:244px" : ""}"><span>${a}</span><b>${b}</b></div>`).join("")}
+    ${hub(L)}
+    ${sk === 2 ? "" : `<div class="dv" style="left:1110px;top:196px;height:716px"></div>`}
+    <div class="ab" style="left:1150px;top:196px;width:600px;height:4px;background:${LABC.chemo}"></div>
+    <div class="ab mut t20" style="left:1150px;top:222px">ЛАБОРАТОРИЯ</div>
+    <div class="ab" style="left:1150px;top:254px;display:flex;align-items:center;gap:18px;font-size:48px;letter-spacing:.02em;color:${LABC.chemo}">${li("chemo", 48, `color:${LABC.chemo}`)}ХЕМОФОРМ</div>
+    <div class="ab mut t20" style="left:1150px;top:324px">УРОВЕНЬ 1 · ЗАДАЧ 2 ИЗ 12</div>
+    <div class="ab mut t20" style="left:1150px;top:380px">СЕЙЧАС</div>
+    <div class="ab" style="left:1150px;top:410px;font-size:28px;letter-spacing:.02em">АНАЛИЗ ПРОБЫ КР-01</div>
+    <div class="ab mut t20" style="left:1150px;top:452px">ИК-СПЕКТРОМЕТР · ОСТАЛОСЬ 6 МИН</div>
+    <div class="ab prog" style="left:1150px;top:490px;width:600px"><i style="width:60%;background:${LABC.chemo}"></i></div>
+    <div class="ab mut t20" style="left:1150px;top:512px">ПРОБА 45 % · 4,5 МЛ</div>
+    <div class="ab mut t20" style="left:1150px;top:570px">ЗАДАЧА</div>
+    <div class="ab" style="left:1150px;top:600px;font-size:28px;letter-spacing:.02em">ГАЗ В ЛЕДНИКЕ</div>
+    <div class="ab mut t20" style="left:1150px;top:642px">ШАГ 3 ИЗ 5: ИЗМЕРЬТЕ МАССУ И СПЕКТР</div>
+    <div class="ab" style="left:1150px;top:692px;display:flex;gap:14px;width:600px"><span class="btn f" style="flex:1">К ЗАДАЧЕ</span><span class="btn" style="flex:1">ОТСЛЕДИТЬ</span></div>
+    <div class="ab" style="left:1150px;top:782px;width:600px"><div class="hd" style="margin-bottom:10px">ЭКСПЕДИЦИИ</div>
+      <div class="kvb"><span>ПРОБЫ НАЙДЕНЫ</span><b>2 · КР-01, КР-02</b></div><div class="kvb"><span>ЗОНЫ ИССЛЕДОВАНЫ</span><b>3 ИЗ 8</b></div></div>`);
+
+  /* ===================== page ===================== */
+  const VARIANTS = {
+    esc: [
+      { t: "1 · Как у тебя, выверено", s: "Твой NX_Pause без изменений в композиции: размеры, отступы и группы те же. Добавлена эмблема за логотипом, как в главном меню.", screens: [escE1],
+        n: ["Выбранный пункт — твоя плашка и черта 4 px снизу, как у активной вкладки в Tab. Пауза и Tab выделяют одинаково.", "Ничего не надо переучивать. Самый спокойный вариант, сцена хорошо видна.", "Не видно, где игрок и когда было сохранение. Это скажет только окно подтверждения при выходе."] },
+      { t: "2 · Плашки одной ширины", s: "Та же середина, но каждый пункт лежит на стеклянной плашке одной ширины, как строки задач в Tab. Под логотипом — где игрок.", screens: [escE2],
+        n: ["Плашки из твоего аккордеона задач. Справа на плашке короткая подсказка: «7 сохранений», «−8 мин».", "Пауза похожа на Tab — одно семейство. Видно лабораторию и цену выхода.", "Плашки тяжелее твоего чистого списка. Шрифт пунктов меньше — 40 px вместо 56."] },
+      { t: "3 · Полоса внизу", s: "Логотип с эмблемой по центру, пункты — в стеклянной полосе внизу, как вкладки Tab. Над полосой одна строка о выбранном пункте.", screens: [escE3],
+        n: ["Попробовал другое: пункты в строку, выбор стрелками. Полоса та же, что у вкладок Tab.", "Сцена почти открыта. Логотип и эмблема работают как заставка паузы.", "Шесть пунктов в строку — мелко (28 px). «Выход» рядом с «Продолжить» по горизонтали — легче промахнуться."] },
+    ],
+    tab: [
+      { t: "1 · Как у тебя, выверено", s: "Одна стеклянная панель, полоса вкладок с Q/E, «НАЗАД» внизу. У предметов снизу черта цвета лаборатории.", sk: 1,
+        n: ["Цветная черта у ячейки — какой лаборатории нужен предмет. Справа внизу — где игрок. Активная вкладка и выбранная ячейка в цвете лаборатории.", "Ближе всего к твоему Figma. Всё читается крупно.", "Одна большая панель: колонки разделяет только тонкая черта."] },
+      { t: "2 · Отдельные карточки", s: "Вкладки — отдельные стеклянные плашки. Каждая колонка — своя карточка с полосой-заголовком, как карточки настроек.", sk: 2,
+        n: ["Карточки из NX_Settings и выбора лаборатории. Между колонками воздух вместо черты.", "Колонки хорошо отделены, проще собирать в Rive из одинаковых карточек.", "Больше стекла на экране, фон виден меньше. Плашки вкладок рядом друг с другом пестрят."] },
+      { t: "3 · Иконки и счётчики", s: "Полоса вкладок с иконками и счётчиками, активная залита целиком. Панелей нет, только черты на затемнённом фоне.", sk: 3,
+        n: ["Залитая вкладка — твоя кнопка в «нажатом» состоянии из NX · Components. Счётчики: 5 задач, 3/30 в рюкзаке, +2 статьи.", "Видно, где что-то новое, не открывая вкладку. Самый лёгкий по стеклу.", "Вкладки мельче (28 px). Без панелей текст держится только на затемнении."] },
+    ],
+  };
+  const LAB_ORDER = ["station", "chemo", "bio", "quant"];
+  let big = "station";
+  try { const s = localStorage.getItem("nx-menus2-lab"); if (LABS[s]) big = s; } catch (e) {}
+  const other = () => (big === "chemo" ? "station" : "chemo");
+
+  const scrStyle = L => `--acc:${L.acc};--acc-rgb:${L.rgb};--sel:${L.sel};--ink:${L.ink}`;
+  const fitOne = c => { const s = c.firstElementChild; if (s) s.style.transform = `scale(${c.clientWidth / 1920})`; };
+  const mount = (comp, fn, labKey) => {
+    const L = LABS[labKey];
+    comp.innerHTML = `<div class="scr" style="${scrStyle(L)}">${fn(L)}</div>`;
+    const scr = comp.firstElementChild;
+    scr.querySelectorAll("[data-group]").forEach(g => g.querySelectorAll("[data-pick]").forEach(t => {
+      const pick = () => {
+        g.querySelectorAll("[data-pick]").forEach(o => o.classList.toggle("sel", o === t));
+        const out = scr.querySelector("[data-out]"), i = +t.dataset.pick;
+        if (out && g.dataset.panel === "I") out.innerHTML = itemPanel(i, 1140);
+        if (out && g.hasAttribute("data-cap")) out.textContent = CAPS(L, i);
+      };
+      t.addEventListener("mouseenter", pick); t.addEventListener("focus", pick);
+    }));
+    fitOne(comp);
+  };
+
+  const regs = [];
+  const add = (c, fn, lab, capEl, capTxt) => regs.push({ c, fn, lab, capEl, capTxt });
+  VARIANTS.esc.forEach(v => {
+    const art = document.createElement("article"); art.className = "v";
+    art.innerHTML = `<header><h3>${v.t}</h3><span>${v.s}</span></header>
+      <div class="cap" data-c0></div><div class="comp" data-a></div>
+      <div class="row2"><div><div class="cap" data-c1></div><div class="comp" data-b></div></div>
+      <div class="notes" style="grid-template-columns:minmax(0,1fr)"><p><b>ЧТО ПОМЕНЯЛ</b>${v.n[0]}</p><p><b>ЗА</b>${v.n[1]}</p><p><b>ПРОТИВ</b>${v.n[2]}</p></div></div>`;
+    document.getElementById("esc").appendChild(art);
+    add(art.querySelector("[data-a]"), v.screens[0], "big", art.querySelector("[data-c0]"), "ПАУЗА");
+    add(art.querySelector("[data-b]"), v.screens[0], "other", art.querySelector("[data-c1]"), "ТО ЖЕ");
+  });
+  VARIANTS.tab.forEach(v => {
+    const art = document.createElement("article"); art.className = "v";
+    art.innerHTML = `<header><h3>${v.t}</h3><span>${v.s}</span></header>
+      <div class="cap" data-c0></div><div class="comp" data-a></div>
+      <div class="row2"><div><div class="cap" data-c1></div><div class="comp" data-b></div></div><div><div class="cap" data-c2></div><div class="comp" data-c></div></div></div>
+      <div class="notes"><p><b>ЧТО ПОМЕНЯЛ</b>${v.n[0]}</p><p><b>ЗА</b>${v.n[1]}</p><p><b>ПРОТИВ</b>${v.n[2]}</p></div>`;
+    document.getElementById("tab").appendChild(art);
+    add(art.querySelector("[data-a]"), L => inv(L, v.sk), "big", art.querySelector("[data-c0]"), "ИНВЕНТАРЬ");
+    add(art.querySelector("[data-b]"), L => tasks(L, v.sk), "other", art.querySelector("[data-c1]"), "ЗАДАЧИ");
+    add(art.querySelector("[data-c]"), L => base(L, v.sk), "other", art.querySelector("[data-c2]"), "ОБЗОР БАЗЫ");
+  });
+  const render = () => regs.forEach(r => {
+    const lab = r.lab === "big" ? big : other();
+    mount(r.c, r.fn, lab);
+    r.capEl.textContent = `${r.capTxt} · ${LABS[lab].ui}`;
+  });
+
+  const bar = document.getElementById("bar");
+  LAB_ORDER.forEach(k => {
+    const b = document.createElement("button");
+    b.type = "button"; b.id = "lab-" + k;
+    b.innerHTML = `<i style="background:${LABS[k].key === "station" ? "#d3d3d3" : LABS[k].acc}"></i>${LABS[k].ui}`;
+    b.setAttribute("aria-pressed", String(k === big));
+    b.addEventListener("click", () => {
+      big = k; try { localStorage.setItem("nx-menus2-lab", k); } catch (e) {}
+      bar.querySelectorAll("button").forEach(o => o.setAttribute("aria-pressed", String(o === b)));
+      render();
+    });
+    bar.appendChild(b);
+  });
+  render();
+  new ResizeObserver(() => document.querySelectorAll(".comp").forEach(fitOne)).observe(document.body);
+})();
+</script>
