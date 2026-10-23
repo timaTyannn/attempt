@@ -1,0 +1,842 @@
+<title>Нексус · Tab, три системы</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500&display=swap">
+<style>
+@font-face { font-family: "Disket Mono"; font-weight: 400; src: url(data:font/ttf;base64,__DISKET_REG__) format("truetype"); }
+@font-face { font-family: "Disket Mono"; font-weight: 700; src: url(data:font/ttf;base64,__DISKET_BOLD__) format("truetype"); }
+/* Layout: review page — three whole Tab-menu systems (strips, poster, drawing sheet), each shown on all five sections at 1920×1080. Single dark look by design. */
+:root {
+  color-scheme: dark;
+  --page: #0b0b0b; --ink: #e8e8e8; --muted: #9a9a9a; --rule: #262626;
+  --mono: "Disket Mono", ui-monospace, Menlo, monospace;
+  --body: "Jost", "Segoe UI", system-ui, sans-serif;
+  --ease: cubic-bezier(.2, .7, .2, 1);
+}
+html, body { background: var(--page); color: var(--ink); }
+body { font-family: var(--body); font-size: 17px; line-height: 1.55; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--page); }
+.doc { max-width: 1240px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 34px 90px; }
+h1 { font-family: var(--mono); font-weight: 700; font-size: clamp(26px, 4vw, 40px); margin: 0 0 8px; text-wrap: balance; }
+.lead { color: var(--muted); max-width: 74ch; margin: 0; }
+.toc3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 16px 28px; margin-top: 24px; }
+.toc3 a { display: block; min-width: 0; border-top: 1px solid var(--rule); padding-top: 12px; color: inherit; text-decoration: none; }
+.toc3 b { display: block; font-family: var(--mono); font-size: 18px; margin-bottom: 4px; }
+.toc3 span { color: #bdbdbd; }
+.toc3 a:hover b, .toc3 a:focus-visible b { text-decoration: underline; }
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--page); padding-block: 12px; margin-top: 28px; border-bottom: 1px solid var(--rule); display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+.bar > span { font-family: var(--mono); font-size: 12px; letter-spacing: .12em; color: var(--muted); }
+.bar button { display: inline-flex; align-items: center; gap: 9px; padding: 8px 13px; border: 1px solid #2e2f2f; background: transparent; color: #cfcfcf; font-family: var(--mono); font-size: 13px; letter-spacing: .08em; cursor: pointer; }
+.bar button i { width: 12px; height: 12px; }
+.bar button[aria-pressed="true"] { background: #e9e9e9; color: #111; border-color: #e9e9e9; }
+.bar button:focus-visible, .scr [data-pick]:focus-visible { outline: 2px solid #8fd; outline-offset: 2px; }
+@media (max-width: 600px) { .bar { position: static; } .bar > span { width: 100%; } }
+.part { margin-top: 64px; scroll-margin-top: 70px; }
+.part > h2 { font-family: var(--mono); font-size: clamp(22px, 3vw, 32px); margin: 0; padding-bottom: 10px; border-bottom: 1px solid var(--rule); }
+.idea { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 10px 32px; margin-top: 14px; }
+.idea p { margin: 0; color: #c9c9c9; min-width: 0; }
+.idea b { display: block; font-family: var(--mono); font-weight: 400; font-size: 12px; letter-spacing: .12em; color: var(--muted); }
+.cap { font-family: var(--mono); font-size: 12px; letter-spacing: .12em; color: var(--muted); margin: 26px 0 6px; }
+.row2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 20px; }
+@media (max-width: 820px) { .row2 { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---------- 1920×1080 screen ---------- */
+.comp { position: relative; width: 100%; max-width: 100%; aspect-ratio: 16 / 9; overflow: hidden; background: #0e0f0f; }
+.scr { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; overflow: hidden; background: #000; color: #fff; font-family: var(--mono); }
+.scr * { box-sizing: border-box; }
+.ab { position: absolute; }
+.bgi { position: absolute; inset: -30px; background-size: cover; background-position: center; }
+.ov { position: absolute; inset: 0; }
+.li { display: inline-block; flex: none; line-height: 0; }
+.li svg { width: 100%; height: 100%; display: block; }
+.key { display: inline-block; width: 40px; height: 40px; flex: none; }
+.key svg { width: 100%; height: 100%; display: block; }
+.g { color: rgba(255,255,255,.6); }
+.s20 { font-size: 20px; letter-spacing: .04em; }
+.jp { font-family: var(--body); font-size: 22px; line-height: 1.45; color: rgba(255,255,255,.85); margin: 0; }
+.jp b { font-weight: 500; color: #fff; }
+.form { font-family: var(--body); font-weight: 500; }
+.ol { color: transparent; -webkit-text-stroke: 1.5px rgba(255,255,255,.5); }
+.fi { color: var(--acc); -webkit-text-stroke: 0; }
+.prog { height: 6px; background: rgba(255,255,255,.14); }
+.prog i { display: block; height: 6px; background: var(--acc); }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 12px; height: 56px; padding: 0 28px; font-size: 22px; letter-spacing: .04em; border: 1px solid rgba(255,255,255,.35); color: #fff; white-space: nowrap; }
+.btn.f { background: var(--acc); border-color: var(--acc); color: var(--ink); }
+.tag { display: inline-block; padding: 3px 9px; font-size: 18px; letter-spacing: .06em; background: var(--acc); color: var(--ink); vertical-align: middle; }
+.kv { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 11px 0; border-top: 1px solid rgba(255,255,255,.14); font-size: 20px; letter-spacing: .04em; }
+.kv span { color: rgba(255,255,255,.6); }
+.kv b { font-weight: 400; text-align: right; }
+[data-pick] { cursor: pointer; outline: none; }
+
+/* ===== A · strips ===== */
+.Aout { position: absolute; left: 48px; top: 48px; width: 1824px; height: 984px; display: flex; gap: 8px; }
+.Ao { position: relative; flex: 0 0 104px; background: rgba(255,255,255,.05); overflow: hidden; }
+.Ao .ix { position: absolute; left: 0; right: 0; top: 26px; text-align: center; font-size: 20px; color: rgba(255,255,255,.5); }
+.Ao .ic { position: absolute; left: 32px; top: 70px; width: 40px; height: 40px; color: rgba(255,255,255,.7); }
+.vl { position: absolute; left: 50%; writing-mode: vertical-rl; transform: translateX(-50%) rotate(180deg); white-space: nowrap; }
+.Ao .vl { bottom: 110px; font-size: 32px; letter-spacing: .1em; color: rgba(255,255,255,.62); }
+.Ao .ct { position: absolute; left: 12px; right: 12px; bottom: 30px; text-align: center; font-size: 20px; padding: 6px 0; background: rgba(255,255,255,.1); }
+.Ao.open { flex: 1 1 auto; background: rgba(255,255,255,.06); }
+.Ao.open::before { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgba(var(--acc-rgb), .2), rgba(var(--acc-rgb), 0) 38%); pointer-events: none; }
+.Ao.open::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: var(--acc); }
+.Ahd { position: absolute; left: 40px; right: 40px; top: 34px; display: flex; align-items: center; gap: 22px; }
+.Ahd .ix2 { font-size: 24px; color: rgba(255,255,255,.5); }
+.Ahd .tt { font-weight: 700; font-size: 60px; letter-spacing: .02em; line-height: 1; }
+.Ahd .mt { margin-left: auto; font-size: 20px; letter-spacing: .04em; color: rgba(255,255,255,.7); text-align: right; }
+.Ain { position: absolute; left: 48px; width: 1280px; display: flex; gap: 10px; }
+.Ai { position: relative; flex: 0 0 120px; background: rgba(255,255,255,.05); overflow: hidden; transition: flex .42s var(--ease), background-color .3s var(--ease); }
+.Ai:hover { background: rgba(255,255,255,.09); }
+.Ai.open { flex: 1 0 120px; background: rgba(255,255,255,.1); }
+.Ai.open::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: var(--acc); }
+.Ai .bar6 { position: absolute; left: 0; right: 0; top: 0; height: 6px; }
+.Ai .c { position: absolute; inset: 0; transition: opacity .2s var(--ease); }
+.Ai .c .ic { position: absolute; left: 30px; top: 34px; width: 60px; height: 60px; color: rgba(255,255,255,.8); }
+.Ai .c .vl { bottom: 92px; font-size: 26px; letter-spacing: .08em; color: rgba(255,255,255,.75); }
+.Ai .c .ct { position: absolute; left: 0; right: 0; bottom: 34px; text-align: center; font-size: 22px; color: rgba(255,255,255,.75); }
+.Ai .c .nw { position: absolute; right: 14px; top: 20px; width: 12px; height: 12px; border-radius: 50%; background: var(--acc); }
+.Ai.x .c { opacity: .38; }
+.Ai .o { position: absolute; left: 0; top: 0; bottom: 0; padding: 30px 32px 36px; display: flex; flex-direction: column; gap: 18px; opacity: 0; pointer-events: none; transition: opacity .2s var(--ease); }
+.Ai.open .c { opacity: 0; }
+.Ai.open .o { opacity: 1; pointer-events: auto; transition: opacity .3s var(--ease) .12s; }
+.Ai .o .hd { display: flex; align-items: center; gap: 20px; }
+.Ai .o .nm { font-weight: 700; font-size: 40px; letter-spacing: .02em; line-height: 1.05; }
+.here { margin-left: auto; padding: 6px 12px; background: var(--acc); color: var(--ink); font-size: 18px; letter-spacing: .06em; white-space: nowrap; }
+.Astat { position: absolute; left: 48px; width: 1280px; display: grid; grid-template-columns: repeat(4, 1fr); }
+.Astat div { display: flex; flex-direction: column; gap: 6px; padding-right: 20px; }
+.Astat span { font-size: 20px; letter-spacing: .04em; color: rgba(255,255,255,.6); }
+.Astat b { font-weight: 700; font-size: 64px; line-height: 1; letter-spacing: .02em; }
+.Astat b small { font-weight: 400; font-size: 26px; color: rgba(255,255,255,.6); margin-left: 12px; }
+.zones { display: flex; gap: 8px; }
+.zones i { flex: 1; height: 40px; border: 1.5px solid rgba(255,255,255,.4); }
+.zones i.d { background: rgba(255,255,255,.75); border-color: transparent; }
+.rail { display: flex; flex-direction: column; }
+.rail div { position: relative; display: flex; align-items: center; gap: 18px; min-height: 52px; font-family: var(--body); font-size: 22px; color: rgba(255,255,255,.55); }
+.rail div::before { content: ""; position: absolute; left: 11px; top: 0; bottom: 0; width: 2px; background: rgba(255,255,255,.2); }
+.rail div:first-child::before { top: 50%; } .rail div:last-child::before { bottom: 50%; }
+.rail i { position: relative; z-index: 1; width: 24px; height: 24px; flex: none; border-radius: 50%; border: 2px solid rgba(255,255,255,.5); background: #2a2b2b; }
+.rail .d { color: rgba(255,255,255,.45); text-decoration: line-through; }
+.rail .d i { background: rgba(255,255,255,.6); border-color: transparent; }
+.rail .cu { color: #fff; }
+.rail .cu i { border: 3px solid var(--acc); background: #2a2b2b; box-shadow: 0 0 0 6px rgba(var(--acc-rgb), .2); }
+.rail em { margin-left: auto; font-style: normal; font-family: var(--mono); font-size: 20px; color: rgba(255,255,255,.7); }
+.ilist { display: flex; flex-direction: column; gap: 6px; }
+.ilist .r { position: relative; display: flex; align-items: center; gap: 16px; height: 84px; padding: 0 16px; background: rgba(255,255,255,.04); font-size: 22px; letter-spacing: .02em; }
+.ilist .r .th { width: 64px; height: 64px; display: grid; place-items: center; flex: none; }
+.ilist .r .th img { max-width: 64px; max-height: 64px; }
+.ilist .r em { margin-left: auto; font-style: normal; color: rgba(255,255,255,.7); }
+.ilist .r.sel { background: rgba(var(--acc-rgb), .18); }
+.ilist .r.sel::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--acc); }
+.art { display: grid; place-items: center; }
+.art img { max-width: 100%; max-height: 100%; }
+.chain { display: flex; flex-direction: column; }
+.chain .n { position: relative; display: flex; align-items: center; gap: 14px; height: 74px; padding: 0 16px; border: 1.5px solid rgba(255,255,255,.4); font-size: 21px; letter-spacing: .02em; }
+.chain .n + .n { margin-top: 30px; }
+.chain .n + .n::before { content: ""; position: absolute; left: 40px; top: -32px; height: 30px; width: 2px; background: rgba(255,255,255,.35); }
+.chain .n .st { margin-left: auto; font-size: 18px; color: rgba(255,255,255,.65); white-space: nowrap; }
+.chain .n.done { background: rgba(255,255,255,.12); border-color: transparent; color: rgba(255,255,255,.75); }
+.chain .n.lock { border-style: dashed; color: rgba(255,255,255,.4); }
+.chain .n.run { border-color: rgba(255,255,255,.7); }
+.chain .n.sel { border: 3px solid var(--acc); background: rgba(var(--acc-rgb), .14); color: #fff; }
+.chain .n .mk { width: 26px; text-align: center; font-size: 20px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chips span { padding: 8px 14px; font-size: 20px; letter-spacing: .02em; background: rgba(255,255,255,.07); color: rgba(255,255,255,.75); }
+.chips span.on { background: var(--acc); color: var(--ink); }
+.figbox { border: 1px solid rgba(255,255,255,.18); display: grid; place-items: center; color: #fff; }
+.figbox svg { display: block; }
+.figcap { font-family: var(--body); font-size: 20px; color: rgba(255,255,255,.6); }
+.srch { display: flex; align-items: center; gap: 14px; height: 56px; padding: 0 18px; border: 1px solid rgba(255,255,255,.3); font-size: 20px; color: rgba(255,255,255,.55); }
+
+/* ===== B · poster ===== */
+.Bmq { position: absolute; top: 52px; display: flex; gap: 96px; white-space: nowrap; }
+.Bmq span { font-weight: 700; font-size: 116px; line-height: 1; letter-spacing: .02em; color: transparent; -webkit-text-stroke: 1.5px rgba(255,255,255,.32); }
+.Bmq span.on { color: #fff; -webkit-text-stroke: 0; }
+.Bun { position: absolute; top: 182px; height: 6px; background: var(--acc); }
+.Bkey { position: absolute; top: 88px; padding: 10px; background: rgba(8,9,9,.9); }
+.Bl { position: relative; display: flex; align-items: center; gap: 22px; }
+.Bl .w { font-weight: 700; line-height: 1; letter-spacing: .02em; white-space: nowrap; color: transparent; -webkit-text-stroke: 1.5px rgba(255,255,255,.5); }
+.Bl.sel .w { color: var(--acc); -webkit-text-stroke: 0; }
+.Bl.done .w { color: rgba(255,255,255,.42); -webkit-text-stroke: 0; }
+.Bl.lock .w { -webkit-text-stroke-color: rgba(255,255,255,.18); }
+.Bl .lb { font-size: 20px; letter-spacing: .06em; color: rgba(255,255,255,.6); white-space: nowrap; }
+.Bl .ct { margin-left: auto; font-size: 28px; color: rgba(255,255,255,.7); }
+.Bl.sel .ct { color: #fff; }
+.Bfoot { position: absolute; left: 100px; right: 100px; top: 1010px; display: flex; justify-content: space-between; font-size: 20px; letter-spacing: .06em; color: rgba(255,255,255,.6); }
+.Bfoot b { font-weight: 400; color: var(--acc); }
+.abc { position: absolute; display: flex; gap: 0; }
+.abc span { width: 58px; height: 52px; display: grid; place-items: center; font-size: 28px; color: rgba(255,255,255,.18); }
+.abc span.a { color: rgba(255,255,255,.85); }
+.abc span.on { background: var(--acc); color: var(--ink); }
+
+/* ===== C · drawing sheet ===== */
+.Csheet { position: absolute; left: 40px; top: 84px; width: 1840px; height: 960px; background: rgba(13,14,14,.94); border: 1px solid rgba(255,255,255,.22); }
+.Cframe { position: absolute; left: 120px; top: 104px; width: 1740px; height: 920px; border: 2px solid rgba(255,255,255,.75); pointer-events: none; }
+.Ctabs { position: absolute; left: 120px; top: 34px; display: flex; gap: 6px; align-items: flex-end; }
+.Ctabs span { position: relative; height: 50px; display: flex; align-items: center; gap: 12px; padding: 0 22px; font-size: 21px; letter-spacing: .04em; color: rgba(255,255,255,.5); background: rgba(13,14,14,.7); border: 1px solid rgba(255,255,255,.2); border-bottom: 0; }
+.Ctabs span i { font-style: normal; color: rgba(255,255,255,.4); }
+.Ctabs span.on { height: 51px; color: #fff; background: rgb(13,14,14); border-color: rgba(255,255,255,.22); z-index: 2; }
+.Ctabs span.on::before { content: ""; position: absolute; left: -1px; right: -1px; top: -1px; height: 4px; background: var(--acc); }
+.Ctabs span.on i { color: var(--acc); }
+.Cdes { position: absolute; left: 120px; top: 104px; width: 280px; height: 56px; border: 2px solid rgba(255,255,255,.75); border-top: 0; border-left: 0; display: grid; place-items: center; font-size: 22px; letter-spacing: .04em; }
+.Cdes span { transform: rotate(180deg); }
+.stamp { position: absolute; left: 1100px; top: 864px; width: 760px; height: 160px; border-top: 2px solid rgba(255,255,255,.75); border-left: 2px solid rgba(255,255,255,.75); display: grid; grid-template-columns: 300px 1fr 210px; font-size: 20px; letter-spacing: .02em; }
+.stamp > div { border-right: 1px solid rgba(255,255,255,.4); display: grid; }
+.stamp > div:last-child { border-right: 0; }
+.stamp .sg { grid-template-rows: repeat(4, 1fr); }
+.stamp .sg div { display: grid; grid-template-columns: 112px 1fr; border-bottom: 1px solid rgba(255,255,255,.25); }
+.stamp .sg div:last-child { border-bottom: 0; }
+.stamp .sg span { padding: 0 8px; display: flex; align-items: center; border-right: 1px solid rgba(255,255,255,.25); color: rgba(255,255,255,.65); white-space: nowrap; overflow: hidden; }
+.stamp .sg span:last-child { border-right: 0; }
+.stamp .sg b { font-weight: 400; color: #fff; }
+.stamp .nm { grid-template-rows: 1fr 1fr; }
+.stamp .nm div { display: grid; place-items: center; text-align: center; }
+.stamp .nm div:first-child { border-bottom: 1px solid rgba(255,255,255,.4); font-size: 28px; }
+.stamp .nm div:last-child { font-weight: 700; font-size: 26px; line-height: 1.1; }
+.stamp .rt { grid-template-rows: 1fr 1fr 2fr; }
+.stamp .rt div { display: grid; grid-template-columns: repeat(2, 1fr); border-bottom: 1px solid rgba(255,255,255,.4); }
+.stamp .rt div span { display: grid; place-items: center; border-right: 1px solid rgba(255,255,255,.25); color: rgba(255,255,255,.65); }
+.stamp .rt div span:last-child { border-right: 0; }
+.stamp .rt div b { font-weight: 400; color: #fff; }
+.stamp .rt div.o { grid-template-columns: 1fr; border-bottom: 0; place-items: center; text-align: center; font-size: 18px; line-height: 1.3; color: rgba(255,255,255,.75); }
+.Ckeys { position: absolute; top: 40px; display: flex; gap: 10px; }
+.tb { position: absolute; border-collapse: collapse; font-size: 20px; letter-spacing: .02em; }
+.tb th { font-weight: 400; color: rgba(255,255,255,.65); border: 1px solid rgba(255,255,255,.5); border-top-width: 2px; padding: 0 10px; height: 56px; text-align: center; }
+.tb td { border-left: 1px solid rgba(255,255,255,.5); border-right: 1px solid rgba(255,255,255,.5); border-bottom: 1px solid rgba(255,255,255,.16); padding: 0 10px; height: 44px; white-space: nowrap; }
+.tb td.c { text-align: center; }
+.tb tr.sec td { text-align: center; color: rgba(255,255,255,.75); }
+.tb tr.sec td u { text-decoration: underline; text-underline-offset: 5px; }
+.tb tr.sel td { background: var(--acc); color: var(--ink); }
+.tb tr.dim td { color: rgba(255,255,255,.4); }
+.tb tr[data-pick]:not(.sel):hover td { background: rgba(255,255,255,.06); }
+.TT { font-size: 22px; letter-spacing: .02em; }
+.tr2 { display: flex; flex-direction: column; gap: 10px; }
+.tr2 p { margin: 0; display: grid; grid-template-columns: 36px 1fr; font-family: var(--body); font-size: 22px; line-height: 1.4; color: rgba(255,255,255,.85); }
+.tr2 p i { font-style: normal; font-family: var(--mono); color: rgba(255,255,255,.6); }
+.Ctoc { display: flex; flex-direction: column; }
+.Ctoc .h { margin-top: 8px; padding: 4px 0; font-weight: 700; font-size: 20px; letter-spacing: .06em; }
+.Ctoc .h:first-child { margin-top: 0; }
+.Ctoc .e { display: flex; align-items: center; gap: 10px; height: 36px; padding: 0 10px; font-family: var(--body); font-size: 21px; color: rgba(255,255,255,.85); }
+.Ctoc .e .ld { flex: 1; border-bottom: 2px dotted rgba(255,255,255,.3); transform: translateY(6px); }
+.Ctoc .e i { font-style: normal; font-family: var(--mono); font-size: 20px; color: rgba(255,255,255,.6); }
+.Ctoc .e.sel { background: var(--acc); color: var(--ink); }
+.Ctoc .e.sel .ld { border-color: rgba(0,0,0,.35); }
+.Ctoc .e.sel i { color: var(--ink); }
+.Ctoc .e.lk { color: rgba(255,255,255,.4); }
+.sec2 { font-weight: 700; font-size: 22px; letter-spacing: .04em; margin: 0 0 8px; }
+</style>
+
+<div class="doc">
+  <h1>Нексус · Tab, три системы</h1>
+  <p class="lead">Три новые идеи меню станции. Каждая собрана целиком, на всех пяти разделах: обзор базы, задачи, инвентарь, исследования, справочник. Растут из вариантов «Приборов», которые понравились: полосы-аккордеон, типографский постер с бегущей строкой и чертежи в 1 px. Интерфейс бело-серый; в Хемоформе выбранное становится бирюзовым — внизу каждой системы два экрана в этом цвете. Наводите курсор на полосы, строки и ячейки.</p>
+  <nav class="toc3" aria-label="Системы">
+    <a href="#strips"><b>А · ПОЛОСЫ</b><span>Разделы — вертикальные полосы на весь экран. Внутри раздела тоже полосы, открыта одна.</span></a>
+    <a href="#poster"><b>Б · ПОСТЕР</b><span>Огромные слова. Разделы бегущей строкой, выбранное залито, остальное контуром.</span></a>
+    <a href="#sheet"><b>В · ЧЕРТЁЖ</b><span>Каждый раздел — лист чертежа: рамка, штамп, спецификация, схемы и выноски.</span></a>
+  </nav>
+  <div class="bar" id="bar"><span>ЦВЕТ ОСНОВНЫХ ЭКРАНОВ</span></div>
+  <div id="systems"></div>
+</div>
+
+<script>
+/*__NXSVG__*/
+(() => {
+  const BG = { hub: "data:image/jpeg;base64,__BG_HUB__", inv: "data:image/jpeg;base64,__BG_INV__" };
+  const IMG = { cher: "data:image/png;base64,__P_CHER__", potato: "data:image/png;base64,__P_POTATO__", scab: "data:image/png;base64,__P_SCAB__" };
+  const UI = {
+    station: { key: "station", ui: "СТАНЦИЯ", where: "ХАБ СТАНЦИИ", acc: "#ececec", rgb: "236,236,236", ink: "#141414" },
+    chemo: { key: "chemo", ui: "ХЕМОФОРМ", where: "ХЕМОФОРМ", acc: "#3dd4c4", rgb: "61,212,196", ink: "#0b201e" },
+  };
+
+  /* ---------- icons ---------- */
+  const LINE = {
+    hub: `<circle cx="32" cy="34" r="9"/><circle cx="32" cy="9" r="5"/><circle cx="54" cy="44" r="5"/><circle cx="10" cy="44" r="5"/><path d="M32 25V14M40 38l10 4M24 38l-10 4"/>`,
+    tasks: `<path d="M10 14h8v8h-8zM10 30h8v8h-8zM10 46h8v8h-8zM26 18h28M26 34h28M26 50h20"/>`,
+    inv: `<path d="M14 22h36v32H14zM22 22v-5a10 10 0 0 1 20 0v5M14 34h36M28 34v6h8v-6"/>`,
+    tree: `<circle cx="32" cy="10" r="5"/><circle cx="14" cy="52" r="5"/><circle cx="32" cy="52" r="5"/><circle cx="50" cy="52" r="5"/><path d="M32 15v32M32 30H14v17M32 30h18v17"/>`,
+    book: `<path d="M32 16c-6-4-14-5-22-4v38c8-1 16 0 22 4 6-4 14-5 22-4V12c-8-1-16 0-22 4zM32 16v38"/>`,
+    vial: `<path d="M22 18h20v30a10 10 0 0 1-20 0z"/><path d="M19 8h26v10H19zM22 36h20"/><circle cx="29" cy="46" r="2"/><circle cx="35" cy="42" r="1.5"/>`,
+    water: `<path d="M26 6h12v8l6 8v34H20V22l6-8z"/><path d="M20 38c4-3 8 3 12 0s8 3 12 0"/>`,
+    quartz: `<path d="M32 4l12 14v28L32 60 20 46V18z"/><path d="M20 18l12 6 12-6M32 24v36"/>`,
+    lens: `<ellipse cx="32" cy="32" rx="13" ry="24"/><path d="M26 16c-4 8-4 24 0 32"/>`,
+    filter: `<ellipse cx="32" cy="16" rx="20" ry="6"/><path d="M12 16v30c0 3 9 6 20 6s20-3 20-6V16M20 30h24M20 39h24"/>`,
+    battery: `<path d="M14 16h36v40H14zM24 10h16v6H24zM35 24l-8 12h11l-8 12"/>`,
+    flask: `<path d="M26 6h12M28 6v16L14 54h36L36 22V6M20 42h24"/>`,
+    cuvette: `<path d="M22 10h20v46H22zM22 18h20M26 38h12"/>`,
+    planet: `<circle cx="32" cy="32" r="22"/><path d="M32 10v44M10 32h44M16.4 16.4l31.2 31.2M47.6 16.4L16.4 47.6"/><path d="M32 32L32 10A22 22 0 0 1 54 32z" fill="currentColor" stroke="none" opacity=".5"/>`,
+    dev: `<path d="M8 18h48v32H8zM14 24h22v20H14zM42 26h8M42 34h8M42 42h8M18 50v6M46 50v6"/><path d="M16 38l5-8 4 5 4-9 5 12"/>`,
+    search: `<circle cx="27" cy="27" r="16"/><path d="M39 39l15 15"/>`,
+  };
+  const SVGL = d => `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+  const ico = (k, s, st = "") => `<span class="li" style="width:${s}px;height:${s}px;${st}">${LINE[k] ? SVGL(LINE[k]) : NXSVG[k]}</span>`;
+  const key = k => `<span class="key">${NXSVG[k]}</span>`;
+  const bg = (k, a) => `<div class="bgi" style="background-image:url(${BG[k]})"></div><div class="ov" style="background:rgba(5,6,6,${a})"></div>`;
+
+  /* ---------- game content ---------- */
+  const TABS = ["ОБЗОР БАЗЫ", "ЗАДАЧИ", "ИНВЕНТАРЬ", "ИССЛЕДОВАНИЯ", "СПРАВОЧНИК"];
+  const TICO = ["hub", "tasks", "inv", "tree", "book"];
+  const TCNT = ["", "5", "12/30", "3", "+2"];
+  const LABS = [
+    { k: "quant", n: "КВАНТОФОРМ", c: "#ea7d3c", ic: "quant", st: "НОВОЕ ЗАДАНИЕ", lvl: 1, t: 1, r: "0 из 2", note: "Оптический стол собран наполовину. Подойдите к рабочей зоне, чтобы начать." },
+    { k: "geo", n: "ГЕОФОРМ", c: "#f0c23a", ic: "geo", st: "СВОБОДНА", lvl: 1, t: 1, r: "1 из 2", note: "Бур готов. Ждёт кернов из следующей экспедиции." },
+    { k: "bio", n: "БИОФОРМ", c: "#8cc63f", ic: "bio", st: "СБОР ОБРАЗЦОВ", lvl: 2, t: 1, p: 50, r: "1 из 3", note: "Теплица запущена. Для полива нужны пробы воды." },
+    { k: "chemo", n: "ХЕМОФОРМ", c: "#3dd4c4", ic: "chemo", st: "АНАЛИЗ ПРОБЫ КР-01", lvl: 1, t: 2, p: 60, r: "1 из 5", note: "ИК-спектрометр работает, осталось 6 минут. В пробирке 45 % пробы — 4,5 мл." },
+    { k: "terra", n: "ТЕРРАФОРМ", c: "#7f8a99", ic: "astro", st: "ЗАКРЫТА", lvl: 0, t: 0, x: 1, note: "Откроется, когда станция дойдёт до уровня 3." },
+  ];
+  const LAB = Object.fromEntries(LABS.map(l => [l.k, l]));
+  const STATS = [["ДЕНЬ", "03", "14:20"], ["ОЧКИ", "3", ""], ["ХРАНИЛИЩЕ", "12", "/ 30"], ["ЗАДАЧИ", "5", "ВЫП. 12"]];
+  const EVENTS = [["12:15", "Возвращение из экспедиции · 2 пробы"], ["13:40", "Открыта статья «ИК-спектрометр»"], ["14:02", "Проба КР-01 на столе"], ["14:20", "Идёт анализ"]];
+  const TASKS = [
+    { lab: "quant", n: "ПОДГОТОВКА", s: "0/2", nw: 1, d: "Квантоформ ещё не запускали. Осмотритесь и найдите рабочую зону.", steps: [["Осмотритесь", 0], ["Подойдите к рабочей зоне", 0]], cur: 0, rew: ["Откроет Квантоформ"] },
+    { lab: "geo", n: "РАЗВЕДКА ЗОН", s: "3/8", d: "Пройдите восемь зон вокруг станции и отметьте, где брать пробы.", steps: [["Зоны 1–3: равнина, озеро, ледник", 1], ["Зона 4: каньон «Восточный»", 0], ["Зоны 5–8", 0]], cur: 1, rew: ["+1 очко за каждые 4 зоны"] },
+    { lab: "bio", n: "СБОР ОБРАЗЦОВ", s: "1/2", d: "Теплице нужны местные растения и вода для полива.", steps: [["Соберите 3 растения", 1], ["Возьмите пробы воды", 0]], cur: 1, rew: ["+1 очко", "Теплица: второй ярус"] },
+    { lab: "chemo", n: "ГАЗ В ЛЕДНИКЕ", s: "3/5", d: "В ледяной пробе КР-01 нашли пузырьки газа: талая вода от него кислит. Определите газ.", steps: [["Доставьте пробу из ледника", 1], ["Поставьте пробу на стол", 1], ["Измерьте массу и спектр", 0], ["Соберите молекулу на голограмме", 0], ["Отправьте отчёт", 0]], cur: 2, curNote: "1 из 2", decide: 3, rew: ["+1 очко за ответ", "+1 за экономию пробы", "Статья «Углекислый газ»"] },
+    { lab: "chemo", n: "СОЛЬ В ОЗЁРНОЙ ВОДЕ", s: "0/4", d: "Осадок со дна озера оставляет на стекле белый налёт. Узнайте, что это за соль.", steps: [["Поставьте пробу КР-02 на стол", 0], ["Измерьте pH и массу", 0], ["Соберите формулу соли", 0], ["Отправьте отчёт", 0]], cur: 0, rew: ["+1 очко за ответ"] },
+  ];
+  const DONE = ["Первая вылазка", "Шлюз станции", "Склад и хранилище", "Теплица", "Бур Геоформа", "Хроматограф"];
+  const CATS = [
+    { k: "plant", n: "РАСТЕНИЯ", ic: "bio" }, { k: "probe", n: "ПРОБЫ", ic: "vial" }, { k: "min", n: "МИНЕРАЛЫ", ic: "quartz" },
+    { k: "part", n: "ДЕТАЛИ", ic: "lens" }, { k: "cons", n: "РАСХОДНИКИ", ic: "filter" },
+  ];
+  const ITEMS = [
+    { cat: "plant", img: "cher", n: "ЧЕРЕМША", q: 14, lab: "bio", type: "РАСТЕНИЕ", code: "БФ-РС.01", d: "Дикий лук с широкими листьями и белыми шариками соцветий. Растёт в тени у камней.", kv: [["ВЕС", "0,1 КГ"], ["ТИП", "ТРАВА"]], use: "БИОФОРМ · СБОР ОБРАЗЦОВ", parts: [["соцветие", .52, .18], ["лист", .3, .55], ["корень", .5, .95]] },
+    { cat: "plant", img: "potato", n: "КАРТОФЕЛЬ", q: 11, lab: "bio", type: "РАСТЕНИЕ", code: "БФ-РС.02", d: "Куст с мелкими белыми цветками. Клубни пригодятся для теплицы станции.", kv: [["ВЕС", "0,4 КГ"], ["ТИП", "КЛУБНЕПЛОД"]], use: "БИОФОРМ · ТЕПЛИЦА", parts: [["цветок", .45, .25], ["лист", .75, .5], ["стебель", .48, .9]] },
+    { cat: "plant", img: "scab", n: "СКАБИОЗА", q: 10, lab: "bio", type: "РАСТЕНИЕ", code: "БФ-РС.03", d: "Скабиоза жёлтая — лёгкое «воздушное» луговое растение с тонкими стеблями и кремово-жёлтыми цветками.", kv: [["ВЕС", "0,2 КГ"], ["ТИП", "ТРАВА"]], use: "БИОФОРМ · СБОР ОБРАЗЦОВ", parts: [["соцветие", .4, .14], ["стебель", .55, .5], ["лист", .2, .8]] },
+    { cat: "probe", ic: "vial", n: "ПРОБА КР-01", q: 1, lab: "chemo", type: "ПРОБА · ХЕМОФОРМ", code: "ХФ-ПР.01", note: "45 %", d: "Лёд из ледника «Северный» с пузырьками газа. Сейчас на лабораторном столе.", kv: [["МЕСТО", "ЛЕДНИК «СЕВЕРНЫЙ»"], ["ОСТАЛОСЬ", "45 % · 4,5 МЛ"]], use: "ХЕМОФОРМ · ГАЗ В ЛЕДНИКЕ" },
+    { cat: "probe", ic: "vial", n: "ПРОБА КР-02", q: 1, lab: "chemo", type: "ПРОБА · ХЕМОФОРМ", code: "ХФ-ПР.02", note: "100 %", d: "Осадок со дна озера. Ждёт своей очереди на столе.", kv: [["МЕСТО", "ОЗЕРО У БАЗЫ"], ["ОСТАЛОСЬ", "100 % · 10 МЛ"]], use: "ХЕМОФОРМ · СОЛЬ В ОЗЁРНОЙ ВОДЕ" },
+    { cat: "probe", ic: "water", n: "ПРОБА ВОДЫ", q: 3, lab: "bio", type: "ПРОБА · БИОФОРМ", code: "БФ-ПР.01", note: "3 × 0,5 л", d: "Талая вода из трёх точек у ледника.", kv: [["ОБЪЁМ", "3 × 0,5 Л"]], use: "БИОФОРМ · СБОР ОБРАЗЦОВ" },
+    { cat: "min", ic: "quartz", n: "КВАРЦ", q: 6, lab: "geo", type: "МИНЕРАЛ", code: "ГФ-МН.01", d: "Прозрачные шестигранные кристаллы из скальной зоны.", kv: [["ВЕС", "0,6 КГ"]], use: "ГЕОФОРМ · РАЗВЕДКА ЗОН" },
+    { cat: "part", ic: "lens", n: "ЛИНЗА", q: 2, lab: "quant", type: "ДЕТАЛЬ", code: "КФ-ДТ.01", note: "f 120 мм", d: "Собирающая линза для оптического стола.", kv: [["ФОКУС", "120 ММ"]], use: "КВАНТОФОРМ · ПОДГОТОВКА" },
+    { cat: "cons", ic: "flask", n: "РЕАГЕНТ", q: 5, lab: "chemo", type: "РАСХОДНИК", code: "ХФ-РС.01", d: "Индикатор кислотности для pH-метра.", kv: [["ХВАТИТ НА", "5 ИЗМЕРЕНИЙ"]], use: "ХЕМОФОРМ · pH-МЕТР" },
+    { cat: "cons", ic: "cuvette", n: "КЮВЕТА", q: 3, lab: "chemo", type: "РАСХОДНИК", code: "ХФ-РС.02", d: "Кварцевая кювета для ИК- и УФ-спектрометров.", kv: [["ХВАТИТ НА", "3 СПЕКТРА"]], use: "ХЕМОФОРМ · ИК-СПЕКТРОМЕТР" },
+    { cat: "cons", ic: "filter", n: "ФИЛЬТР", q: 4, lab: null, type: "РАСХОДНИК", code: "СТ-РС.01", note: "6 дней", d: "Сменный фильтр для воздуха станции.", kv: [["СРОК", "6 ДНЕЙ"]], use: "СТАНЦИЯ · ВОЗДУХ" },
+    { cat: "cons", ic: "battery", n: "БАТАРЕЯ", q: 2, lab: null, type: "РАСХОДНИК", code: "СТ-РС.02", d: "Заряд для костюма на одну вылазку.", kv: [["ЗАРЯД", "100 %"]], use: "ЭКСПЕДИЦИЯ" },
+  ];
+  const RES = [
+    { k: "station", n: "СТАНЦИЯ", ic: "emblem", code: "СТ", nodes: [
+      ["ХРАНИЛИЩЕ +10", "done", 1, "Ещё 10 ячеек на складе станции."],
+      ["ДРОН ДОСТАВКИ ПРОБ", "run", 2, "Дрон сам привозит новую пробу, когда старая кончилась.", "2 ИЗ 3 ПРОБ"],
+      ["ВТОРОЙ АККУМУЛЯТОР", "open", 2, "Вылазка в костюме длится вдвое дольше."],
+      ["СКАНЕР ЗОН", "lock", 3, "Показывает на карте, где лежат пробы.", "нужен «Дрон доставки проб»"]] },
+    { k: "chemo", n: "ХЕМОФОРМ", ic: "chemo", code: "ХФ", nodes: [
+      ["ХРОМАТОГРАФ", "done", 1, "Делит смесь на отдельные вещества."],
+      ["ИК: УЗКИЕ ЗОНЫ", "open", 1, "Зоны ИК делятся на узкие участки — связь узнаётся точнее."],
+      ["УФ-СПЕКТРОМЕТР", "open", 2, "Новый прибор: видно двойные связи и кольца. Тратит 10 % пробы."],
+      ["ЯМР-СПЕКТРОМЕТР", "lock", 3, "Показывает, как атомы водорода стоят в молекуле.", "нужен «УФ-спектрометр»"],
+      ["ГОЛОГРАММА: 6 АТОМОВ", "lock", 2, "На голограмме собираются молекулы до шести тяжёлых атомов.", "нужен «ЯМР-спектрометр»"]] },
+    { k: "bio", n: "БИОФОРМ", ic: "bio", code: "БФ", nodes: [
+      ["ТЕПЛИЦА", "done", 1, "Растения растут под лампами станции."],
+      ["СУШИЛЬНЫЙ ШКАФ", "open", 1, "Высушенные образцы не портятся."],
+      ["МИКРОСКОП", "lock", 2, "Клетки растений в 400-кратном увеличении.", "нужен «Сушильный шкаф»"]] },
+    { k: "quant", n: "КВАНТОФОРМ", ic: "quant", code: "КФ", nodes: [
+      ["ОПТИЧЕСКИЙ СТОЛ", "open", 1, "Стол для опытов со светом."],
+      ["ЛАЗЕР", "lock", 2, "Луч одной длины волны.", "нужен «Оптический стол»"]] },
+    { k: "geo", n: "ГЕОФОРМ", ic: "geo", code: "ГФ", nodes: [
+      ["БУР", "done", 1, "Достаёт керн с глубины до 2 м."],
+      ["СЕЙСМОДАТЧИК", "lock", 2, "Слышит пустоты под поверхностью.", "нужно 4 зоны"]] },
+  ];
+  const RSTATE = { done: "ГОТОВО", open: "ДОСТУПНО", run: "ИДЁТ", lock: "ЗАКРЫТО" };
+  const RMARK = { done: "✓", open: "○", run: "◐", lock: "—" };
+  const POINTS = 3;
+
+  // reference: one full article per category, the rest are titles (some locked)
+  const ART = {
+    hub: { t: "ХАБ СТАНЦИИ", cat: "СТАНЦИЯ", sub: "СТАНЦИЯ · ОТКРЫТА В ДЕНЬ 1", fig: "hub", cap: "Рис. 1 — План станции, вид сверху", p: ["Центральный зал станции. Отсюда ведут переходы во все пять лабораторий, здесь же склад и шлюз для экспедиций."], kv: [["ДИАМЕТР", "42 М"], ["ЛАБОРАТОРИЙ", "5"], ["СКЛАД", "30 ЯЧЕЕК"]] },
+    glacier: { t: "ЛЕДНИК «СЕВЕРНЫЙ»", cat: "ПЛАНЕТА", sub: "ПЛАНЕТА · ЗОНА 3 · НОВАЯ", nw: 1, fig: "glacier", cap: "Рис. 1 — Разрез ледника", p: ["Ледяной язык в 4 км к северу от станции. Во льду вмёрзли пузырьки газа — его пробы уходят в Хемоформ."], kv: [["РАССТОЯНИЕ", "4 КМ"], ["ТОЛЩИНА ЛЬДА", "ДО 60 М"], ["ТЕМПЕРАТУРА", "−38 °C"], ["ПРОБЫ", "КР-01"]] },
+    co2: { t: "УГЛЕКИСЛЫЙ ГАЗ", f: "CO₂", cat: "ХИМИЯ", sub: "ХИМИЯ · ОТКРЫТА В ДЕНЬ 3 · НОВАЯ", nw: 1, fig: "co2", cap: "Рис. 1 — Молекула CO₂", p: ["Газ без цвета и запаха. Атом углерода держит два атома кислорода двойными связями, все три — на одной линии.", "В воде часть газа становится слабой угольной кислотой. Поэтому талая вода ледника кислит."], kv: [["МОЛЯРНАЯ МАССА", "44 Г/МОЛЬ"], ["ИК-ПОЛОСЫ", "2349 И 667 СМ⁻¹"], ["СВЯЗЬ C=O", "116 ПМ"], ["НАЙДЕН", "ПРОБА КР-01"]] },
+    scab: { t: "СКАБИОЗА ЖЁЛТАЯ", cat: "БИОЛОГИЯ", sub: "БИОЛОГИЯ · ОТКРЫТА В ДЕНЬ 2", fig: "scab", cap: "Рис. 1 — Общий вид", p: ["Лёгкое «воздушное» луговое растение с тонкими стеблями и кремово-жёлтыми цветками, похожими на подушечки с иголками."], kv: [["ВЕС", "0,2 КГ"], ["ТИП", "ТРАВА"], ["ГДЕ РАСТЁТ", "ЛУГ У ОЗЕРА"]] },
+    ir: { t: "ИК-СПЕКТРОМЕТР", cat: "ПРИБОРЫ", sub: "ПРИБОРЫ · ХЕМОФОРМ", fig: "ir", cap: "Рис. 1 — ИК-спектр пробы КР-01", p: ["Светит на пробу инфракрасным светом и показывает, какие частоты она поглотила. Каждая связь поглощает свою полосу."], kv: [["РАСХОД ПРОБЫ", "10 %"], ["ДИАПАЗОН", "4000–400 СМ⁻¹"], ["ГДЕ", "ХЕМОФОРМ"]] },
+    level: { t: "УРОВЕНЬ ЛАБОРАТОРИИ", cat: "СТАНЦИЯ", sub: "СТАНЦИЯ", p: ["Лаборатория растёт с каждой закрытой задачей. Новый уровень открывает исследования и приборы."], kv: [["ХЕМОФОРМ", "УРОВЕНЬ 1"], ["БИОФОРМ", "УРОВЕНЬ 2"], ["ДО УРОВНЯ 2", "3 ЗАДАЧИ"]] },
+  };
+  const NICE = { "KEPLER-442B": "Kepler-442b", "ЛЕДНИК «СЕВЕРНЫЙ»": "Ледник «Северный»", "КИСЛОТЫ И PH": "Кислоты и pH", "ТАБЛИЦА ИК-ЗОН": "Таблица ИК-зон", "ИК-СПЕКТРОМЕТР": "ИК-спектрометр", "PH-МЕТР": "pH-метр" };
+  const nice = t => NICE[t] || t[0] + t.slice(1).toLowerCase();
+  const LOCKED = t => ({ t, lock: 1, p: [t === "УГОЛЬНАЯ КИСЛОТА" ? "Откроется после задачи «Газ в леднике»." : t === "УЗКИЕ ЗОНЫ ИК" ? "Откроется после исследования «ИК: узкие зоны»." : "Откроется после исследования «УФ-спектрометр»."], kv: [] });
+  const RCATS = [
+    { k: "station", n: "СТАНЦИЯ", ic: "emblem", items: [["ХАБ СТАНЦИИ", "hub", 1], ["ХРАНИЛИЩЕ", 0, 2], ["ДРОН ДОСТАВКИ", 0, 3], ["УРОВЕНЬ ЛАБОРАТОРИИ", "level", 4]] },
+    { k: "planet", n: "ПЛАНЕТА", ic: "planet", nw: 1, items: [["KEPLER-442B", 0, 5], ["ЛЕДНИК «СЕВЕРНЫЙ»", "glacier", 6], ["ОЗЕРО У БАЗЫ", 0, 7], ["ЗОНЫ РАЗВЕДКИ", 0, 8]] },
+    { k: "chem", n: "ХИМИЯ", ic: "chemo", nw: 1, items: [["УГЛЕКИСЛЫЙ ГАЗ", "co2", 9], ["КИСЛОТЫ И PH", 0, 10], ["ГАЗЫ В ВОДЕ", 0, 11], ["ТАБЛИЦА ИК-ЗОН", 0, 12], ["МОЛЯРНАЯ МАССА", 0, 13]] },
+    { k: "bio", n: "БИОЛОГИЯ", ic: "bio", items: [["СКАБИОЗА ЖЁЛТАЯ", "scab", 14], ["ЧЕРЕМША", 0, 15], ["КАРТОФЕЛЬ", 0, 16], ["ТЕПЛИЦА", 0, 17]] },
+    { k: "dev", n: "ПРИБОРЫ", ic: "dev", items: [["ИК-СПЕКТРОМЕТР", "ir", 18], ["МАСС-СПЕКТРОМЕТР", 0, 19], ["ХРОМАТОГРАФ", 0, 20], ["PH-МЕТР", 0, 21]] },
+  ];
+
+  /* ---------- figures (1 px drawings, white) ---------- */
+  const FIG = {
+    co2: (w, h) => {
+      const cy = h / 2 + 10, cx = w / 2, d = Math.min(w * .3, 150), ro = 40, rc = 30;
+      const xs = [cx - d, cx, cx + d];
+      return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" fill="none" stroke="currentColor" stroke-width="2">
+        ${[0, 1].map(i => { const a = xs[i] + (i ? rc : ro), b = xs[i + 1] - (i ? ro : rc); return `<line x1="${a}" y1="${cy - 7}" x2="${b}" y2="${cy - 7}"/><line x1="${a}" y1="${cy + 7}" x2="${b}" y2="${cy + 7}"/>`; }).join("")}
+        <circle cx="${xs[0]}" cy="${cy}" r="${ro}"/><circle cx="${xs[1]}" cy="${cy}" r="${rc}" stroke-width="3"/><circle cx="${xs[2]}" cy="${cy}" r="${ro}"/>
+        <g fill="currentColor" stroke="none" font-size="30" text-anchor="middle" style="font-family:var(--body);font-weight:500"><text x="${xs[0]}" y="${cy + 11}">O</text><text x="${xs[1]}" y="${cy + 11}">C</text><text x="${xs[2]}" y="${cy + 11}">O</text></g>
+        <g stroke-opacity=".55" stroke-width="1.5">${[0, 1].map(i => `<line x1="${xs[i]}" y1="${cy - 50}" x2="${xs[i]}" y2="${cy - 80}"/>`).join("")}<line x1="${xs[2]}" y1="${cy - 50}" x2="${xs[2]}" y2="${cy - 80}"/>
+          ${[0, 1].map(i => `<line x1="${xs[i] + 6}" y1="${cy - 70}" x2="${xs[i + 1] - 6}" y2="${cy - 70}"/><path d="M${xs[i] + 6} ${cy - 70}l10 -5v10zM${xs[i + 1] - 6} ${cy - 70}l-10 -5v10z" fill="currentColor" stroke="none"/>`).join("")}</g>
+        <g fill="currentColor" stroke="none" font-size="20" text-anchor="middle" opacity=".75">${[0, 1].map(i => `<text x="${(xs[i] + xs[i + 1]) / 2}" y="${cy - 80}">116 ПМ</text>`).join("")}<text x="${cx}" y="${cy + 74}">180°</text></g>
+        <path d="M${cx - 44} ${cy + 46}a44 44 0 0 0 88 0" stroke-opacity=".55" stroke-width="1.5"/>
+      </svg>`;
+    },
+    ir: (w, h) => {
+      const x0 = 50, x1 = w - 20, y0 = 30, y1 = h - 50, X = v => x0 + (4000 - v) / 3600 * (x1 - x0), base = y0 + 20;
+      const pts = []; for (let v = 4000; v >= 400; v -= 20) { let y = base + 8 * Math.sin(v / 90); y += 150 * Math.exp(-(((v - 2349) / 40) ** 2)) * (y1 - y0) / 220; y += 95 * Math.exp(-(((v - 667) / 30) ** 2)) * (y1 - y0) / 220; pts.push(`${X(v).toFixed(1)},${Math.min(y, y1 - 4).toFixed(1)}`); }
+      return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M${x0} ${y0}V${y1}H${x1}" stroke-opacity=".5" stroke-width="1.5"/>
+        ${[4000, 3000, 2000, 1000, 400].map(v => `<line x1="${X(v)}" y1="${y1}" x2="${X(v)}" y2="${y1 + 8}" stroke-opacity=".5"/><text x="${X(v)}" y="${y1 + 32}" text-anchor="middle" fill="currentColor" stroke="none" font-size="18" opacity=".7">${v}</text>`).join("")}
+        <polyline points="${pts.join(" ")}"/>
+        <g stroke="var(--acc)" stroke-dasharray="5 6" stroke-width="1.5"><line x1="${X(2349)}" y1="${y0}" x2="${X(2349)}" y2="${y1}"/><line x1="${X(667)}" y1="${y0}" x2="${X(667)}" y2="${y1}"/></g>
+        <g fill="var(--acc)" stroke="none" font-size="20"><text x="${X(2349) + 10}" y="${y0 + 14}">2349</text><text x="${X(667) - 10}" y="${y0 + 14}" text-anchor="end">667</text></g>
+      </svg>`;
+    },
+    glacier: (w, h) => `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M10 ${h - 40}L${w * .25} ${h - 60}L${w * .45} ${h - 46}L${w * .7} ${h - 70}L${w - 10} ${h - 52}" stroke-opacity=".55"/>
+        <path d="M${w * .08} ${h - 45}C${w * .2} ${h * .22} ${w * .55} ${h * .12} ${w * .92} ${h * .3}L${w * .92} ${h - 55}" />
+        ${Array.from({ length: 14 }, (_, i) => `<circle cx="${(w * (.2 + (i * 37 % 60) / 100)).toFixed(0)}" cy="${(h * (.4 + (i * 23 % 35) / 100)).toFixed(0)}" r="${3 + i % 4}" stroke-opacity=".7"/>`).join("")}
+        <line x1="${w * .96}" y1="${h * .3}" x2="${w * .96}" y2="${h - 55}" stroke-opacity=".55" stroke-width="1.5"/><text x="${w * .96 - 8}" y="${h * .62}" text-anchor="end" fill="currentColor" stroke="none" font-size="20" opacity=".75">60 М</text>
+        <path d="M${w * .48} ${h * .5}l40 -40h120" stroke="var(--acc)" stroke-width="1.5"/><circle cx="${w * .48}" cy="${h * .5}" r="5" fill="var(--acc)" stroke="none"/><text x="${w * .48 + 46}" y="${h * .5 - 48}" fill="var(--acc)" stroke="none" font-size="20">КР-01</text>
+      </svg>`,
+    hub: (w, h) => {
+      const cx = w / 2, cy = h / 2, r = Math.min(w, h) * .2, R = Math.min(w, h) * .36;
+      return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" fill="none" stroke="currentColor" stroke-width="2">
+        ${[-90, -18, 54, 126, 198].map(a => { const t = a * Math.PI / 180, x = cx + R * Math.cos(t), y = cy + R * Math.sin(t); return `<line x1="${cx + r * Math.cos(t)}" y1="${cy + r * Math.sin(t)}" x2="${x}" y2="${y}" stroke-opacity=".6"/><rect x="${x - 26}" y="${y - 18}" width="52" height="36" fill="rgb(13,14,14)"/>`; }).join("")}
+        <circle cx="${cx}" cy="${cy}" r="${r}" fill="rgb(13,14,14)"/><circle cx="${cx}" cy="${cy}" r="${r - 8}" stroke-opacity=".5"/>
+      </svg>`;
+    },
+    scab: (w, h) => `<img src="${IMG.scab}" alt="" style="max-height:${h}px;max-width:${w}px">`,
+  };
+
+  /* =====================================================================
+     A · ПОЛОСЫ — sections are full-height strips; inside, items are strips too
+     ===================================================================== */
+  const A_OPEN = 1824 - 4 * 112;          // 1376
+  const iw = (n, total = 1280) => total - (n - 1) * 130;   // open inner strip width
+  const strip = (i, open, colour, c, o, w, cls = "") => `<div class="Ai${open ? " open" : ""}${cls}" data-pick="${i}" tabindex="0">
+      ${colour ? `<i class="bar6" style="background:${colour}"></i>` : ""}<div class="c">${c}</div><div class="o" style="width:${w}px">${o}</div></div>`;
+  const cstrip = (icon, label, count, nw) => `<span class="ic">${icon}</span>${nw ? '<i class="nw"></i>' : ""}<span class="vl">${label}</span><span class="ct">${count}</span>`;
+  const Ashell = (L, p, meta, body) => `${bg("inv", .74)}<div class="Aout">${TABS.map((t, i) => i === p
+      ? `<div class="Ao open"><div class="Ahd">${key("q")}<span class="ix2">0${i + 1}</span><span class="tt">${t}</span><span class="mt">${meta}</span>${key("e")}</div>${body}</div>`
+      : `<div class="Ao"><span class="ix">0${i + 1}</span><span class="ic">${ico(TICO[i], 40)}</span><span class="vl">${t}</span>${TCNT[i] ? `<span class="ct">${TCNT[i]}</span>` : ""}</div>`).join("")}</div>`;
+
+  const labOpen = (L, l, w) => {
+    const here = L.key === l.k;
+    if (l.k === "planet") return `<div class="hd">${ico("planet", 64)}<div><div class="nm">ПЛАНЕТА</div><div class="g s20" style="margin-top:6px">KEPLER-442B · ЭКСПЕДИЦИИ</div></div></div>
+      <div class="g s20" style="margin-top:12px">ЗОНЫ РАЗВЕДКИ · 3 ИЗ 8</div><div class="zones">${[1, 1, 1, 0, 0, 0, 0, 0].map(d => `<i class="${d ? "d" : ""}"></i>`).join("")}</div>
+      <p class="jp">Исследованы равнина, озеро и ледник «Северный». Следующая цель — каньон «Восточный».</p>
+      <div><div class="kv"><span>ПРОБЫ НАЙДЕНЫ</span><b>КР-01, КР-02</b></div><div class="kv"><span>ВЫЛАЗКА</span><b>2 БАТАРЕИ</b></div></div>
+      <div style="margin-top:auto;display:flex;gap:12px"><span class="btn f">К ШЛЮЗУ</span><span class="btn">КАРТА ЗОН</span></div>`;
+    return `<div class="hd">${ico(l.ic, 64, `color:${l.x ? "rgba(255,255,255,.4)" : "#fff"}`)}<div><div class="nm">${l.n}</div><div class="g s20" style="margin-top:6px">${l.x ? "ЗАКРЫТА" : "УРОВЕНЬ " + l.lvl}</div></div>${here ? '<span class="here">ВЫ ЗДЕСЬ</span>' : ""}</div>
+      <div style="margin-top:10px"><div class="g s20">СЕЙЧАС</div><div style="font-size:30px;letter-spacing:.02em;margin-top:8px">${l.st}</div>
+      ${l.p ? `<div style="display:flex;align-items:center;gap:16px;margin-top:14px"><div class="prog" style="flex:1"><i style="width:${l.p}%"></i></div><span class="s20">${l.p} %</span></div>` : ""}</div>
+      <p class="jp">${l.note}</p>
+      ${l.x ? "" : `<div><div class="kv"><span>ЗАДАЧИ</span><b>${l.t}</b></div><div class="kv"><span>ИССЛЕДОВАНИЯ</span><b>${l.r}</b></div></div>`}
+      <div style="margin-top:auto;display:flex;gap:12px">${l.x ? '<span class="btn" style="opacity:.5">ЗАКРЫТА</span>' : `<span class="btn f">${here ? "К СТОЛУ" : "ПЕРЕЙТИ"}</span><span class="btn">ЗАДАЧИ · ${l.t}</span>`}</div>`;
+  };
+  const A1 = (L, S) => {
+    const list = [...LABS, { k: "planet", n: "ПЛАНЕТА", c: "#bfbfbf" }], sel = S.a ?? 3, w = iw(list.length);
+    return Ashell(L, 0, `ВЫ ЗДЕСЬ: <span style="color:var(--acc)">${L.where}</span>`, `
+      <div class="Astat" style="top:150px">${STATS.map(([a, b, c]) => `<div><span>${a}</span><b>${b}${c ? `<small>${c}</small>` : ""}</b></div>`).join("")}</div>
+      <div class="Ain" style="top:296px;height:640px" data-group="a" data-strips>${list.map((l, i) => strip(i, i === sel, l.c,
+        cstrip(ico(l.k === "planet" ? "planet" : l.ic, 60), l.n, l.k === "planet" ? "3/8" : l.x ? "—" : l.t, l.k === "quant"), labOpen(L, l, w), w, l.x ? " x" : "")).join("")}</div>`);
+  };
+
+  const taskOpen = (t) => {
+    const l = LAB[t.lab];
+    return `<div class="g s20" style="display:flex;align-items:center;gap:12px">${ico(l.ic, 30, `color:${l.c}`)}${l.n} · ЭТАП ${t.cur + 1} ИЗ ${t.steps.length}${t.nw ? ' <span class="tag" style="margin-left:6px">НОВОЕ</span>' : ""}</div>
+      <div class="nm" style="font-size:44px">${t.n}</div>
+      <p class="jp">${t.d}</p>
+      <div class="rail">${t.steps.map(([s, d], i) => `<div class="${d ? "d" : i === t.cur ? "cu" : ""}"><i></i>${s}${i === t.cur && t.curNote ? `<em>${t.curNote}</em>` : ""}</div>`).join("")}</div>
+      <div><div class="g s20" style="margin-bottom:6px">НАГРАДА</div>${t.rew.map(r => `<div class="kv"><span>${r}</span></div>`).join("")}</div>
+      <div style="margin-top:auto;display:flex;gap:12px"><span class="btn f">✓ ОТСЛЕЖИВАЕТСЯ</span><span class="btn">НА КАРТЕ</span></div>`;
+  };
+  const A2 = (L, S) => {
+    const sel = S.a ?? 3, w = iw(6);
+    return Ashell(L, 1, "АКТИВНЫЕ 5 · ВЫПОЛНЕНО 12", `
+      <div class="Ain" style="top:150px;height:786px" data-group="a" data-strips>${TASKS.map((t, i) => strip(i, i === sel, LAB[t.lab].c,
+        cstrip(ico(LAB[t.lab].ic, 60), t.n, t.s, t.nw), taskOpen(t), w)).join("")}
+        ${strip(5, sel === 5, null, cstrip(ico("tasks", 60), "ВЫПОЛНЕННЫЕ", "12"),
+          `<div class="nm">ВЫПОЛНЕННЫЕ · 12</div><div class="ilist">${DONE.map((d, i) => `<div class="r" style="height:64px;color:rgba(255,255,255,.7)"><span>✓</span>${d.toUpperCase()}<em>ДЕНЬ ${i < 3 ? 1 : 2}</em></div>`).join("")}</div><div class="g s20">ЕЩЁ 6 →</div>`, w, " x")}</div>`);
+  };
+
+  const itemDetail = (it, h = 300) => `<div class="art" style="height:${h}px;${it.img ? "" : "color:#fff"}">${it.img ? `<img src="${IMG[it.img]}" alt="" style="height:${it.img === "scab" ? h : h * .7}px">` : ico(it.ic, h * .6)}</div>
+      <div><div class="nm" style="font-size:36px">${it.n}</div><div class="g s20" style="margin-top:6px">${it.type} · ×${it.q}</div></div>
+      <p class="jp">${it.d}</p>
+      <div>${it.kv.map(([a, b]) => `<div class="kv"><span>${a}</span><b>${b}</b></div>`).join("")}</div>
+      <div class="kv" style="margin-top:auto;border:0;background:rgba(var(--acc-rgb),.16);padding:14px 16px"><span style="color:#fff">НУЖНА ДЛЯ: ${it.use}</span><b>›</b></div>`;
+  const catOpen = (c, S, w) => {
+    const items = ITEMS.filter(i => i.cat === c.k), si = Math.min(S.i ?? (c.k === "plant" ? 2 : 0), items.length - 1);
+    return `<div class="hd"><div class="nm">${c.n}</div><span class="g s20" style="margin-left:auto">${items.length} ${items.length === 1 ? "ПРЕДМЕТ" : "ПРЕДМЕТА"}</span></div>
+      <div style="display:grid;grid-template-columns:300px 1fr;gap:30px;flex:1;min-height:0">
+        <div class="ilist" data-group="i">${items.map((it, i) => `<div class="r${i === si ? " sel" : ""}" data-pick="${i}" tabindex="0"><span class="th">${it.img ? `<img src="${IMG[it.img]}" alt="">` : ico(it.ic, 48)}</span>${it.n}<em>×${it.q}</em></div>`).join("")}</div>
+        <div style="display:flex;flex-direction:column;gap:14px;min-width:0">${itemDetail(items[si], 220)}</div></div>`;
+  };
+  const A3 = (L, S) => {
+    const sel = S.a ?? 0, w = iw(5) + 0;
+    return Ashell(L, 2, "РЮКЗАК 12 / 30", `
+      <div class="Ain" style="top:150px;height:786px" data-group="a" data-strips>${CATS.map((c, i) => strip(i, i === sel, null,
+        cstrip(ico(c.ic, 60), c.n, ITEMS.filter(x => x.cat === c.k).length), catOpen(c, i === sel ? S : {}, w), w)).join("")}</div>`);
+  };
+
+  const resDetail = (b, nd) => {
+    const [n, st, cost, d, extra] = nd, can = st === "open" && cost <= POINTS;
+    return `<div class="g s20">${b.n} · ${RSTATE[st]}</div><div class="nm" style="font-size:30px">${n}</div>
+      <div style="display:flex;align-items:baseline;gap:14px"><span style="font-weight:700;font-size:96px;line-height:1">${cost}</span><span class="s20 g">${cost === 1 ? "ОЧКО" : "ОЧКА"} · У ВАС ${POINTS}</span></div>
+      <p class="jp">${d}</p>
+      ${st === "run" ? `<div><div class="g s20" style="margin-bottom:10px">ПРОГРЕСС · ${extra}</div><div class="prog"><i style="width:66%"></i></div></div>` : ""}
+      ${st === "lock" ? `<div class="kv"><span>НУЖНО</span><b>${extra}</b></div>` : ""}
+      <div style="margin-top:auto">${can ? `<span class="btn f" style="width:100%">ИССЛЕДОВАТЬ</span>` : st === "done" ? `<span class="btn" style="width:100%;opacity:.6">✓ ИССЛЕДОВАНО</span>` : st === "run" ? `<span class="btn" style="width:100%">ИДЁТ</span>` : `<span class="btn" style="width:100%;opacity:.5">ЗАКРЫТО</span>`}</div>`;
+  };
+  const branchOpen = (b, S) => {
+    const si = Math.min(S.r ?? (b.k === "chemo" ? 2 : 1), b.nodes.length - 1);
+    return `<div class="hd">${ico(b.ic, 48)}<div class="nm">${b.n}</div><span class="g s20" style="margin-left:auto">${b.nodes.filter(n => n[1] === "done").length} ИЗ ${b.nodes.length}</span></div>
+      <div style="display:grid;grid-template-columns:330px 1fr;gap:32px;flex:1;min-height:0">
+        <div class="chain" data-group="r">${b.nodes.map((nd, i) => `<div class="n ${nd[1]}${i === si ? " sel" : ""}" data-pick="${i}" tabindex="0"><span class="mk">${RMARK[nd[1]]}</span>${nd[0]}</div>`).join("")}</div>
+        <div style="display:flex;flex-direction:column;gap:16px;min-width:0">${resDetail(b, b.nodes[si])}</div></div>`;
+  };
+  const A4 = (L, S) => {
+    const sel = S.a ?? 1, w = iw(5);
+    return Ashell(L, 3, `ОЧКИ: <span style="color:var(--acc)">${POINTS}</span> · ИДЁТ: ДРОН ДОСТАВКИ ПРОБ`, `
+      <div class="Ain" style="top:150px;height:786px" data-group="a" data-strips>${RES.map((b, i) => strip(i, i === sel, null,
+        cstrip(ico(b.ic, 60), b.n, `${b.nodes.filter(n => n[1] === "done").length}/${b.nodes.length}`), branchOpen(b, i === sel ? S : {}), w)).join("")}</div>`);
+  };
+
+  const artBody = (a, w, figH, compact) => a.lock
+    ? `<div class="g s20">ЗАКРЫТО</div><div class="nm" style="font-size:36px;color:rgba(255,255,255,.5)">${a.t}</div><p class="jp">${a.p[0]}</p>`
+    : `<div class="g s20">${a.cat}</div><div class="nm" style="font-size:34px">${a.t}${a.f ? ` <span class="form" style="font-size:34px;color:rgba(255,255,255,.7)">${a.f}</span>` : ""}</div>
+      ${a.fig ? `<div class="figbox" style="height:${figH}px">${FIG[a.fig](w - 2, figH - 2)}</div><div class="figcap">${a.cap}</div>` : ""}
+      ${(compact ? a.p.slice(0, 1) : a.p).map(t => `<p class="jp">${t}</p>`).join("")}
+      <div>${(compact ? a.kv.slice(0, 3) : a.kv).map(([k, v]) => `<div class="kv"><span>${k}</span><b>${v}</b></div>`).join("")}</div>`;
+  const rcatOpen = (c, S) => {
+    const si = Math.min(S.e ?? 0, c.items.length - 1), it = c.items[si], a = it[1] ? ART[it[1]] : { t: it[0], p: ["Статья ещё пишется: откроется, когда вы встретите это в игре."], kv: [], lock: 1 };
+    return `<div class="hd"><div class="nm">${c.n}</div><span class="g s20" style="margin-left:auto">${c.items.length} СТАТЬИ</span></div>
+      <div style="display:grid;grid-template-columns:250px 1fr;gap:30px;flex:1;min-height:0">
+        <div style="display:flex;flex-direction:column;gap:14px"><div class="srch">${ico("search", 22)}ПОИСК</div>
+          <div class="ilist" data-group="e">${c.items.map(([t, k], i) => `<div class="r${i === si ? " sel" : ""}" data-pick="${i}" tabindex="0" style="height:64px;font-size:19px;${k ? "" : "color:rgba(255,255,255,.45)"}">${t}${k && ART[k].nw ? '<em><i style="display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--acc)"></i></em>' : ""}</div>`).join("")}</div></div>
+        <div style="display:flex;flex-direction:column;gap:14px;min-width:0">${artBody(a, 450, 200, 1)}</div></div>`;
+  };
+  const A5 = (L, S) => {
+    const sel = S.a ?? 2, w = iw(5);
+    return Ashell(L, 4, "СТАТЕЙ 21 · НОВЫХ 2", `
+      <div class="Ain" style="top:150px;height:786px" data-group="a" data-strips>${RCATS.map((c, i) => strip(i, i === sel, null,
+        cstrip(ico(c.ic, 60), c.n, c.items.length, c.nw), rcatOpen(c, i === sel ? S : {}), w)).join("")}</div>`);
+  };
+
+  /* =====================================================================
+     Б · ПОСТЕР — huge type; sections as a marquee, selected filled, rest outlined
+     ===================================================================== */
+  const Bshell = (L, p, body, right = "") => {
+    const order = [-2, -1, 0, 1, 2].map(d => (p + d + 5) % 5);
+    return `${bg("inv", .86)}
+      <div class="ab s20 g" style="left:0;right:0;top:22px;text-align:center">0${p + 1} / 05</div>
+      <div class="Bmq" data-mq>${order.map(i => `<span class="${i === p ? "on" : ""}">${TABS[i]}</span>`).join("")}</div>
+      <div class="Bun" data-un></div>
+      <div class="Bkey" style="left:30px">${key("q")}</div><div class="Bkey" style="right:30px">${key("e")}</div>
+      <div class="ab" style="left:0;right:0;top:214px;height:1px;background:rgba(255,255,255,.18)"></div>
+      ${body}
+      <div class="Bfoot"><span>ВЫ ЗДЕСЬ — <b>${L.where}</b></span><span>${right || "ДЕНЬ 3 · 14:20"}</span></div>`;
+  };
+  const B1 = (L, S) => {
+    const sel = S.b ?? 3, l = LABS[sel];
+    return Bshell(L, 0, `
+      <div class="ab s20 g" style="left:100px;top:252px">ДЕНЬ</div>
+      <div class="ab" style="left:90px;top:280px;font-weight:700;font-size:300px;line-height:.82">03</div>
+      <div class="ab" style="left:530px;top:452px;font-size:64px;color:rgba(255,255,255,.7)">14:20</div>
+      ${[["ОЧКИ", "3"], ["ХРАНИЛИЩЕ", "12/30"], ["ЗАДАЧИ", "5"]].map(([a, b], i) => `<div class="ab" style="left:${[100, 320, 780][i]}px;top:590px"><div class="s20 g">${a}</div><div style="font-weight:700;font-size:100px;line-height:1;margin-top:6px">${b}</div></div>`).join("")}
+      <div class="ab" style="left:100px;top:790px;width:780px"><div class="s20 g" style="display:flex;justify-content:space-between"><span>ЗОНЫ ПЛАНЕТЫ</span><span style="color:#fff">3 / 8</span></div>
+        <div class="zones" style="margin-top:12px">${[1, 1, 1, 0, 0, 0, 0, 0].map(d => `<i class="${d ? "d" : ""}" style="height:56px"></i>`).join("")}</div>
+        <p class="jp" style="margin-top:14px">Пробы КР-01 и КР-02 · следующая цель — каньон «Восточный»</p></div>
+      <div class="ab" style="left:1000px;top:250px;width:820px;display:flex;flex-direction:column" data-group="b">
+        ${LABS.map((x, i) => `<div class="Bl${i === sel ? " sel" : ""}${x.x ? " lock" : ""}" data-pick="${i}" tabindex="0" style="height:${i === sel ? 236 : 114}px;align-items:flex-start;padding-top:14px">
+          ${ico(x.ic, 44, `color:${x.x ? "rgba(255,255,255,.3)" : x.c};margin-top:6px`)}
+          <div style="flex:1;min-width:0"><div class="w" style="font-size:64px">${x.n}</div>
+            ${i === sel ? `<div style="margin-top:14px;font-size:24px;letter-spacing:.02em">${x.st}</div>${x.p ? `<div style="display:flex;align-items:center;gap:14px;margin-top:12px"><div class="prog" style="flex:1"><i style="width:${x.p}%"></i></div><span class="s20">${x.p} %</span></div>` : ""}<p class="jp" style="margin-top:12px;font-size:21px">${x.note}</p>` : `<div class="lb" style="margin-top:8px">${x.st}</div>`}</div>
+          ${L.key === x.k ? '<span class="here" style="margin-top:14px">ВЫ ЗДЕСЬ</span>' : `<span class="ct" style="margin-top:14px">${x.x ? "" : x.t}</span>`}</div>`).join("")}</div>`);
+  };
+  const B2 = (L, S) => {
+    const sel = S.b ?? 3, t = TASKS[sel];
+    return Bshell(L, 1, `
+      <div class="ab" style="left:100px;top:244px;width:980px;display:flex;flex-direction:column" data-group="b">
+        ${TASKS.map((x, i) => `<div class="Bl${i === sel ? " sel" : ""}" data-pick="${i}" tabindex="0" style="height:130px;flex-direction:column;align-items:stretch;justify-content:center;gap:8px">
+          <div class="lb" style="display:flex;align-items:center;gap:10px"><i style="width:14px;height:14px;background:${LAB[x.lab].c}"></i>${LAB[x.lab].n}${x.nw ? ' <span class="tag">НОВОЕ</span>' : ""}</div>
+          <div style="display:flex;align-items:baseline;gap:20px"><span class="w" style="font-size:66px">${x.n}</span><span class="ct">${x.s}</span></div></div>`).join("")}
+        <div class="s20 g" style="margin-top:14px">ВЫПОЛНЕННЫЕ · 12 →</div></div>
+      <div class="ab" style="left:1160px;top:250px;width:660px">
+        <div style="font-weight:700;font-size:190px;line-height:.85"><span style="color:var(--acc)">${t.cur + 1}</span><span class="ol">/${t.steps.length}</span></div>
+        <div class="s20 g" style="margin-top:16px">СЕЙЧАС</div><div style="font-size:28px;letter-spacing:.02em;margin-top:6px">${t.steps[t.cur][0].toUpperCase()}${t.curNote ? ` · ${t.curNote.toUpperCase()}` : ""}</div>
+        <p class="jp" style="margin-top:22px;font-size:24px">${t.d}</p>
+        <div style="margin-top:22px;display:flex;flex-direction:column;gap:10px">${t.steps.map(([s, d], i) => `<div style="display:flex;gap:16px;font-size:22px;letter-spacing:.02em;${d ? "color:rgba(255,255,255,.4);text-decoration:line-through" : i === t.cur ? "color:var(--acc)" : "color:rgba(255,255,255,.75)"}"><span style="width:40px">${d ? "✓" : String(i + 1).padStart(2, "0")}</span>${s.toUpperCase()}</div>`).join("")}</div>
+        <div class="s20 g" style="margin-top:24px">НАГРАДА: <span style="color:#fff">${t.rew.join(" · ").toUpperCase()}</span></div></div>`, "АКТИВНЫЕ 5 · ВЫПОЛНЕНО 12");
+  };
+  const B3 = (L, S) => {
+    const sel = S.b ?? 2, it = ITEMS[sel], vis = ITEMS.slice(0, 10);
+    return Bshell(L, 2, `
+      <div class="ab" style="left:100px;top:248px;display:flex;gap:28px;font-size:22px;letter-spacing:.04em">${[["ВСЕ", 12], ...CATS.map(c => [c.n, ITEMS.filter(x => x.cat === c.k).length])].map(([n, q], i) => `<span style="${i === 0 ? "background:var(--acc);color:var(--ink);padding:4px 12px;margin:-4px -12px" : "color:rgba(255,255,255,.6)"}">${n} ${q}</span>`).join("")}</div>
+      <div class="ab" style="left:100px;top:312px;width:700px;display:flex;flex-direction:column" data-group="b">
+        ${vis.map((x, i) => `<div class="Bl${i === sel ? " sel" : ""}" data-pick="${i}" tabindex="0" style="height:64px"><span class="w" style="font-size:46px">${x.n}</span><span class="lb">×${x.q}</span>${x.lab ? `<i style="margin-left:auto;width:12px;height:12px;background:${LAB[x.lab].c}"></i>` : ""}</div>`).join("")}
+        <div class="s20 g" style="margin-top:12px">ЕЩЁ 2 ↓</div></div>
+      <div class="ab ol" style="right:96px;top:228px;font-weight:700;font-size:340px;line-height:1;-webkit-text-stroke-color:rgba(255,255,255,.14)">×${it.q}</div>
+      <div class="ab art" style="left:830px;top:300px;width:520px;height:640px;color:#fff">${it.img ? `<img src="${IMG[it.img]}" alt="" style="height:${it.img === "scab" ? 600 : 380}px">` : ico(it.ic, 360)}</div>
+      <div class="ab" style="left:1390px;top:330px;width:430px;display:flex;flex-direction:column;gap:18px">
+        <div style="font-weight:700;font-size:58px;line-height:1.02;color:var(--acc)">${it.n}</div><div class="s20 g">${it.type}</div>
+        <p class="jp" style="font-size:23px">${it.d}</p>
+        <div>${it.kv.map(([a, b]) => `<div class="kv"><span>${a}</span><b>${b}</b></div>`).join("")}</div>
+        <div class="s20 g" style="margin-top:10px">НУЖНА ДЛЯ</div><div style="font-size:24px;letter-spacing:.02em;border-bottom:4px solid var(--acc);padding-bottom:10px">${it.use} →</div></div>`, "РЮКЗАК 12 / 30");
+  };
+  const B4 = (L, S) => {
+    const b = RES[1], sel = S.b ?? 2, nd = b.nodes[sel], [n, st, cost, d, extra] = nd;
+    return Bshell(L, 3, `
+      <div class="ab" style="left:100px;top:248px;display:flex;gap:28px;font-size:22px;letter-spacing:.04em">${RES.map((r, i) => `<span style="${i === 1 ? "background:var(--acc);color:var(--ink);padding:4px 12px;margin:-4px -12px" : "color:rgba(255,255,255,.6)"}">${r.n} ${r.nodes.filter(x => x[1] === "done").length}/${r.nodes.length}</span>`).join("")}</div>
+      <div class="ab" style="left:100px;top:318px;width:960px;display:flex;flex-direction:column" data-group="b">
+        ${b.nodes.map((x, i) => `<div class="Bl${i === sel ? " sel" : ""} ${x[1]}" data-pick="${i}" tabindex="0" style="height:122px;flex-direction:column;align-items:stretch;justify-content:center;gap:8px">
+          <div class="lb">${RSTATE[x[1]]}${x[1] === "run" ? " · " + x[4] : ""} · ${x[2]} ${x[2] === 1 ? "ОЧКО" : "ОЧКА"}</div><span class="w" style="font-size:64px">${x[0]}</span></div>`).join("")}</div>
+      <div class="ab" style="left:1160px;top:318px;width:660px;display:flex;flex-direction:column;gap:18px">
+        <div class="s20 g">ХЕМОФОРМ · ${RSTATE[st]}</div>
+        <div style="display:flex;align-items:flex-end;gap:18px"><span style="font-weight:700;font-size:220px;line-height:.8;color:var(--acc)">${cost}</span><span style="font-size:30px;margin-bottom:6px">${cost === 1 ? "ОЧКО" : "ОЧКА"}<br><span class="g s20">У ВАС ${POINTS}</span></span></div>
+        <div style="font-weight:700;font-size:48px;line-height:1.05">${n}</div>
+        <p class="jp" style="font-size:24px">${d}</p>
+        <div>${st === "lock" ? `<div class="kv"><span>НУЖНО</span><b>${extra.toUpperCase()}</b></div>` : ""}<div class="kv"><span>ВЕТКА</span><b>${b.code}.0${sel + 1}</b></div></div>
+        ${st === "open" ? `<span class="btn f" style="align-self:flex-start">ИССЛЕДОВАТЬ · ${cost}</span>` : ""}</div>`, `ОЧКИ ИССЛЕДОВАНИЙ — ${POINTS}`);
+  };
+  const ABC = "АБВГДЕЖЗИКЛМНОПРСТУФХЦЧШЩЭЮЯ".split("");
+  const AVAIL = new Set("АГДИКЛМОСТУХЧ".split(""));
+  const ULIST = [["УГЛЕКИСЛЫЙ ГАЗ", "co2"], ["УГОЛЬНАЯ КИСЛОТА", null], ["УЗКИЕ ЗОНЫ ИК", null], ["УРОВЕНЬ ЛАБОРАТОРИИ", "level"], ["УФ-СПЕКТРОМЕТР", null]];
+  const B5 = (L, S) => {
+    const sel = S.b ?? 0, [t, k] = ULIST[sel], a = k ? ART[k] : LOCKED(t);
+    return Bshell(L, 4, `
+      <div class="abc" style="left:100px;top:242px">${ABC.map(c => `<span class="${c === "У" ? "on" : AVAIL.has(c) ? "a" : ""}">${c}</span>`).join("")}</div>
+      <div class="ab ol" style="left:60px;top:300px;font-weight:700;font-size:620px;line-height:1;-webkit-text-stroke-color:rgba(255,255,255,.16)">У</div>
+      <div class="ab" style="left:140px;top:360px;width:780px;display:flex;flex-direction:column" data-group="b">
+        ${ULIST.map(([x, kk], i) => `<div class="Bl${i === sel ? " sel" : ""}${kk ? "" : " lock"}" data-pick="${i}" tabindex="0" style="height:96px"><span class="w" style="font-size:46px">${x}</span>${kk && ART[kk].nw ? '<span class="tag">НОВАЯ</span>' : kk ? "" : '<span class="lb">ЗАКРЫТО</span>'}</div>`).join("")}</div>
+      <div class="ab" style="left:1000px;top:330px;width:820px;display:flex;flex-direction:column;gap:18px">
+        ${a.lock ? `<div class="s20 g">ЗАКРЫТО</div><div style="font-weight:700;font-size:56px;line-height:1.05;color:rgba(255,255,255,.45)">${a.t}</div><p class="jp" style="font-size:24px">${a.p[0]}</p>`
+          : `<div class="s20 g">${a.sub}</div><div style="font-weight:700;font-size:56px;line-height:1.05">${a.t}${a.f ? ` <span class="form" style="font-size:48px;color:rgba(255,255,255,.6)">${a.f}</span>` : ""}</div>
+          ${a.fig ? `<div style="color:#fff">${FIG[a.fig](820, 230)}</div>` : ""}
+          ${a.p.map(x => `<p class="jp" style="font-size:23px">${x}</p>`).join("")}
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 30px">${a.kv.map(([x, v]) => `<div class="kv"><span>${x}</span><b>${v}</b></div>`).join("")}</div>`}</div>`, "СТАТЕЙ 21 · НОВЫХ 2");
+  };
+
+  /* =====================================================================
+     В · ЧЕРТЁЖ — each section is a drawing sheet with a frame and a title block
+     ===================================================================== */
+  const SHEET = ["ПЛАН СТАНЦИИ", "БЛОК-СХЕМА", "СПЕЦИФИКАЦИЯ", "СХЕМА СТРУКТУРНАЯ", "ПОЯСНИТЕЛЬНАЯ ЗАПИСКА"];
+  const Cshell = (L, p, body) => `${bg("inv", .6)}
+    <div class="Ckeys" style="left:52px">${key("q")}</div>
+    <div class="Ctabs">${TABS.map((t, i) => `<span class="${i === p ? "on" : ""}"><i>Л${i + 1}</i>${t}</span>`).join("")}</div>
+    <div class="Ckeys" style="left:1834px">${key("e")}</div>
+    <div class="Csheet"></div><div class="Cframe"></div>
+    <div class="Cdes"><span>НХ-ТАБ.0${p + 1}</span></div>
+    ${body}
+    <div class="stamp">
+      <div class="sg">${[["РАЗРАБ.", "ИГРОК"], ["ПРОВ.", "НЕКСУС"], ["ДЕНЬ", "3 · 14:20"], ["ГДЕ", `<span style="color:var(--acc);padding:0;border:0">${L.where}</span>`]].map(r => `<div>${r.map((c, j) => `<span>${j === 1 ? `<b>${c}</b>` : c}</span>`).join("")}</div>`).join("")}</div>
+      <div class="nm"><div>НХ-ТАБ.0${p + 1}</div><div>${TABS[p]}<br><span style="font-weight:400;font-size:18px;color:rgba(255,255,255,.65)">${SHEET[p]}</span></div></div>
+      <div class="rt"><div><span>ЛИСТ</span><span>ЛИСТОВ</span></div><div><span><b>${p + 1}</b></span><span><b>5</b></span></div><div class="o">СТАНЦИЯ НЕКСУС<br>KEPLER-442B</div></div>
+    </div>`;
+  const PLAN = [
+    { k: "hub", n: "ХАБ", pos: 1, x: 560, y: 560 },
+    { k: "quant", pos: 2, x: 560, y: 268 }, { k: "geo", pos: 3, x: 840, y: 440 }, { k: "bio", pos: 4, x: 840, y: 700 },
+    { k: "chemo", pos: 5, x: 280, y: 700 }, { k: "terra", pos: 6, x: 280, y: 440 }, { k: "gate", n: "ШЛЮЗ", pos: 7, x: 560, y: 880 },
+  ];
+  const EXPL = [["ХАБ СТАНЦИИ", "склад, переходы", "—"], ["КВАНТОФОРМ", "новое задание", "1"], ["ГЕОФОРМ", "свободна", "1"], ["БИОФОРМ", "сбор образцов", "1"], ["ХЕМОФОРМ", "анализ · 60 %", "2"], ["ТЕРРАФОРМ", "закрыта", "—"], ["ШЛЮЗ", "зоны 3 из 8", "—"]];
+  const C1 = (L, S) => {
+    const sel = S.c ?? 4, here = L.key === "chemo" ? "chemo" : "hub";
+    const mod = (m, i) => {
+      const l = LAB[m.k], on = i === sel, col = on ? "var(--acc)" : m.k === "terra" ? "rgba(255,255,255,.4)" : "rgba(255,255,255,.85)";
+      if (m.k === "hub") return `<circle cx="${m.x}" cy="${m.y}" r="118" fill="rgb(13,14,14)" stroke="${col}" stroke-width="${on ? 4 : 2}"/><circle cx="${m.x}" cy="${m.y}" r="104" stroke="rgba(255,255,255,.4)"/>
+        <text x="${m.x}" y="${m.y + 8}" text-anchor="middle" font-size="26" fill="#fff" stroke="none">ХАБ</text>`;
+      const w = m.k === "gate" ? 160 : 200, h = m.k === "gate" ? 70 : 100;
+      return `<rect x="${m.x - w / 2}" y="${m.y - h / 2}" width="${w}" height="${h}" fill="rgb(13,14,14)" stroke="${col}" stroke-width="${on ? 4 : 2}" ${m.k === "terra" ? 'stroke-dasharray="8 7"' : ""}/>
+        ${l ? NXSVG[l.ic].replace("<svg ", `<svg x="${m.x - w / 2 + 14}" y="${m.y - 18}" width="36" height="36" style="color:${m.k === "terra" ? "rgba(255,255,255,.4)" : "#fff"}" `) : ""}
+        <text x="${m.x + (l ? 18 : 0)}" y="${m.y + 8}" text-anchor="middle" font-size="20" fill="${m.k === "terra" ? "rgba(255,255,255,.45)" : "#fff"}" stroke="none">${l ? l.n : m.n}</text>`;
+    };
+    const corr = PLAN.slice(1).map(m => { const dx = m.x - 560, dy = m.y - 560, d = Math.hypot(dx, dy), ux = dx / d, uy = dy / d, px = -uy * 12, py = ux * 12; const a = [560 + ux * 118, 560 + uy * 118], b = [m.x - ux * (m.k === "gate" ? 35 : 60), m.y - uy * (m.k === "gate" ? 35 : 60)];
+      return `<line x1="${a[0] + px}" y1="${a[1] + py}" x2="${b[0] + px}" y2="${b[1] + py}"/><line x1="${a[0] - px}" y1="${a[1] - py}" x2="${b[0] - px}" y2="${b[1] - py}"/>`; }).join("");
+    const callout = (m, i) => { const sx = m.x + (m.x >= 560 ? 120 : -120), sy = m.y - (m.k === "hub" ? 150 : 70); return `<line x1="${m.x + (m.x >= 560 ? 40 : -40)}" y1="${m.y - (m.k === "hub" ? 95 : 30)}" x2="${sx}" y2="${sy}" stroke="rgba(255,255,255,.55)" stroke-width="1.5"/><line x1="${sx}" y1="${sy}" x2="${sx + (m.x >= 560 ? 40 : -40)}" y2="${sy}" stroke="rgba(255,255,255,.55)" stroke-width="1.5"/><text x="${sx + (m.x >= 560 ? 20 : -20)}" y="${sy - 8}" text-anchor="middle" font-size="22" fill="${i === sel ? "var(--acc)" : "#fff"}" stroke="none">${m.pos}</text>`; };
+    const me = PLAN.find(m => m.k === here), mx = me.x + (here === "hub" ? 0 : 0), my = me.y + (here === "hub" ? 50 : 70);
+    return Cshell(L, 0, `
+      <svg class="ab" style="left:0;top:0" width="1100" height="1040" viewBox="0 0 1100 1040" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2">
+        <g stroke="rgba(255,255,255,.55)">${corr}</g>
+        ${PLAN.map(mod).join("")}${PLAN.filter(m => m.k !== "gate").map(callout).join("")}
+        <g stroke="rgba(255,255,255,.55)" stroke-width="1.5"><line x1="442" y1="1000" x2="678" y2="1000"/><line x1="442" y1="990" x2="442" y2="1010"/><line x1="678" y1="990" x2="678" y2="1010"/></g>
+        <text x="560" y="990" text-anchor="middle" font-size="20" fill="rgba(255,255,255,.75)" stroke="none">Ø 42 М</text>
+        <g transform="translate(200 230)"><circle r="30" stroke="rgba(255,255,255,.55)" stroke-width="1.5"/><path d="M0 -28L9 6L0 0L-9 6z" fill="#fff" stroke="none"/><text y="-40" text-anchor="middle" font-size="20" fill="#fff" stroke="none">С</text></g>
+        <path d="M${mx} ${my - 16}l14 26h-28z" fill="var(--acc)" stroke="none"/><text x="${mx + 22}" y="${my + 8}" font-size="20" fill="var(--acc)" stroke="none">ВЫ</text>
+      </svg>
+      <div class="ab TT g" style="left:1040px;top:150px">ЭКСПЛИКАЦИЯ</div>
+      <table class="tb" style="left:1040px;top:186px;width:790px" data-group="c"><tr><th style="width:70px">ПОЗ.</th><th>НАИМЕНОВАНИЕ</th><th style="width:250px">СОСТОЯНИЕ</th><th style="width:80px">ЗАД.</th></tr>
+        ${EXPL.map(([n, s, t], i) => `<tr class="${i === sel ? "sel" : ""}${i === 5 ? " dim" : ""}" data-pick="${i}" tabindex="0"><td class="c">${i + 1}</td><td>${n}</td><td style="font-family:var(--body);font-size:21px">${s}</td><td class="c">${t}</td></tr>`).join("")}</table>
+      <div class="ab tr2" style="left:1040px;top:580px;width:790px"><div class="TT g" style="margin-bottom:4px">ТЕХНИЧЕСКИЕ ТРЕБОВАНИЯ</div>
+        <p><i>1.</i>День 3, 14:20. Очки исследований — 3.</p><p><i>2.</i>Хранилище: 12 ячеек из 30.</p><p><i>3.</i>Зоны планеты: 3 из 8. Пробы КР-01, КР-02.</p><p><i>4.</i>Последнее: 14:02 — проба КР-01 на столе.</p></div>`);
+  };
+
+  const flow = (t, cx, top) => {
+    let y = top, out = "";
+    const box = (txt, cls, h = 54, w = 520) => { const r = `<rect x="${cx - w / 2}" y="${y}" width="${w}" height="${h}" ${cls}/>`; const tx = `<text x="${cx}" y="${y + h / 2 + 7}" text-anchor="middle" font-size="20" fill="${cls.includes("acc") ? "#fff" : cls.includes("hatch") ? "rgba(255,255,255,.65)" : "rgba(255,255,255,.85)"}" stroke="none">${txt}</text>`; y += h; return r + tx; };
+    const arrow = () => { const a = `<line x1="${cx}" y1="${y}" x2="${cx}" y2="${y + 24}"/><path d="M${cx - 6} ${y + 16}l6 9 6-9z" fill="rgba(255,255,255,.7)" stroke="none"/>`; y += 26; return a; };
+    out += box("НАЧАЛО", 'rx="27" stroke="rgba(255,255,255,.7)"', 50, 240) + arrow();
+    let curY = 0;
+    t.steps.forEach(([s, d], i) => {
+      if (i === t.cur) curY = y;
+      const cls = d ? 'fill="url(#hatch)" stroke="rgba(255,255,255,.5)"' : i === t.cur ? 'stroke="var(--acc)" stroke-width="4" data-acc' : 'stroke="rgba(255,255,255,.7)" stroke-dasharray="7 6"';
+      out += box(s.toUpperCase(), cls);
+      if (t.decide === i) {
+        out += arrow();
+        const dy = y, h = 84, w = 340;
+        out += `<path d="M${cx} ${dy}l${w / 2} ${h / 2}l-${w / 2} ${h / 2}l-${w / 2} -${h / 2}z" stroke="rgba(255,255,255,.7)" stroke-dasharray="7 6"/><text x="${cx}" y="${dy + h / 2 + 7}" text-anchor="middle" font-size="20" fill="rgba(255,255,255,.85)" stroke="none">МОЛЕКУЛА СОШЛАСЬ?</text>`;
+        out += `<path d="M${cx + w / 2} ${dy + h / 2}H${cx + 320}V${curY + 27}H${cx + 262}" stroke="rgba(255,255,255,.6)"/><path d="M${cx + 270} ${curY + 21}l-9 6 9 6z" fill="rgba(255,255,255,.7)" stroke="none"/>
+          <text x="${cx + 330}" y="${dy + h / 2 - 12}" font-size="20" fill="rgba(255,255,255,.7)" stroke="none">НЕТ</text><text x="${cx + 330}" y="${(dy + curY) / 2 + 30}" font-size="20" fill="rgba(255,255,255,.7)" stroke="none">−10 %</text>
+          <text x="${cx + 14}" y="${dy + h + 22}" font-size="20" fill="rgba(255,255,255,.7)" stroke="none">ДА</text>`;
+        y = dy + h;
+      }
+      out += arrow();
+    });
+    out += box("ОТЧЁТ", 'rx="27" stroke="rgba(255,255,255,.7)"', 50, 240);
+    out += `<line x1="${cx - 262}" y1="${curY + 27}" x2="${cx - 320}" y2="${curY + 27}" stroke="var(--acc)" stroke-width="2"/><text x="${cx - 330}" y="${curY + 34}" text-anchor="end" font-size="20" fill="var(--acc)" stroke="none">ВЫ ЗДЕСЬ</text>`;
+    return out;
+  };
+  const C2 = (L, S) => {
+    const sel = S.c ?? 3, t = TASKS[sel];
+    return Cshell(L, 1, `
+      <div class="ab TT g" style="left:150px;top:182px">ПЕРЕЧЕНЬ ЗАДАЧ</div>
+      <table class="tb" style="left:150px;top:218px;width:820px" data-group="c"><tr><th style="width:70px">ПОЗ.</th><th>ЗАДАЧА</th><th style="width:220px">ЛАБОРАТОРИЯ</th><th style="width:100px">ЭТАП</th></tr>
+        ${TASKS.map((x, i) => `<tr class="${i === sel ? "sel" : ""}" data-pick="${i}" tabindex="0"><td class="c">${i + 1}</td><td>${x.n}${x.nw ? " ●" : ""}</td><td>${LAB[x.lab].n}</td><td class="c">${x.s}</td></tr>`).join("")}
+        <tr class="dim"><td class="c">—</td><td>ВЫПОЛНЕННЫЕ</td><td></td><td class="c">12</td></tr></table>
+      <div class="ab" style="left:150px;top:600px;width:820px;display:flex;flex-direction:column;gap:14px">
+        <div class="sec2">1 ОПИСАНИЕ</div><p class="jp">${t.d}</p>
+        <div class="sec2" style="margin-top:10px">2 НАГРАДА</div>${t.rew.map((r, i) => `<p class="jp">2.${i + 1} ${r}</p>`).join("")}</div>
+      <svg class="ab" style="left:0;top:0" width="1880" height="860" viewBox="0 0 1880 860" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2">
+        <defs><pattern id="hatch-${S.id}" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="12" stroke="rgba(255,255,255,.28)" stroke-width="2"/></pattern></defs>
+        ${flow(t, 1420, 150).replace(/url\(#hatch\)/g, `url(#hatch-${S.id})`)}
+      </svg>`);
+  };
+
+  const C3 = (L, S) => {
+    const sel = S.c ?? 2, it = ITEMS[sel];
+    let pos = 0;
+    const rows = CATS.map(c => `<tr class="sec"><td></td><td></td><td><u>${c.n[0] + c.n.slice(1).toLowerCase()}</u></td><td></td><td></td></tr>` + ITEMS.map((x, i) => x.cat !== c.k ? "" : `<tr class="${i === sel ? "sel" : ""}" data-pick="${i}" tabindex="0"><td class="c">${++pos}</td><td>${x.code}</td><td>${x.n}</td><td class="c">${x.q}</td><td style="font-family:var(--body);font-size:20px">${x.note || (x.lab ? LAB[x.lab].n[0] + LAB[x.lab].n.slice(1).toLowerCase() : "Станция")}</td></tr>`).join("")).join("");
+    const parts = it.parts || [];
+    return Cshell(L, 2, `
+      <table class="tb" style="left:150px;top:180px;width:880px" data-group="c"><tr><th style="width:66px">ПОЗ.</th><th style="width:170px">ОБОЗНАЧЕНИЕ</th><th>НАИМЕНОВАНИЕ</th><th style="width:76px">КОЛ.</th><th style="width:180px">ПРИМЕЧ.</th></tr>${rows}</table>
+      <div class="ab" style="left:1100px;top:150px;width:730px;height:470px;border:1px solid rgba(255,255,255,.3)"></div>
+      <div class="ab art" style="left:1250px;top:170px;width:430px;height:430px;color:#fff">${it.img ? `<img src="${IMG[it.img]}" alt="" style="height:${it.img === "scab" ? 420 : 300}px">` : ico(it.ic, 300)}</div>
+      <svg class="ab" style="left:1100px;top:150px" width="730" height="470" viewBox="0 0 730 470" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.5">
+        ${parts.map(([nm, px, py], i) => { const x = 150 + px * 430, y = 20 + py * 430, left = px < .5, ex = left ? 40 : 690; return `<circle cx="${x}" cy="${y}" r="4" fill="#fff" stroke="none"/><line x1="${x}" y1="${y}" x2="${left ? 110 : 620}" y2="${y - 30}"/><line x1="${left ? 110 : 620}" y1="${y - 30}" x2="${ex}" y2="${y - 30}"/><text x="${left ? 40 : 690}" y="${y - 40}" text-anchor="${left ? "start" : "end"}" font-size="20" fill="#fff" stroke="none">${ITEMS.indexOf(it) + 1}.${i + 1}</text><text x="${left ? 40 : 690}" y="${y - 6}" text-anchor="${left ? "start" : "end"}" font-size="18" fill="rgba(255,255,255,.7)" stroke="none" style="font-family:var(--body)">${nm}</text>`; }).join("")}
+        <line x1="40" y1="440" x2="160" y2="440"/><line x1="40" y1="432" x2="40" y2="448"/><line x1="100" y1="436" x2="100" y2="444"/><line x1="160" y1="432" x2="160" y2="448"/><text x="176" y="447" font-size="20" fill="rgba(255,255,255,.75)" stroke="none">10 СМ</text>
+      </svg>
+      <div class="ab figcap" style="left:1100px;top:630px">Рис. ${ITEMS.indexOf(it) + 1} — ${it.n[0] + it.n.slice(1).toLowerCase()}, общий вид</div>
+      <div class="ab" style="left:1100px;top:676px;width:730px;display:flex;flex-direction:column;gap:6px"><p class="jp" style="font-size:21px">${it.d}</p>
+        <div class="kv" style="margin-top:6px"><span>НУЖНА ДЛЯ</span><b style="color:var(--acc)">${it.use}</b></div></div>`);
+  };
+
+  const C4 = (L, S) => {
+    const sel = S.c ?? 6, flat = []; RES.forEach((b, bi) => b.nodes.forEach((n, ni) => flat.push([bi, ni])));
+    const [sb, sn] = flat[sel], b = RES[sb], nd = b.nodes[sn], [n, st, cost, d, extra] = nd, colW = 236;
+    let k = 0;
+    const blocks = RES.map((r, bi) => {
+      const x = 150 + bi * colW;
+      return `<g>${r.ic === "emblem" ? "" : ""}<text x="${x + 108}" y="196" text-anchor="middle" font-size="20" fill="#fff" stroke="none">${r.n}</text><line x1="${x}" y1="212" x2="${x + 216}" y2="212" stroke="rgba(255,255,255,.5)"/>
+        ${r.nodes.map((nn, ni) => { const y = 240 + ni * 120, i = k++, on = i === sel, s = nn[1];
+          const rect = `<rect x="${x}" y="${y}" width="216" height="80" ${s === "done" ? `fill="url(#h4-${S.id})" stroke="rgba(255,255,255,.5)"` : s === "lock" ? 'stroke="rgba(255,255,255,.4)" stroke-dasharray="7 6"' : 'stroke="rgba(255,255,255,.85)"'} ${on ? 'stroke="var(--acc)" stroke-width="4"' : ""}/>`;
+          const link = ni ? `<line x1="${x + 108}" y1="${y - 40}" x2="${x + 108}" y2="${y}" stroke="rgba(255,255,255,.5)"/><path d="M${x + 102} ${y - 9}l6 9 6-9z" fill="rgba(255,255,255,.6)" stroke="none"/>` : "";
+          const words = nn[0].split(" "), l1 = words.slice(0, Math.ceil(words.length / 2)).join(" "), l2 = words.slice(Math.ceil(words.length / 2)).join(" ");
+          return `${link}<g data-pick="${i}" tabindex="0" style="cursor:pointer">${rect}<text x="${x + 10}" y="${y + 24}" font-size="18" fill="rgba(255,255,255,.6)" stroke="none">${r.code}.0${ni + 1}</text>
+            <text x="${x + 10}" y="${y + 48}" font-size="18" fill="${s === "lock" ? "rgba(255,255,255,.45)" : "#fff"}" stroke="none">${nn[0].length > 15 ? l1 : nn[0]}</text>${nn[0].length > 15 ? `<text x="${x + 10}" y="${y + 68}" font-size="18" fill="${s === "lock" ? "rgba(255,255,255,.45)" : "#fff"}" stroke="none">${l2}</text>` : ""}
+            ${s === "run" ? `<rect x="${x}" y="${y + 80}" width="144" height="6" fill="var(--acc)" stroke="none"/>` : ""}</g>`; }).join("")}</g>`;
+    }).join("");
+    return Cshell(L, 3, `
+      <svg class="ab" style="left:0;top:0" width="1360" height="1040" viewBox="0 0 1360 1040" fill="none" stroke-width="2" data-group="c">
+        <defs><pattern id="h4-${S.id}" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="12" stroke="rgba(255,255,255,.28)" stroke-width="2"/></pattern></defs>
+        ${blocks}
+        <g transform="translate(150 900)" font-size="20" stroke="none"><rect x="0" y="0" width="40" height="26" fill="url(#h4-${S.id})" stroke="rgba(255,255,255,.5)"/><text x="52" y="20" fill="rgba(255,255,255,.75)">ГОТОВО</text>
+          <rect x="200" y="0" width="40" height="26" stroke="rgba(255,255,255,.85)" stroke-width="2"/><text x="252" y="20" fill="rgba(255,255,255,.75)">ДОСТУПНО</text>
+          <rect x="430" y="0" width="40" height="26" stroke="rgba(255,255,255,.4)" stroke-dasharray="6 5" stroke-width="2"/><text x="482" y="20" fill="rgba(255,255,255,.75)">ЗАКРЫТО</text>
+          <rect x="660" y="10" width="40" height="6" fill="var(--acc)"/><text x="712" y="20" fill="rgba(255,255,255,.75)">ИДЁТ</text></g>
+      </svg>
+      <div class="ab" style="left:1380px;top:150px;width:450px;display:flex;flex-direction:column;gap:16px">
+        <div class="TT g">ПОЗ. ${b.code}.0${sn + 1} · ${RSTATE[st]}</div>
+        <div style="font-weight:700;font-size:38px;line-height:1.08">${n}</div>
+        <div style="display:flex;align-items:baseline;gap:14px"><span style="font-weight:700;font-size:90px;line-height:1;color:var(--acc)">${cost}</span><span class="TT">${cost === 1 ? "ОЧКО" : "ОЧКА"}<span class="g"> · У ВАС ${POINTS}</span></span></div>
+        <p class="jp">${d}</p>
+        <div>${sn ? `<div class="kv"><span>ПОСЛЕ</span><b>${b.code}.0${sn} ${b.nodes[sn - 1][1] === "done" ? "✓" : ""}</b></div>` : ""}${st === "lock" ? `<div class="kv"><span>НУЖНО</span><b>${extra.toUpperCase()}</b></div>` : ""}${st === "run" ? `<div class="kv"><span>ПРОГРЕСС</span><b>${extra}</b></div>` : ""}</div>
+        ${st === "open" ? `<span class="btn f">ИССЛЕДОВАТЬ</span>` : ""}</div>`);
+  };
+
+  const C5 = (L, S) => {
+    const all = []; RCATS.forEach(c => c.items.slice(0, 3).forEach(it => all.push(it)));
+    const sel = S.c ?? 6, it = all[sel], a = it[1] ? ART[it[1]] : { t: it[0], p: ["Статья откроется, когда вы встретите это в игре."], kv: [], lock: 1 };
+    let k = 0;
+    return Cshell(L, 4, `
+      <div class="ab Ctoc" style="left:150px;top:180px;width:470px" data-group="c"><div class="TT g" style="margin-bottom:8px">СОДЕРЖАНИЕ</div>
+        ${RCATS.map(c => `<div class="h">${c.n}</div>${c.items.slice(0, 3).map(([t, kk, pg]) => { const i = k++; return `<div class="e${i === sel ? " sel" : ""}${kk ? "" : " lk"}" data-pick="${i}" tabindex="0">${nice(t)}<span class="ld"></span><i>${pg}</i></div>`; }).join("")}`).join("")}</div>
+      <div class="ab" style="left:650px;top:150px;width:1px;height:860px;background:rgba(255,255,255,.3)"></div>
+      <div class="ab" style="left:690px;top:150px;width:1140px">
+        <div class="TT g">${a.lock ? "ЗАКРЫТО" : a.sub}</div>
+        <div style="font-weight:700;font-size:52px;line-height:1.05;margin-top:10px;${a.lock ? "color:rgba(255,255,255,.45)" : ""}">${a.t}${a.f ? ` <span class="form" style="font-size:44px;color:rgba(255,255,255,.6)">${a.f}</span>` : ""}</div></div>
+      <div class="ab" style="left:690px;top:260px;width:520px;display:flex;flex-direction:column;gap:12px">
+        <div class="sec2">1 ОБЩИЕ СВЕДЕНИЯ</div>${a.p.map(x => `<p class="jp">${x}</p>`).join("")}
+        ${a.kv.length ? `<div class="sec2" style="margin-top:12px">2 СВОЙСТВА</div><table class="tb" style="position:static;width:520px"><tr><th>ПАРАМЕТР</th><th style="width:220px">ЗНАЧЕНИЕ</th></tr>${a.kv.map(([x, v]) => `<tr><td style="font-size:19px">${x}</td><td class="c" style="font-size:19px">${v}</td></tr>`).join("")}</table><div class="figcap">Таблица 1 — Свойства</div>` : ""}</div>
+      ${a.fig ? `<div class="ab" style="left:1250px;top:260px;width:580px;height:330px;border:1px solid rgba(255,255,255,.3);display:grid;place-items:center;color:#fff">${FIG[a.fig](570, 320)}</div><div class="ab figcap" style="left:1250px;top:600px">${a.cap}</div>` : ""}`);
+  };
+
+  /* ===================== page ===================== */
+  const SYS = [
+    { id: "strips", t: "А · Полосы", pages: [A1, A2, A3, A4, A5], kind: "A",
+      idea: ["Растёт из аккордеона «Приборов». Пять разделов — пять полос на всю высоту. Q/E раскрывают соседнюю полосу, остальные сжимаются до подписи и счётчика.", "Внутри раздела — тоже полосы: лаборатории, задачи, категории, ветки, разделы справочника. Открыта одна, наведите — раскроется другая.", "Где ты находишься и сколько всего — видно, не открывая разделы. Одна механика на всё меню.", "В Rive одна полоса — компонент с состоянием «открыта/закрыта», ширина и прозрачность двух слоёв. Моушн уже описан в rive-motion-strips.md."] },
+    { id: "poster", t: "Б · Постер", pages: [B1, B2, B3, B4, B5], kind: "B",
+      idea: ["Растёт из «Постера» и «Бегущей строки». Сверху название раздела огромными буквами, соседние обрезаны краями экрана — Q/E прокручивают строку.", "Списки — тоже крупные слова: выбранное залито цветом, остальные контуром, готовое серое, закрытое почти невидимо. Цифры — на пол-экрана.", "Самый «журнальный» и узнаваемый вид. Мало элементов — в Rive собирается из текста и пары полос.", "Мало места на подробности, длинные названия не влезают в одну строку. Нужен крупный экран: на ноутбуке 46 px превратятся в 26."] },
+    { id: "sheet", t: "В · Чертёж", pages: [C1, C2, C3, C4, C5], kind: "C",
+      idea: ["Растёт из чертежей приборов в 1 px. Каждый раздел — лист чертежа: рамка, штамп с номером листа, вкладки сверху как закладки папки.", "Обзор — план станции с позициями и экспликацией. Задачи — блок-схема. Инвентарь — спецификация. Исследования — структурная схема. Справочник — пояснительная записка с рисунками и таблицами.", "Больше всего говорит о мире: станция научная, всё задокументировано. Таблицы удобны, когда предметов станет много.", "Самый плотный и «бумажный» вариант. Тонкие линии рябят на ТВ, чертежи для каждого предмета нужно рисовать."] },
+  ];
+  let big = "station";
+  try { const s = localStorage.getItem("nx-tab3-lab"); if (UI[s]) big = s; } catch (e) {}
+  const other = () => (big === "chemo" ? "station" : "chemo");
+  const fitOne = c => { const s = c.firstElementChild; if (s) s.style.transform = `scale(${c.clientWidth / 1920})`; };
+  let uid = 0;
+  const mount = (r) => {
+    const L = UI[r.lab === "big" ? big : other()], S = r.state;
+    S.id = S.id || ++uid;
+    r.c.innerHTML = `<div class="scr" style="--acc:${L.acc};--acc-rgb:${L.rgb};--ink:${L.ink}">${r.fn(L, S)}</div>`;
+    const scr = r.c.firstElementChild;
+    measure(scr);
+    scr.querySelectorAll("[data-group]").forEach(g => {
+      const gk = g.dataset.group, strips = g.hasAttribute("data-strips");
+      g.querySelectorAll(":scope > [data-pick], :scope tr[data-pick], :scope g[data-pick], :scope .e[data-pick]").forEach(t => {
+        if (t.closest("[data-group]") !== g) return;
+        const pick = () => {
+          const i = +t.dataset.pick;
+          if ((S[gk] ?? -1) === i && !strips) return;
+          if (strips) {
+            if (t.classList.contains("open")) return;
+            S[gk] = i; ["i", "r", "e"].forEach(k => delete S[k]);
+            g.querySelectorAll(":scope > .Ai").forEach(o => o.classList.toggle("open", o === t));
+            return;
+          }
+          S[gk] = i; mount(r);
+        };
+        t.addEventListener("mouseenter", pick); t.addEventListener("focus", pick);
+      });
+    });
+    fitOne(r.c);
+  };
+
+  const measure = scr => { const mq = scr.querySelector("[data-mq]"); if (!mq) return; const on = mq.querySelector(".on"), cx = on.offsetLeft + on.offsetWidth / 2; mq.style.left = `${960 - cx}px`; const un = scr.querySelector("[data-un]"); un.style.left = `${960 - on.offsetWidth / 2}px`; un.style.width = `${on.offsetWidth}px`; };
+  if (document.fonts) document.fonts.ready.then(() => document.querySelectorAll(".scr").forEach(measure));
+  const regs = [];
+  const host = document.getElementById("systems");
+  SYS.forEach(sy => {
+    const sec = document.createElement("section"); sec.className = "part"; sec.id = sy.id;
+    sec.innerHTML = `<h2>${sy.t}</h2><div class="idea"><p><b>ИДЕЯ</b>${sy.idea[0]}</p><p><b>КАК УСТРОЕНО</b>${sy.idea[1]}</p><p><b>ЗА</b>${sy.idea[2]}</p><p><b>${sy.kind === "A" ? "В RIVE" : "ПРОТИВ"}</b>${sy.idea[3]}</p></div>
+      ${TABS.map((t, i) => `<div class="cap" data-cap="${i}"></div><div class="comp" data-p="${i}"></div>`).join("")}
+      <div class="row2"><div><div class="cap" data-capx="0"></div><div class="comp" data-x="0"></div></div><div><div class="cap" data-capx="1"></div><div class="comp" data-x="1"></div></div></div>`;
+    host.appendChild(sec);
+    sy.pages.forEach((fn, i) => regs.push({ c: sec.querySelector(`[data-p="${i}"]`), cap: sec.querySelector(`[data-cap="${i}"]`), t: `${i + 1} · ${TABS[i]}`, fn, lab: "big", state: {} }));
+    [0, 2].forEach((pi, j) => regs.push({ c: sec.querySelector(`[data-x="${j}"]`), cap: sec.querySelector(`[data-capx="${j}"]`), t: TABS[pi], fn: sy.pages[pi], lab: "other", state: {} }));
+  });
+  const render = () => regs.forEach(r => { r.state = {}; mount(r); r.cap.textContent = `${r.t} · ${UI[r.lab === "big" ? big : other()].ui}`; });
+  const bar = document.getElementById("bar");
+  ["station", "chemo"].forEach(k => {
+    const b = document.createElement("button");
+    b.type = "button"; b.id = "lab-" + k;
+    b.innerHTML = `<i style="background:${UI[k].acc}"></i>${UI[k].ui}`;
+    b.setAttribute("aria-pressed", String(k === big));
+    b.addEventListener("click", () => { big = k; try { localStorage.setItem("nx-tab3-lab", k); } catch (e) {} bar.querySelectorAll("button").forEach(o => o.setAttribute("aria-pressed", String(o === b))); render(); });
+    bar.appendChild(b);
+  });
+  render();
+  new ResizeObserver(() => document.querySelectorAll(".comp").forEach(fitOne)).observe(document.body);
+})();
+</script>
